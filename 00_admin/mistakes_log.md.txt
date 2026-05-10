@@ -1,0 +1,4 @@
+H3 v1+v2 REJECTED. VWAP reversion is anti-edge on ES 2010-2024.
+Intraday momentum (trending) appears to be the correct directional
+bias. Revisit mean-reversion only with tick-level data or order flow
+confirmation.

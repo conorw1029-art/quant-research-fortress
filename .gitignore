@@ -1,0 +1,5 @@
+﻿01_data/raw/*.csv
+venv/
+venv_new/
+__pycache__/
+*.pyc
