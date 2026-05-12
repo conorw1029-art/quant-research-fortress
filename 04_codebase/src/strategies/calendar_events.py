@@ -70,7 +70,7 @@ class CalendarEventStrategy(BaseStrategy):
         """Not used — calendar strategies use custom signals_to_trades."""
         return pd.Series(0, index=data.index)
 
-    def signals_to_trades(self, data: pd.DataFrame, signals: pd.Series) -> List[Trade]:
+    def signals_to_trades(self, data: pd.DataFrame, signals: pd.Series, max_bars_per_trade=None) -> List[Trade]:
         """
         Calendar-based trade generation.
         Long-only on event dates. Entry/exit controlled by params.
