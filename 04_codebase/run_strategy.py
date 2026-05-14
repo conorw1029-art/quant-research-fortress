@@ -72,8 +72,9 @@ def load_data_cached(
     timeframe: str,
     source_tz: str = "utc",
     col_timestamp: str = "ts_event",
+    instrument: str = "ES",
 ):
-    cache_key = (csv_path, timeframe)
+    cache_key = (csv_path, timeframe, instrument)
     if cache_key in _DATA_CACHE:
         logger.info(f"  Data cache hit: {Path(csv_path).name} @ {timeframe}")
         return _DATA_CACHE[cache_key]
@@ -84,6 +85,7 @@ def load_data_cached(
         data_path=csv_path,
         source_tz=source_tz,
         col_mapping={col_timestamp: "timestamp"},
+        instrument=instrument,
     )
     df_raw = loader.load()
     df_rth = loader.filter_rth(df_raw)
@@ -110,6 +112,8 @@ def build_cost_model(instrument_key: str, scenario: str) -> TransactionCost:
         "optimistic": 0,
         "realistic": 1,
         "conservative": 2,
+        "stress": 4,      # 4 ticks/side — extreme liquidity shock
+        "extreme": 8,     # 8 ticks/side — tail-risk sizing
     }.get(scenario, 1)
     overridden = InstrumentSpec(
         symbol=base.symbol,
@@ -122,7 +126,7 @@ def build_cost_model(instrument_key: str, scenario: str) -> TransactionCost:
         rth_start=base.rth_start,
         rth_end=base.rth_end,
     )
-    return TransactionCost(instrument=overridden)
+    return TransactionCost(instrument=overridden, slippage_scenario=scenario)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -261,7 +265,8 @@ def test_strategy(
                 f"Download {entry.data_path_key} data first."
             )
 
-        _, data = load_data_cached(csv_path, entry.timeframe, source_tz, col_timestamp)
+        _, data = load_data_cached(csv_path, entry.timeframe, source_tz, col_timestamp,
+                                   instrument=entry.instrument)
 
         # Build cost model from registry instrument
         cost_model = build_cost_model(entry.instrument, cost_scenario)
@@ -359,7 +364,8 @@ def run_batch(entries, zoo_path, cost_scenario="realistic", **kwargs):
 
 def main():
     parser = argparse.ArgumentParser(description="Strategy runner")
-    parser.add_argument("--key", help="Strategy key to test")
+    parser.add_argument("--key", action="append", dest="keys",
+                        help="Strategy key(s) to test (repeat for multiple)")
     parser.add_argument("--all", action="store_true", help="Test all active strategies")
     parser.add_argument("--include-rejected", action="store_true")
     parser.add_argument("--summary", action="store_true")
@@ -369,7 +375,7 @@ def main():
                         help="Override data CSV path (default: from registry)")
     parser.add_argument("--zoo-path", default=None)
     parser.add_argument("--cost-scenario", default="realistic",
-                        choices=["zero", "optimistic", "realistic", "conservative"])
+                        choices=["zero", "optimistic", "realistic", "conservative", "stress", "extreme"])
     parser.add_argument("--source-tz", default="utc")
     parser.add_argument("--col-timestamp", default="ts_event")
     parser.add_argument("--train-days", type=int, default=1000)
@@ -392,13 +398,15 @@ def main():
         print(zoo.summary())
         return
 
-    if args.key:
-        entry = get_by_key(args.key)
-        if entry is None:
-            logger.error(f"Unknown strategy key: {args.key}")
-            logger.info(f"Available: {[s.key for s in get_all()]}")
-            sys.exit(1)
-        entries = [entry]
+    if args.keys:
+        entries = []
+        for k in args.keys:
+            entry = get_by_key(k)
+            if entry is None:
+                logger.error(f"Unknown strategy key: {k}")
+                logger.info(f"Available: {[s.key for s in get_all()]}")
+                sys.exit(1)
+            entries.append(entry)
     elif args.all:
         entries = get_active()
         if args.include_rejected:

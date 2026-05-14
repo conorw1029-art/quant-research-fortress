@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-05-12",
+  "description": "Priority queue for the next wave of strategy candidates. Each entry is a Hypothesis Card — enough detail to move straight to smoke test without additional design work.",
+  "entries": [
+    {
+      "key": "london_open_breakout_m6e",
+      "priority": 1,
+      "family": "session_breakout",
+      "status": "EXPERIMENTAL",
+      "market_candidates": ["M6E", "M6B"],
+      "data_required": ["6E_1min.csv", "6B_1min.csv"],
+      "source_confidence": "high",
+      "rationale": "EUR/USD at London open (08:20 ET) concentrates the highest FX volume of the day. The first 15-30 minutes establish a directional range driven by European economic data and overnight position unwinding. Breakout of that range has documented follow-through in academic literature (Cai, 2009; Osler, 2003).",
+      "entry_logic": "At session open (08:20 ET), accumulate high/low for orb_minutes=[15,30]. First close above range high → long entry; first close below range low → short entry. One trade per session only.",
+      "exit_logic": "Target = entry + rr_ratio × range_size. Stop = opposite side of range. Hard exit at 11:30 ET (London close) or EOD.",
+      "parameters": {
+        "orb_minutes": [15, 30],
+        "rr_ratio": [1.0, 1.5, 2.0]
+      },
+      "risk_notes": "Avoid days with 08:30 ET macro data (CPI, NFP, PPI) as range can be violated violently in both directions. Consider a news-filter flag.",
+      "lookahead_risks": "Opening range must be computed from bars strictly within the orb window — no current-bar close until the bar is complete.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 180,
+      "notes": "Code exists in src/strategies/london_open_breakout.py"
+    },
+    {
+      "key": "london_open_fakeout_reversal_m6e",
+      "priority": 2,
+      "family": "session_reversal",
+      "status": "PLANNED",
+      "market_candidates": ["M6E"],
+      "data_required": ["6E_1min.csv"],
+      "source_confidence": "medium",
+      "rationale": "After the London open breakout, 30-40% of sessions see a 'fake-out' — the initial break reverses sharply. Entry on the reversal after a defined retrace captures the fade trade with defined risk.",
+      "entry_logic": "After a breakout signal (same range as LOB), if price retraces back INTO the range within 3 bars → enter opposite direction. Stop = the breakout high/low. Target = opposite side of range.",
+      "exit_logic": "Target = opposite side of opening range. Stop = breakout extreme. Exit at 11:30 ET.",
+      "parameters": {
+        "retrace_bars": [2, 3, 5],
+        "rr_ratio": [1.0, 1.5]
+      },
+      "risk_notes": "High failure rate on strong trend days. Regime filter (ADX > 25) should suppress signals on trending days.",
+      "lookahead_risks": "The 'fakeout' is defined post-hoc — ensure the entry signal bar is fully closed before acting.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 60,
+      "notes": "Complement to london_open_breakout; should be tested AFTER LOB passes."
+    },
+    {
+      "key": "vwap_reclaim_mes",
+      "priority": 3,
+      "family": "vwap_mean_reversion",
+      "status": "PLANNED",
+      "market_candidates": ["MES", "MCL"],
+      "data_required": ["ES_1min.csv", "CL_1min.csv"],
+      "source_confidence": "high",
+      "rationale": "VWAP is the institutional benchmark. When price dips below VWAP and quickly reclaims it with a strong close, institutional buyers stepped in. The reclaim bar signals continuation above VWAP.",
+      "entry_logic": "Bar closes below VWAP AND next bar closes above VWAP AND volume > 1.2× avg volume → long. Reverse for short. Only trade between 10:00 and 14:00 ET (avoid open volatility and EOD positioning).",
+      "exit_logic": "Target = prior swing high (for long). Stop = low of the reclaim bar. Max hold = 12 bars.",
+      "parameters": {
+        "vol_multiplier": [1.0, 1.2, 1.5],
+        "hold_bars": [6, 12, 24]
+      },
+      "risk_notes": "Volume data quality is inconsistent in Databento 1-min CSV. Verify volume column is non-zero before using multiplier.",
+      "lookahead_risks": "VWAP must be computed cumulatively from session open — no look-back beyond current bar.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 200,
+      "notes": "Requires session_vwap feature already added by ESDataLoader.add_features(). Check column name."
+    },
+    {
+      "key": "prior_day_hl_sweep_mes",
+      "priority": 4,
+      "family": "level_reaction",
+      "status": "PLANNED",
+      "market_candidates": ["MES", "MGC", "MCL"],
+      "data_required": ["ES_1min.csv", "GC_1min.csv", "CL_1min.csv"],
+      "source_confidence": "high",
+      "rationale": "Prior day high/low levels are widely watched by institutional desks. A sweep (brief breach) followed by a reversal back inside the prior range is one of the highest-probability intraday setups in futures (SMC literature; Sperandeo 1994).",
+      "entry_logic": "Price trades above prior_day_high by ≤ sweep_buffer ATR, then closes back below prior_day_high within sweep_bars → short. Reverse for low sweep. Entry at first close back inside.",
+      "exit_logic": "Target = prior_day_midpoint (high+low)/2. Stop = sweep extreme (the tick that breached). EOD exit.",
+      "parameters": {
+        "sweep_buffer_atr": [0.25, 0.5],
+        "sweep_bars": [1, 2, 3],
+        "rr_ratio": [1.0, 1.5]
+      },
+      "risk_notes": "Do not trade if the open is ALREADY beyond the prior day range — the setup requires the sweep to happen during the session.",
+      "lookahead_risks": "Prior day high/low must use prior_close shift=1. Session_high/session_low are live and causal.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 100,
+      "notes": "Similar to pivot_reaction.py but anchored to prior day, not S/R pivots."
+    },
+    {
+      "key": "atr_compression_breakout_mcl",
+      "priority": 5,
+      "family": "volatility_breakout",
+      "status": "PLANNED",
+      "market_candidates": ["MCL", "MGC", "M6E"],
+      "data_required": ["CL_1min.csv", "GC_1min.csv", "6E_1min.csv"],
+      "source_confidence": "medium",
+      "rationale": "Extended low-volatility consolidation (ATR compression) reliably precedes explosive directional moves in commodity and FX markets. Entry on the breakout bar after N bars of below-average ATR.",
+      "entry_logic": "ATR(14) < ATR_slow(50) * compression_threshold for compression_bars consecutive bars. On the bar where ATR(14) expands above ATR_slow → enter in the direction of the bar (long if bullish bar, short if bearish). Filter: only enter if close is beyond the N-bar high (long) or N-bar low (short).",
+      "exit_logic": "Target = entry ± 2 × current ATR(14). Stop = prior N-bar low (for long). Max hold = 24 bars.",
+      "parameters": {
+        "compression_bars": [5, 10],
+        "compression_threshold": [0.7, 0.8],
+        "rr_ratio": [1.5, 2.0]
+      },
+      "risk_notes": "False compression signals are common around economic releases. ATR spikes on a single bar can reset the streak counter incorrectly — use ATR smoothed over 3 bars.",
+      "lookahead_risks": "ATR(14) at bar close is causal — it uses close prices of completed bars only.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 80,
+      "notes": "Energy and metal markets have better-defined volatility cycles than equity indices."
+    },
+    {
+      "key": "overnight_gap_fill_mes",
+      "priority": 6,
+      "family": "gap_fill",
+      "status": "PLANNED",
+      "market_candidates": ["MES", "MGC"],
+      "data_required": ["ES_1min.csv", "GC_1min.csv"],
+      "source_confidence": "medium",
+      "rationale": "ES futures regularly gap above/below the prior RTH close at the 09:30 open. Gaps under 0.5% fill within the session 60-70% of the time (Caporin et al. 2012). Entry on the open, target = prior close.",
+      "entry_logic": "At 09:30 open, if gap_pct > gap_min AND gap_pct < gap_max → enter against the gap direction. Gap_pct = (open - prior_close) / prior_close. Long if gap down, short if gap up.",
+      "exit_logic": "Target = prior_close (gap fill). Stop = open ± stop_atr × ATR(20). Exit by 11:00 ET if not filled.",
+      "parameters": {
+        "gap_min_pct": [0.1, 0.2],
+        "gap_max_pct": [0.5, 0.75],
+        "stop_atr": [1.0, 1.5]
+      },
+      "risk_notes": "Do NOT trade gap fill on days following major macro events (NFP, FOMC, earnings gaps) — those gaps often extend. Consider a gap_max_pct upper bound to avoid chasing runaway moves.",
+      "lookahead_risks": "Gap calculation uses prior_close (shift=1) which is causal.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 120,
+      "notes": "Requires gap_raw and gap_pct features from ESDataLoader.add_features()."
+    },
+    {
+      "key": "asia_range_breakout_m6e",
+      "priority": 7,
+      "family": "session_breakout",
+      "status": "PLANNED",
+      "market_candidates": ["M6E"],
+      "data_required": ["6E_1min.csv"],
+      "source_confidence": "low",
+      "rationale": "True Asian session (20:00-03:00 ET) range breakout for EUR. Requires loading overnight data, which is a pipeline change. High potential — this is the textbook London open breakout thesis.",
+      "entry_logic": "Define Asian range as high/low from 20:00-03:00 ET. At 03:00 ET (London open), if price breaks range → enter in breakout direction. Exit by 08:20 ET (M6E RTH start).",
+      "exit_logic": "Target = entry ± 1.5 × Asian range. Stop = opposite side of range.",
+      "parameters": {
+        "session_start_et": ["20:00"],
+        "session_end_et": ["03:00"],
+        "rr_ratio": [1.0, 1.5]
+      },
+      "risk_notes": "Pipeline MUST load overnight bars (no RTH filter). Currently blocked by ESDataLoader RTH-filter architecture. Resolve before testing.",
+      "lookahead_risks": "The Asian range uses bars from 20:00 to 03:00 only — no current session data.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 200,
+      "notes": "BLOCKED: requires non-RTH data loading path. Implement after london_open_breakout_m6e is validated."
+    },
+    {
+      "key": "bollinger_rsi_fxe_regime_filter",
+      "priority": 8,
+      "family": "mean_reversion",
+      "status": "PLANNED",
+      "market_candidates": ["M6E"],
+      "data_required": ["6E_1min.csv"],
+      "source_confidence": "high",
+      "rationale": "bollinger_rsi_fxe was killed by conservative costs but had DSR=11.2 at realistic costs. The cost problem is well-understood: 9,453 trades × $0.0002 extra = ~$1.9 loss. A regime filter (ADX < 25 = range-bound) that reduces trade count by 30-40% while preserving the profitable range-bound trades should fix the cost cliff.",
+      "entry_logic": "Same as bollinger_rsi.py, AND ADX(14) < adx_threshold (range-bound filter). Reduces trade frequency on trending days where mean-reversion fails.",
+      "exit_logic": "Same as bollinger_rsi — BB midline target, ATR stop, 12-bar timeout.",
+      "parameters": {
+        "bb_period": [20, 50],
+        "rsi_extreme": [25, 30],
+        "adx_threshold": [20, 25]
+      },
+      "risk_notes": "ADX feature must be added to ESDataLoader.add_features() before testing. Current pipeline does not compute ADX.",
+      "lookahead_risks": "ADX(14) at bar close is causal — uses completed bars only.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 5000,
+      "notes": "Direct rescue of a killed survivor. Should be Priority 1 if ADX feature is added to pipeline."
+    },
+    {
+      "key": "equal_risk_portfolio",
+      "priority": 9,
+      "family": "portfolio",
+      "status": "PLANNED",
+      "market_candidates": ["MES", "MGC", "MCL"],
+      "data_required": ["ES_1min.csv", "GC_1min.csv", "CL_1min.csv"],
+      "source_confidence": "high",
+      "rationale": "Combining uncorrelated survivors (equity index + commodity + energy) with equal risk weighting consistently produces better Sharpe than any individual strategy. The 3 hardened survivors have very low pairwise correlation by asset class.",
+      "entry_logic": "Run all 3 strategies simultaneously. On each signal, size contracts so each trade risks the same dollar amount (equal risk per trade). Total capital = $75,000 (3 × $25k micro accounts or 1 $75k account).",
+      "exit_logic": "Each strategy manages its own exits independently.",
+      "parameters": {
+        "risk_per_trade_pct": [0.01, 0.02],
+        "rebalance_frequency_days": [0]
+      },
+      "risk_notes": "Requires simultaneous operation of 3 strategies. Platform must support multiple open positions. Topstep Combine allows only 1 strategy per account — this requires a funded account or prop arrangement.",
+      "lookahead_risks": "No portfolio-level lookahead if each strategy is individually causal.",
+      "timeframe": "5min",
+      "test_method": "WALK_FORWARD",
+      "estimated_trades_per_year": 2500,
+      "notes": "Phase 4 (portfolio construction) in fortress workflow. Not for single-instrument paper trading."
+    },
+    {
+      "key": "fomc_drift_expanded",
+      "priority": 10,
+      "family": "calendar",
+      "status": "PLANNED",
+      "market_candidates": ["MES", "MGC", "MCL", "M6E"],
+      "data_required": ["ES_1min.csv", "GC_1min.csv", "CL_1min.csv", "6E_1min.csv"],
+      "source_confidence": "medium",
+      "rationale": "The FOMC drift on MES is a proven survivor. Gold and crude oil also exhibit pre-FOMC drift (defensive repositioning). EUR/USD shows the drift from the European session open the day before. Testing the same calendar effect on 3 additional markets is low-effort with high expected value.",
+      "entry_logic": "Same as fomc_drift.py but with instrument-specific entry/exit timing. MGC/MCL: enter at 08:20 ET (commodity session open day before FOMC). M6E: enter at 08:20 ET.",
+      "exit_logic": "Exit at 14:00 ET on FOMC day (same as MES version). Instrument-specific cost model.",
+      "parameters": {
+        "exit_offset": [0, 30, 60]
+      },
+      "risk_notes": "Rate-sensitive instruments (ZN, ZB) should NOT use this strategy as FOMC directly drives rate products — the drift edge may not exist or may be in the opposite direction.",
+      "lookahead_risks": "FOMC dates are known in advance and published by the Fed. No lookahead.",
+      "timeframe": "5min",
+      "test_method": "ONE_SHOT_IS_OOS",
+      "estimated_trades_per_year": 8,
+      "notes": "Multi-market extension of the existing fomc_drift survivor. Easy win if calendar effect holds cross-asset."
+    }
+  ]
+}

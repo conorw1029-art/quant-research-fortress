@@ -117,6 +117,16 @@ NFP_Drift,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
 CPI_Drift,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
 Fed_Minutes_Drift,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
 EIA_Inventory,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+boj_fxj,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+boj_nq,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+boe_fxb,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+ism_es,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+ism_nq,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+ppi_es,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+ppi_nq,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+gdp_es,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+retail_sales_es,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
+retail_sales_nq,,FAIL,ERROR,0.0,0.0,0.0,0.0,0,False,1.0,False,,error,True
 donchian_breakout_fxe,,FAIL,FAIL,1.399,1.795,0.562,0.59,240,False,0.0001080876652182513,False,both_halves,both_halves,False
 fomc_drift_rty,,FAIL,FAIL,0.971,1.939,0.544,67.23,57,True,0.03136924293841254,False,dsr,dsr(+0.971),False
 fomc_drift_si,,FAIL,FAIL,0.846,2.194,0.581,2.59,43,True,0.05025301395630175,False,dsr|p_value,dsr(+0.846)|p(0.05),False
@@ -124,6 +134,7 @@ fomc_drift_gc,,FAIL,FAIL,0.773,2.097,0.556,122.5,45,True,0.03469202386890596,Fal
 fomc_drift_nq,,FAIL,FAIL,0.77,1.961,0.579,449.49,57,True,0.03463826060689354,False,dsr,dsr(+0.770),False
 cpi_drift_cl,,FAIL,FAIL,0.724,1.96,0.577,2.88,71,True,0.032905832040447114,False,dsr,dsr(+0.724),False
 fomc_drift_fxj,,FAIL,FAIL,0.658,1.759,0.536,0.0,56,True,0.05233410258952288,False,dsr|p_value,dsr(+0.658)|p(0.052),False
+vix_overlay_bollinger_rsi_gc,,FAIL,FAIL,0.512,1.164,0.361,239.34,2171,True,0.00913071757435669,False,dsr|profit_factor,dsr(+0.512)|pf(1.164),False
 camarilla_breakout_nq,,FAIL,FAIL,0.484,1.177,0.41,880.21,2043,True,0.003513713513291092,False,dsr|profit_factor,dsr(+0.484)|pf(1.177),False
 bollinger_rsi_fxj,,FAIL,FAIL,0.453,1.094,0.364,0.01,8574,False,0.0046128275347929225,False,dsr|profit_factor|both_halves,dsr(+0.453)|pf(1.094)|both_halves,False
 camarilla_breakout_gc,,FAIL,FAIL,0.377,1.15,0.41,118.69,2164,True,0.005095042339886835,False,dsr|profit_factor,dsr(+0.377)|pf(1.150),False
@@ -213,6 +224,7 @@ ecb_drift_es,,FAIL,FAIL,-3.083,0.523,0.396,405.18,48,False,0.8893620083246908,Fa
 pivot_reaction_gc,,FAIL,FAIL,-3.115,0.822,0.399,52.87,138,False,0.8090426896142884,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-3.115)|pf(0.822)|p(0.81)|both_halves|mean_pnl(-0.25914),False
 ecb_drift_fxb,,FAIL,FAIL,-3.118,0.445,0.429,0.1,28,False,0.9408327700568149,False,n_trades|dsr|profit_factor|p_value|both_halves|mean_pnl_positive,n_trades(28)|dsr(-3.118)|pf(0.445)|p(0.94)|both_halves|mean_pnl(-0.00304),False
 donchian_breakout_ym,,FAIL,FAIL,-3.141,0.86,0.512,70192.6,215,False,0.7943636323782902,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-3.141)|pf(0.860)|max_dd($70,193)|p(0.79)|both_halves|mean_pnl(-76.54512)",False
+gdp_nq,,FAIL,FAIL,-3.225,0.552,0.533,669.2,30,False,0.8246560910784322,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-3.225)|pf(0.552)|p(0.82)|both_halves|mean_pnl(-20.62000),False
 orb_nq,,FAIL,FAIL,-3.281,0.975,0.506,9408.9,2610,False,0.6449979603931761,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-3.281)|pf(0.975)|max_dd($9,409)|p(0.64)|both_halves|mean_pnl(-0.76559)",False
 fib_retracement_nq,,FAIL,FAIL,-3.333,0.992,0.46,4997.75,1473,False,0.5380938122569342,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-3.333)|pf(0.992)|max_dd($4,998)|p(0.54)|both_halves|mean_pnl(-0.30720)",False
 eia_inventory_ng,,FAIL,FAIL,-3.351,0.654,0.358,4.83,310,False,0.9876535833515666,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-3.351)|pf(0.654)|p(0.99)|both_halves|mean_pnl(-0.01459),False
@@ -247,6 +259,7 @@ overnight_fade_zn,,FAIL,FAIL,-4.733,0.432,0.442,0.89,52,False,0.9890897848625526
 gap_fill_si,,FAIL,FAIL,-4.738,0.769,0.461,10.46,553,False,0.9746998010061864,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-4.738)|pf(0.769)|p(0.97)|both_halves|mean_pnl(-0.01866),False
 gap_fill_fxj,,FAIL,FAIL,-4.797,0.754,0.434,0.0,366,False,0.9700487811000194,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-4.797)|pf(0.754)|p(0.97)|both_halves|mean_pnl(-0.00000),False
 pivot_reaction_fxj,,FAIL,FAIL,-4.886,0.773,0.481,0.0,1009,False,0.9966323954942825,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-4.886)|pf(0.773)|p(1)|both_halves|mean_pnl(-0.00000),False
+vix_overlay_bollinger_rsi_fxe,,FAIL,FAIL,-4.921,0.918,0.401,2.05,9392,False,0.9984446294798816,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-4.921)|pf(0.918)|p(1)|both_halves|mean_pnl(-0.00006),False
 gap_fill_ng,,FAIL,FAIL,-4.951,0.733,0.415,5.69,513,False,0.9805769635699096,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-4.951)|pf(0.733)|p(0.98)|both_halves|mean_pnl(-0.00899),False
 prior_day_breakout_es,,FAIL,FAIL,-5.006,0.874,0.435,1101.55,2579,False,0.9966290663404895,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-5.006)|pf(0.874)|p(1)|both_halves|mean_pnl(-0.39923),False
 prior_day_breakout_ym,,FAIL,FAIL,-5.052,0.865,0.436,9129.64,2351,False,0.9974329570600017,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-5.052)|pf(0.865)|max_dd($9,130)|p(1)|both_halves|mean_pnl(-3.19657)",False
@@ -289,7 +302,9 @@ overnight_drift_es,,FAIL,FAIL,-10.339,0.625,0.425,2191.71,3024,False,0.999999999
 prior_day_breakout_fxb,,FAIL,FAIL,-11.016,0.648,0.425,0.73,2431,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-11.016)|pf(0.648)|p(1)|both_halves|mean_pnl(-0.00030),False
 overnight_fade_ng,,FAIL,FAIL,-11.059,0.103,0.229,1.8,175,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-11.059)|pf(0.103)|p(1)|both_halves|mean_pnl(-0.01017),False
 rsi_meanrev_fxe,,FAIL,FAIL,-11.117,0.608,0.543,1.01,3918,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-11.117)|pf(0.608)|p(1)|both_halves|mean_pnl(-0.00019),False
+vix_overlay_fomc_es,,FAIL,FAIL,-11.727,0.766,0.405,12391.45,13334,False,1.0,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-11.727)|pf(0.766)|max_dd($12,391)|p(1)|both_halves|mean_pnl(-0.92132)",False
 rsi_meanrev,,FAIL,FAIL,-12.171,0.682,0.554,4133.66,4179,False,1.0,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-12.171)|pf(0.682)|max_dd($4,134)|p(1)|both_halves|mean_pnl(-0.98579)",False
+vix_overlay_donchian_cl,,FAIL,FAIL,-12.388,0.805,0.39,462.44,15766,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-12.388)|pf(0.805)|p(1)|both_halves|mean_pnl(-0.02917),False
 rsi_meanrev_cl,,FAIL,FAIL,-13.198,0.676,0.575,166.17,4554,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-13.198)|pf(0.676)|p(1)|both_halves|mean_pnl(-0.03651),False
 camarilla_breakout_zb,,FAIL,FAIL,-13.609,0.561,0.383,128.6,2525,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-13.609)|pf(0.561)|p(1)|both_halves|mean_pnl(-0.05099),False
 round_number_nq,,FAIL,FAIL,-14.233,0.628,0.524,13996.96,4475,False,1.0,False,dsr|profit_factor|max_drawdown_usd|p_value|both_halves|mean_pnl_positive,"dsr(-14.233)|pf(0.628)|max_dd($13,997)|p(1)|both_halves|mean_pnl(-3.10212)",False
@@ -313,6 +328,7 @@ rsi_meanrev_zb,,FAIL,FAIL,-25.211,0.292,0.495,231.99,3371,False,1.0,False,dsr|pr
 bollinger_rsi_zn,,FAIL,FAIL,-25.272,0.468,0.301,370.78,10856,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-25.272)|pf(0.468)|p(1)|both_halves|mean_pnl(-0.03410),False
 Outside_Bar,,FAIL,FAIL,-26.275,0.531,0.382,8.84,19390,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-26.275)|pf(0.531)|p(1)|both_halves|mean_pnl(-0.00046),False
 Inside_Bar,,FAIL,FAIL,-26.961,0.538,0.377,11.83,26848,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-26.961)|pf(0.538)|p(1)|both_halves|mean_pnl(-0.00044),False
+vix_overlay_fomc_zn,,FAIL,FAIL,-29.479,0.407,0.341,427.94,12089,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-29.479)|pf(0.407)|p(1)|both_halves|mean_pnl(-0.03539),False
 rsi_meanrev_ng,,FAIL,FAIL,-31.338,0.209,0.234,47.8,4504,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-31.338)|pf(0.209)|p(1)|both_halves|mean_pnl(-0.01051),False
 rsi_meanrev_zn,,FAIL,FAIL,-36.697,0.202,0.433,126.4,3417,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-36.697)|pf(0.202)|p(1)|both_halves|mean_pnl(-0.03702),False
 Donchian_Breakout,,FAIL,FAIL,-64.673,0.442,0.317,68.77,153494,False,1.0,False,dsr|profit_factor|p_value|both_halves|mean_pnl_positive,dsr(-64.673)|pf(0.442)|p(1)|both_halves|mean_pnl(-0.00045),False
