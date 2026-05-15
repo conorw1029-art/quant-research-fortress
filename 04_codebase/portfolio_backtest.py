@@ -41,7 +41,7 @@ from src.data.data_schema import INSTRUMENTS
 from src.backtesting.metrics import performance_report, evaluate_go_nogo
 
 # ── Survivors ─────────────────────────────────────────────────────────────────
-# 8 confirmed ALL-CLEAR survivors (Step 1 + Step 2 complete as of 2026-05-15)
+# 9 confirmed ALL-CLEAR survivors (Step 1 + Step 2 complete as of 2026-05-15)
 SURVIVORS = [
     # Original batch (Sessions 1-3)
     "bollinger_rsi_gc",
@@ -54,9 +54,11 @@ SURVIVORS = [
     "donchian_intraday_gc",
     # Batch 6: RTH ORB
     "rth_orb_gc",
+    # Batch 12: Silver Intraday — ALL-CLEAR
+    "vol_adj_momentum_si",
 ]
 
-# Portfolio-level Topstep params (scaled for 8-strategy account)
+# Portfolio-level Topstep params (scaled for 9-strategy account)
 PORT_ACCOUNT_SIZE    = 150_000.0
 PORT_DAILY_LOSS_LIM  =   4_500.0   # 3% of account
 PORT_TRAIL_DD        =   7_500.0   # 5% of account

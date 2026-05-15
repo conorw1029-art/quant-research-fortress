@@ -959,6 +959,71 @@ _STRATEGIES.extend(_multi(
 ))
 
 
+# ----- BATCH 12: SILVER INTRADAY EXPANSION -----
+# Silver (SIL) is a proven edge market — vwap_reclaim_si is a portfolio survivor.
+# The Batch5/6 intraday families (vol_adj_momentum, donchian_intraday, rth_orb,
+# keltner_breakout, ma_trend_entry) were only added for [ES, GC, CL].
+# Silver was never tested with these 5 families — this is the gap.
+# keltner_breakout_gc and ma_trend_entry_gc passed Step1 in Batch5; Silver may too.
+
+_STRATEGIES.extend(_multi(
+    "vol_adj_momentum", "src.strategies.vol_adj_momentum", "VolAdjMomentumStrategy",
+    "momentum", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["SI"], ["atr"],
+    "Batch12. Z-score momentum on Silver — proven on Gold sister market.",
+))
+_STRATEGIES.extend(_multi(
+    "donchian_intraday", "src.strategies.donchian_intraday", "DonchianIntradayStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["SI"], ["atr"],
+    "Batch12. Intraday Donchian breakout on Silver.",
+))
+_STRATEGIES.extend(_multi(
+    "rth_orb", "src.strategies.rth_orb", "RTHORBStrategy",
+    "breakout", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["SI"], ["atr"],
+    "Batch12. RTH opening range breakout on Silver.",
+))
+_STRATEGIES.extend(_multi(
+    "keltner_breakout", "src.strategies.keltner_breakout", "KeltnerBreakoutStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["SI"], ["atr"],
+    "Batch12. Keltner channel breakout on Silver.",
+))
+_STRATEGIES.extend(_multi(
+    "ma_trend_entry", "src.strategies.ma_trend_entry", "MATrendEntryStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["SI"], ["atr"],
+    "Batch12. SMA trend filter entry on Silver.",
+))
+
+
+# ----- BATCH 13: NQ AND RTY INTRADAY EXPANSION -----
+# NQ (MNQ) and RTY (M2K) equity indices: bollinger_rsi and rth_orb were tested
+# (both failed). But three proven intraday families were never applied to NQ/RTY:
+# vwap_reclaim, vol_adj_momentum, donchian_intraday.
+# Expected to fail given ES failures, but required for exhaustive coverage.
+
+_STRATEGIES.extend(_multi(
+    "vwap_reclaim", "src.strategies.vwap_reclaim", "VWAPReclaimStrategy",
+    "vwap_mean_reversion", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["NQ", "RTY"], ["session_vwap", "atr"],
+    "Batch13. VWAP reclaim on NQ and RTY equity indices.",
+))
+_STRATEGIES.extend(_multi(
+    "vol_adj_momentum", "src.strategies.vol_adj_momentum", "VolAdjMomentumStrategy",
+    "momentum", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["NQ", "RTY"], ["atr"],
+    "Batch13. Z-score momentum on NQ and RTY.",
+))
+_STRATEGIES.extend(_multi(
+    "donchian_intraday", "src.strategies.donchian_intraday", "DonchianIntradayStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["NQ", "RTY"], ["atr"],
+    "Batch13. Intraday Donchian breakout on NQ and RTY.",
+))
+
+
 # ======================================================================
 # PUBLIC API
 # ======================================================================
