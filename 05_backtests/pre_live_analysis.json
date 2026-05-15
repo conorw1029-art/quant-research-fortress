@@ -1,0 +1,823 @@
+{
+  "timestamp": "2026-05-15T21:23:25.102663",
+  "n_survivors": 9,
+  "survivor_keys": [
+    "bollinger_rsi_gc",
+    "donchian_breakout_cl",
+    "fomc_drift",
+    "vwap_reclaim_gc",
+    "vwap_reclaim_si",
+    "vol_adj_momentum_gc",
+    "donchian_intraday_gc",
+    "rth_orb_gc",
+    "vol_adj_momentum_si"
+  ],
+  "param_stability": [
+    {
+      "key": "bollinger_rsi_gc",
+      "n_folds": 10,
+      "score": 0.95,
+      "verdict": "EXCELLENT"
+    },
+    {
+      "key": "donchian_breakout_cl",
+      "n_folds": 12,
+      "score": 0.875,
+      "verdict": "GOOD"
+    },
+    {
+      "key": "fomc_drift",
+      "n_folds": 1,
+      "score": 1.0,
+      "verdict": "EXCELLENT"
+    },
+    {
+      "key": "vwap_reclaim_gc",
+      "n_folds": 10,
+      "score": 1.0,
+      "verdict": "EXCELLENT"
+    },
+    {
+      "key": "vwap_reclaim_si",
+      "n_folds": 7,
+      "score": 1.0,
+      "verdict": "EXCELLENT"
+    },
+    {
+      "key": "vol_adj_momentum_gc",
+      "n_folds": 10,
+      "score": 0.8,
+      "verdict": "GOOD"
+    },
+    {
+      "key": "donchian_intraday_gc",
+      "n_folds": 10,
+      "score": 0.8,
+      "verdict": "GOOD"
+    },
+    {
+      "key": "rth_orb_gc",
+      "n_folds": 10,
+      "score": 1.0,
+      "verdict": "EXCELLENT"
+    },
+    {
+      "key": "vol_adj_momentum_si",
+      "n_folds": 7,
+      "score": 1.0,
+      "verdict": "EXCELLENT"
+    }
+  ],
+  "trade_stats": [
+    {
+      "key": "bollinger_rsi_gc",
+      "n": 3103,
+      "win_rate": 36.4,
+      "avg_win_usd": 114.18,
+      "avg_loss_usd": -44.04,
+      "payoff_ratio": 2.59,
+      "max_consec_losses": 30,
+      "avg_hold_hrs": 23.04,
+      "max_hold_hrs": 335.75,
+      "largest_win_usd": 998.44,
+      "largest_loss_usd": -242.72
+    },
+    {
+      "key": "donchian_breakout_cl",
+      "n": 247,
+      "win_rate": 60.7,
+      "avg_win_usd": 959.34,
+      "avg_loss_usd": -597.28,
+      "payoff_ratio": 1.61,
+      "max_consec_losses": 14,
+      "avg_hold_hrs": 927.95,
+      "max_hold_hrs": 1128.0,
+      "largest_win_usd": 3096.76,
+      "largest_loss_usd": -1945.24
+    },
+    {
+      "key": "fomc_drift",
+      "n": 57,
+      "win_rate": 66.7,
+      "avg_win_usd": 170.44,
+      "avg_loss_usd": -117.82,
+      "payoff_ratio": 1.45,
+      "max_consec_losses": 3,
+      "avg_hold_hrs": 22.08,
+      "max_hold_hrs": 22.08,
+      "largest_win_usd": 426.26,
+      "largest_loss_usd": -491.24
+    },
+    {
+      "key": "vwap_reclaim_gc",
+      "n": 1408,
+      "win_rate": 65.0,
+      "avg_win_usd": 39.26,
+      "avg_loss_usd": -22.42,
+      "payoff_ratio": 1.75,
+      "max_consec_losses": 7,
+      "avg_hold_hrs": 12.52,
+      "max_hold_hrs": 310.75,
+      "largest_win_usd": 522.76,
+      "largest_loss_usd": -221.24
+    },
+    {
+      "key": "vwap_reclaim_si",
+      "n": 241,
+      "win_rate": 57.7,
+      "avg_win_usd": 88.63,
+      "avg_loss_usd": -28.81,
+      "payoff_ratio": 3.08,
+      "max_consec_losses": 5,
+      "avg_hold_hrs": 22.39,
+      "max_hold_hrs": 428.25,
+      "largest_win_usd": 816.26,
+      "largest_loss_usd": -246.24
+    },
+    {
+      "key": "vol_adj_momentum_gc",
+      "n": 1016,
+      "win_rate": 36.8,
+      "avg_win_usd": 162.29,
+      "avg_loss_usd": -45.68,
+      "payoff_ratio": 3.55,
+      "max_consec_losses": 11,
+      "avg_hold_hrs": 40.63,
+      "max_hold_hrs": 431.17,
+      "largest_win_usd": 1444.76,
+      "largest_loss_usd": -220.66
+    },
+    {
+      "key": "donchian_intraday_gc",
+      "n": 1327,
+      "win_rate": 40.2,
+      "avg_win_usd": 135.06,
+      "avg_loss_usd": -47.52,
+      "payoff_ratio": 2.84,
+      "max_consec_losses": 14,
+      "avg_hold_hrs": 36.12,
+      "max_hold_hrs": 501.08,
+      "largest_win_usd": 1444.76,
+      "largest_loss_usd": -220.66
+    },
+    {
+      "key": "rth_orb_gc",
+      "n": 1023,
+      "win_rate": 38.1,
+      "avg_win_usd": 124.07,
+      "avg_loss_usd": -39.74,
+      "payoff_ratio": 3.12,
+      "max_consec_losses": 12,
+      "avg_hold_hrs": 24.69,
+      "max_hold_hrs": 431.58,
+      "largest_win_usd": 1249.76,
+      "largest_loss_usd": -194.26
+    },
+    {
+      "key": "vol_adj_momentum_si",
+      "n": 435,
+      "win_rate": 39.5,
+      "avg_win_usd": 288.89,
+      "avg_loss_usd": -80.8,
+      "payoff_ratio": 3.58,
+      "max_consec_losses": 10,
+      "avg_hold_hrs": 94.91,
+      "max_hold_hrs": 718.67,
+      "largest_win_usd": 1261.26,
+      "largest_loss_usd": -395.87
+    }
+  ],
+  "monthly_pnl": {
+    "n_months": 139,
+    "n_profitable_months": 114,
+    "pct_profitable": 82.0,
+    "best_month": "2020-03",
+    "best_month_pnl": 18113.65,
+    "worst_month": "2023-09",
+    "worst_month_pnl": -4341.41,
+    "max_consec_losing": 3,
+    "avg_monthly_pnl": 2042.46,
+    "monthly_records": [
+      {
+        "month": "2014-06",
+        "pnl": -1661.61
+      },
+      {
+        "month": "2014-07",
+        "pnl": 2873.58
+      },
+      {
+        "month": "2014-08",
+        "pnl": 5037.32
+      },
+      {
+        "month": "2014-09",
+        "pnl": 5269.11
+      },
+      {
+        "month": "2014-10",
+        "pnl": 12178.46
+      },
+      {
+        "month": "2014-11",
+        "pnl": 14210.3
+      },
+      {
+        "month": "2014-12",
+        "pnl": 11977.86
+      },
+      {
+        "month": "2015-01",
+        "pnl": -2991.99
+      },
+      {
+        "month": "2015-02",
+        "pnl": -871.82
+      },
+      {
+        "month": "2015-03",
+        "pnl": -1658.87
+      },
+      {
+        "month": "2015-04",
+        "pnl": 1771.03
+      },
+      {
+        "month": "2015-05",
+        "pnl": 725.63
+      },
+      {
+        "month": "2015-06",
+        "pnl": 694.93
+      },
+      {
+        "month": "2015-07",
+        "pnl": 3273.17
+      },
+      {
+        "month": "2015-08",
+        "pnl": -3031.36
+      },
+      {
+        "month": "2015-09",
+        "pnl": 1720.82
+      },
+      {
+        "month": "2015-10",
+        "pnl": 93.61
+      },
+      {
+        "month": "2015-11",
+        "pnl": 173.61
+      },
+      {
+        "month": "2015-12",
+        "pnl": 2531.38
+      },
+      {
+        "month": "2016-01",
+        "pnl": -2184.63
+      },
+      {
+        "month": "2016-02",
+        "pnl": 1657.13
+      },
+      {
+        "month": "2016-03",
+        "pnl": 3483.21
+      },
+      {
+        "month": "2016-04",
+        "pnl": 2810.49
+      },
+      {
+        "month": "2016-05",
+        "pnl": 618.06
+      },
+      {
+        "month": "2016-06",
+        "pnl": 1588.93
+      },
+      {
+        "month": "2016-07",
+        "pnl": -393.37
+      },
+      {
+        "month": "2016-08",
+        "pnl": 562.81
+      },
+      {
+        "month": "2016-09",
+        "pnl": 2506.44
+      },
+      {
+        "month": "2016-10",
+        "pnl": 33.66
+      },
+      {
+        "month": "2016-11",
+        "pnl": 213.71
+      },
+      {
+        "month": "2016-12",
+        "pnl": 1014.18
+      },
+      {
+        "month": "2017-01",
+        "pnl": 1136.26
+      },
+      {
+        "month": "2017-02",
+        "pnl": 758.68
+      },
+      {
+        "month": "2017-03",
+        "pnl": 929.36
+      },
+      {
+        "month": "2017-04",
+        "pnl": 442.91
+      },
+      {
+        "month": "2017-05",
+        "pnl": 413.59
+      },
+      {
+        "month": "2017-06",
+        "pnl": -1383.04
+      },
+      {
+        "month": "2017-07",
+        "pnl": 523.48
+      },
+      {
+        "month": "2017-08",
+        "pnl": 3099.0
+      },
+      {
+        "month": "2017-09",
+        "pnl": 82.84
+      },
+      {
+        "month": "2017-10",
+        "pnl": 382.45
+      },
+      {
+        "month": "2017-11",
+        "pnl": 1859.66
+      },
+      {
+        "month": "2017-12",
+        "pnl": 1443.25
+      },
+      {
+        "month": "2018-01",
+        "pnl": -1474.72
+      },
+      {
+        "month": "2018-02",
+        "pnl": 818.05
+      },
+      {
+        "month": "2018-03",
+        "pnl": 280.34
+      },
+      {
+        "month": "2018-04",
+        "pnl": 1408.36
+      },
+      {
+        "month": "2018-05",
+        "pnl": 817.01
+      },
+      {
+        "month": "2018-06",
+        "pnl": -455.84
+      },
+      {
+        "month": "2018-07",
+        "pnl": -1578.29
+      },
+      {
+        "month": "2018-08",
+        "pnl": 606.02
+      },
+      {
+        "month": "2018-09",
+        "pnl": 317.71
+      },
+      {
+        "month": "2018-10",
+        "pnl": 1333.52
+      },
+      {
+        "month": "2018-11",
+        "pnl": 14995.35
+      },
+      {
+        "month": "2018-12",
+        "pnl": -3616.44
+      },
+      {
+        "month": "2019-01",
+        "pnl": 608.34
+      },
+      {
+        "month": "2019-02",
+        "pnl": 467.71
+      },
+      {
+        "month": "2019-03",
+        "pnl": 781.94
+      },
+      {
+        "month": "2019-04",
+        "pnl": 852.42
+      },
+      {
+        "month": "2019-05",
+        "pnl": 51.27
+      },
+      {
+        "month": "2019-06",
+        "pnl": 990.19
+      },
+      {
+        "month": "2019-07",
+        "pnl": 186.12
+      },
+      {
+        "month": "2019-08",
+        "pnl": 3938.53
+      },
+      {
+        "month": "2019-09",
+        "pnl": -70.7
+      },
+      {
+        "month": "2019-10",
+        "pnl": 2058.55
+      },
+      {
+        "month": "2019-11",
+        "pnl": 581.52
+      },
+      {
+        "month": "2019-12",
+        "pnl": 3414.98
+      },
+      {
+        "month": "2020-01",
+        "pnl": 4296.2
+      },
+      {
+        "month": "2020-02",
+        "pnl": 17569.6
+      },
+      {
+        "month": "2020-03",
+        "pnl": 18113.65
+      },
+      {
+        "month": "2020-04",
+        "pnl": 5135.21
+      },
+      {
+        "month": "2020-05",
+        "pnl": 4178.87
+      },
+      {
+        "month": "2020-06",
+        "pnl": -552.81
+      },
+      {
+        "month": "2020-07",
+        "pnl": 3417.68
+      },
+      {
+        "month": "2020-08",
+        "pnl": 944.59
+      },
+      {
+        "month": "2020-09",
+        "pnl": 4357.37
+      },
+      {
+        "month": "2020-10",
+        "pnl": 3906.59
+      },
+      {
+        "month": "2020-11",
+        "pnl": 156.68
+      },
+      {
+        "month": "2020-12",
+        "pnl": 7013.45
+      },
+      {
+        "month": "2021-01",
+        "pnl": 6341.38
+      },
+      {
+        "month": "2021-02",
+        "pnl": 9082.49
+      },
+      {
+        "month": "2021-03",
+        "pnl": 300.46
+      },
+      {
+        "month": "2021-04",
+        "pnl": 97.16
+      },
+      {
+        "month": "2021-05",
+        "pnl": 234.07
+      },
+      {
+        "month": "2021-06",
+        "pnl": 802.7
+      },
+      {
+        "month": "2021-07",
+        "pnl": -1564.43
+      },
+      {
+        "month": "2021-08",
+        "pnl": 2558.02
+      },
+      {
+        "month": "2021-09",
+        "pnl": 687.66
+      },
+      {
+        "month": "2021-10",
+        "pnl": -2663.17
+      },
+      {
+        "month": "2021-11",
+        "pnl": 2557.1
+      },
+      {
+        "month": "2021-12",
+        "pnl": -2248.12
+      },
+      {
+        "month": "2022-01",
+        "pnl": 3715.5
+      },
+      {
+        "month": "2022-02",
+        "pnl": 11039.66
+      },
+      {
+        "month": "2022-03",
+        "pnl": 1924.02
+      },
+      {
+        "month": "2022-04",
+        "pnl": 3195.75
+      },
+      {
+        "month": "2022-05",
+        "pnl": 2779.46
+      },
+      {
+        "month": "2022-06",
+        "pnl": 872.76
+      },
+      {
+        "month": "2022-07",
+        "pnl": 4355.53
+      },
+      {
+        "month": "2022-08",
+        "pnl": 5341.49
+      },
+      {
+        "month": "2022-09",
+        "pnl": 909.25
+      },
+      {
+        "month": "2022-10",
+        "pnl": 3062.69
+      },
+      {
+        "month": "2022-11",
+        "pnl": 1746.22
+      },
+      {
+        "month": "2022-12",
+        "pnl": -2429.65
+      },
+      {
+        "month": "2023-01",
+        "pnl": -1438.4
+      },
+      {
+        "month": "2023-02",
+        "pnl": 1614.55
+      },
+      {
+        "month": "2023-03",
+        "pnl": -477.67
+      },
+      {
+        "month": "2023-04",
+        "pnl": 1703.56
+      },
+      {
+        "month": "2023-05",
+        "pnl": 1994.15
+      },
+      {
+        "month": "2023-06",
+        "pnl": 1391.94
+      },
+      {
+        "month": "2023-07",
+        "pnl": 373.56
+      },
+      {
+        "month": "2023-08",
+        "pnl": 5021.59
+      },
+      {
+        "month": "2023-09",
+        "pnl": -4341.41
+      },
+      {
+        "month": "2023-10",
+        "pnl": 1932.42
+      },
+      {
+        "month": "2023-11",
+        "pnl": 1771.7
+      },
+      {
+        "month": "2023-12",
+        "pnl": 592.59
+      },
+      {
+        "month": "2024-01",
+        "pnl": 1669.41
+      },
+      {
+        "month": "2024-02",
+        "pnl": 1985.97
+      },
+      {
+        "month": "2024-03",
+        "pnl": 2219.98
+      },
+      {
+        "month": "2024-04",
+        "pnl": 1673.53
+      },
+      {
+        "month": "2024-05",
+        "pnl": 2240.73
+      },
+      {
+        "month": "2024-06",
+        "pnl": -1214.01
+      },
+      {
+        "month": "2024-07",
+        "pnl": 2346.41
+      },
+      {
+        "month": "2024-08",
+        "pnl": 3075.76
+      },
+      {
+        "month": "2024-09",
+        "pnl": 3066.03
+      },
+      {
+        "month": "2024-10",
+        "pnl": 3028.34
+      },
+      {
+        "month": "2024-11",
+        "pnl": -82.27
+      },
+      {
+        "month": "2024-12",
+        "pnl": 5433.8
+      },
+      {
+        "month": "2025-01",
+        "pnl": 2096.28
+      },
+      {
+        "month": "2025-02",
+        "pnl": 2700.16
+      },
+      {
+        "month": "2025-03",
+        "pnl": 3609.18
+      },
+      {
+        "month": "2025-04",
+        "pnl": 4132.65
+      },
+      {
+        "month": "2025-05",
+        "pnl": 4669.27
+      },
+      {
+        "month": "2025-06",
+        "pnl": 5198.85
+      },
+      {
+        "month": "2025-07",
+        "pnl": 3133.94
+      },
+      {
+        "month": "2025-08",
+        "pnl": -39.29
+      },
+      {
+        "month": "2025-09",
+        "pnl": 365.01
+      },
+      {
+        "month": "2025-10",
+        "pnl": 42.51
+      },
+      {
+        "month": "2025-11",
+        "pnl": 25.01
+      },
+      {
+        "month": "2025-12",
+        "pnl": -74.99
+      }
+    ]
+  },
+  "monte_carlo": {
+    "n_sims": 10000,
+    "n_days_per_sim": 2286,
+    "p_trail_dd_breach": 0.0015,
+    "p_daily_limit_breach": 0.0,
+    "worst_day_usd": {
+      "p50": -1986.0,
+      "p25": -1986.0,
+      "p10": -1986.0,
+      "p05": -1986.0,
+      "p01": -1986.0
+    },
+    "max_trailing_dd_usd": {
+      "p50": 3486.8,
+      "p75": 4058.76,
+      "p90": 4696.41,
+      "p95": 5179.27,
+      "p99": 6199.08
+    },
+    "median_final_pnl": 283018.79,
+    "p05_final_pnl": 248779.27,
+    "p95_final_pnl": 320308.2
+  },
+  "sizing_sensitivity": [
+    {
+      "risk_per_trade_usd": 250,
+      "worst_single_day_usd": -1896.71,
+      "daily_limit_breaches": 0,
+      "max_trailing_dd_usd": 6424.07,
+      "total_pnl_usd": 900199.58
+    },
+    {
+      "risk_per_trade_usd": 500,
+      "worst_single_day_usd": -2322.63,
+      "daily_limit_breaches": 0,
+      "max_trailing_dd_usd": 10055.44,
+      "total_pnl_usd": 1282914.24
+    },
+    {
+      "risk_per_trade_usd": 750,
+      "worst_single_day_usd": -3561.29,
+      "daily_limit_breaches": 0,
+      "max_trailing_dd_usd": 11821.69,
+      "total_pnl_usd": 1432438.13
+    }
+  ],
+  "dd_recovery": {
+    "max_dd_usd": 5702.2,
+    "max_dd_day_index": 177,
+    "recovery_days_from_max": 68,
+    "avg_recovery_days": 39.0,
+    "n_drawdown_episodes": 21
+  },
+  "gate_checks": {
+    "Parameter stability (all GOOD+)": true,
+    "Win rate all strategies > 40%": false,
+    "Monthly profitable > 60%": true,
+    "Max consec losing months <= 3": true,
+    "P(trail DD breach $8k) < 5%": true,
+    "P(daily limit breach) < 20%": true,
+    "5th pct 12yr P&L > $0": true,
+    "Worst day (1pct) > -$3,000 unit sizing": true
+  },
+  "gate_verdict": "REVIEW REQUIRED"
+}
