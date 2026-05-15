@@ -1,0 +1,161 @@
+You are working inside the Quant Trading Research Factory (“the fortress”).
+
+Current project environment:
+- Project root: C:\Users\conor\Desktop\quant-research\
+- Working directory for all commands: C:\Users\conor\Desktop\quant-research\04_codebase\
+- Python executable: C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe
+- Zoo database: C:\Users\conor\Desktop\quant-research\05_backtests\zoo.jsonl
+- Logs should go to: C:\Users\conor\Desktop\quant-research\05_backtests\logs\
+
+Important workflow rules:
+- Never delete or manually edit zoo records.
+- Never loosen validation criteria.
+- Never run live trading commands.
+- Never touch the old broken venv.
+- Always use the venv_new Python executable.
+- All commands should run from C:\Users\conor\Desktop\quant-research\04_codebase\
+- Significant changes should be committed to GitHub only after review.
+
+I have just set up Tailscale + OpenSSH so I can monitor/control the fortress remotely from my phone/laptop. Before continuing strategy research, I want safe remote-control scripts and a current project audit.
+
+Please do the following in order.
+
+==================================================
+TASK 1 — CREATE REMOTE OPERATIONS SCRIPTS
+==================================================
+
+Create this folder if it does not exist:
+
+C:\Users\conor\Desktop\quant-research\scripts\
+
+Create these scripts:
+
+1. C:\Users\conor\Desktop\quant-research\scripts\check_fortress_status.ps1
+
+It should:
+- Show current timestamp
+- Show current git branch and git status
+- Show whether any python.exe processes are running
+- Show whether any PowerShell processes are running from the fortress directory if detectable
+- Show the size and last modified time of:
+  C:\Users\conor\Desktop\quant-research\05_backtests\zoo.jsonl
+- Show the newest 10 files in:
+  C:\Users\conor\Desktop\quant-research\05_backtests\logs\
+- Show the last 40 lines of the newest log file if one exists
+- Print the exact working directory and Python executable being used
+- Be safe/read-only
+
+2. C:\Users\conor\Desktop\quant-research\scripts\zoo_reevaluate.ps1
+
+It should:
+- cd into C:\Users\conor\Desktop\quant-research\04_codebase\
+- run:
+  C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe zoo_reevaluate.py
+- log all output to:
+  C:\Users\conor\Desktop\quant-research\05_backtests\logs\zoo_reevaluate_TIMESTAMP.log
+- print where the log was saved
+
+3. C:\Users\conor\Desktop\quant-research\scripts\commit_checkpoint.ps1
+
+It should:
+- cd into C:\Users\conor\Desktop\quant-research\
+- show git status
+- ask me for a commit message
+- run git add -A
+- run git commit -m "message"
+- run git push
+- not auto-commit without my message
+
+4. C:\Users\conor\Desktop\quant-research\scripts\kill_fortress_python_jobs.ps1
+
+It should:
+- list running python.exe processes
+- show process ID, command line if available, start time if available
+- ask for confirmation before killing anything
+- only kill Python processes that appear related to the fortress path if possible
+- never silently kill unrelated processes
+
+5. C:\Users\conor\Desktop\quant-research\scripts\run_batch5.ps1
+
+Do not start Batch 5 yet.
+Create the script only.
+
+It should:
+- cd into C:\Users\conor\Desktop\quant-research\04_codebase\
+- use:
+  C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe
+- log output to:
+  C:\Users\conor\Desktop\quant-research\05_backtests\logs\batch5_TIMESTAMP.log
+- be ready to run Batch 5 once Batch 5 implementation exists
+- include clear TODO comments if exact Batch 5 runner does not exist yet
+
+==================================================
+TASK 2 — CREATE REMOTE OPERATIONS DOCUMENTATION
+==================================================
+
+Create:
+
+C:\Users\conor\Desktop\quant-research\08_docs\remote_operations_plan.md
+
+It should explain:
+- How to SSH into the fortress using Tailscale
+- That the PC Tailscale IP is currently 100.78.208.74
+- That the SSH username is Conor
+- That commands should run from 04_codebase
+- That Python must use venv_new
+- How to run:
+  scripts\check_fortress_status.ps1
+  scripts\zoo_reevaluate.ps1
+  scripts\commit_checkpoint.ps1
+  scripts\kill_fortress_python_jobs.ps1
+  scripts\run_batch5.ps1
+- Safety rules:
+  - Do not open router ports
+  - Do not expose SSH to the public internet
+  - Do not delete zoo records
+  - Do not run live trading
+  - Do not loosen validation rules
+
+==================================================
+TASK 3 — CURRENT SYSTEM TRUTH AUDIT
+==================================================
+
+Create:
+
+C:\Users\conor\Desktop\quant-research\08_docs\current_system_truth_audit.md
+
+This must be based on the actual files/results in the repo, not memory.
+
+Audit:
+1. Confirm current survivor list from the zoo database.
+2. Confirm each survivor’s latest:
+   - key
+   - instrument
+   - DSR
+   - PF
+   - number of trades
+   - max drawdown dollars if available
+   - cost scenario
+3. Confirm Step 1 stress test files/results exist.
+4. Confirm Step 2 regime/Topstep stress files/results exist.
+5. Confirm RiskManager module exists and summarize files/classes.
+6. Confirm portfolio_backtest.py exists and summarize what survivor set it uses.
+7. Confirm current portfolio result if available:
+   - portfolio DSR
+   - max drawdown
+   - positive years
+   - Topstep pass/fail
+8. Check for stale PASS entries or duplicate zoo records if possible.
+9. Summarize what is definitely built, what is partially built, and what is not built.
+
+Do not modify strategy logic during the audit.
+
+==================================================
+TASK 4 — DO NOT START BATCH 5 YET
+==================================================
+
+After creating the scripts and audit documents:
+- Show me the files created/modified.
+- Show me any issues found.
+- Recommend whether it is safe to start Batch 5.
+- Do not start Batch 5 until I explicitly say so.

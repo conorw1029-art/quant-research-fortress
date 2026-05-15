@@ -1,7 +1,7 @@
 """
-Phase 4: Portfolio Backtest — All 5 Hardened Survivors
+Phase 4: Portfolio Backtest — All 8 Hardened Survivors
 =======================================================
-Combines all 5 confirmed survivors into a single portfolio.
+Combines all 8 confirmed ALL-CLEAR survivors into a single portfolio.
 Re-runs WFO for each to get OOS trades, then reports:
 
   1. Per-strategy dollar P&L summary (unit sizing: 1 contract)
@@ -41,15 +41,22 @@ from src.data.data_schema import INSTRUMENTS
 from src.backtesting.metrics import performance_report, evaluate_go_nogo
 
 # ── Survivors ─────────────────────────────────────────────────────────────────
+# 8 confirmed ALL-CLEAR survivors (Step 1 + Step 2 complete as of 2026-05-15)
 SURVIVORS = [
+    # Original batch (Sessions 1-3)
     "bollinger_rsi_gc",
     "donchian_breakout_cl",
     "fomc_drift",
     "vwap_reclaim_gc",
     "vwap_reclaim_si",
+    # Batch 5: Trend Following
+    "vol_adj_momentum_gc",
+    "donchian_intraday_gc",
+    # Batch 6: RTH ORB
+    "rth_orb_gc",
 ]
 
-# Portfolio-level Topstep params (scaled for 5-strategy account)
+# Portfolio-level Topstep params (scaled for 8-strategy account)
 PORT_ACCOUNT_SIZE    = 150_000.0
 PORT_DAILY_LOSS_LIM  =   4_500.0   # 3% of account
 PORT_TRAIL_DD        =   7_500.0   # 5% of account
@@ -194,9 +201,10 @@ def correlation_report(survivor_data: list) -> pd.DataFrame:
 
 def main():
     logger.info("=" * 70)
-    logger.info("  PHASE 4: PORTFOLIO BACKTEST")
-    logger.info("  5 Survivors: bollinger_rsi_gc, donchian_breakout_cl,")
-    logger.info("               fomc_drift, vwap_reclaim_gc, vwap_reclaim_si")
+    logger.info("  PHASE 4: PORTFOLIO BACKTEST — 8 SURVIVORS")
+    logger.info("  bollinger_rsi_gc, donchian_breakout_cl, fomc_drift,")
+    logger.info("  vwap_reclaim_gc, vwap_reclaim_si, vol_adj_momentum_gc,")
+    logger.info("  donchian_intraday_gc, rth_orb_gc")
     logger.info("=" * 70)
 
     # ── Step 1: Load all survivors ────────────────────────────────────────────
@@ -239,17 +247,20 @@ def main():
     corr = correlation_report(survivor_data)
     logger.info(f"\n  {corr.to_string()}")
 
-    # Highlight key correlation: the two Gold strategies
+    # Highlight Gold-Gold correlations (5 Gold strategies in 8-survivor set)
     gc_keys = [s["key"] for s in survivor_data if s["instrument"] == "MGC"]
-    if len(gc_keys) == 2:
-        r = corr.loc[gc_keys[0], gc_keys[1]]
-        logger.info(f"\n  Gold-Gold correlation ({gc_keys[0]} vs {gc_keys[1]}): {r:+.3f}")
-        if abs(r) > 0.5:
-            logger.info("  *** HIGH CORRELATION — consider capping to 1 Gold trade/session ***")
-        elif abs(r) > 0.25:
-            logger.info("  *** MODERATE correlation — acceptable but monitor ***")
-        else:
-            logger.info("  *** LOW correlation — strategies are complementary ***")
+    if len(gc_keys) >= 2:
+        logger.info(f"\n  Gold strategy correlations ({len(gc_keys)} strategies on MGC):")
+        high_corr_pairs = []
+        for i, k1 in enumerate(gc_keys):
+            for k2 in gc_keys[i+1:]:
+                r = corr.loc[k1, k2]
+                flag = "*** HIGH ***" if abs(r) > 0.5 else ("** MOD **" if abs(r) > 0.25 else "OK")
+                logger.info(f"    {k1} vs {k2}: {r:+.3f}  {flag}")
+                if abs(r) > 0.5:
+                    high_corr_pairs.append((k1, k2, r))
+        if high_corr_pairs:
+            logger.info("  *** CONCENTRATION RISK — multiple high-correlation Gold strategies ***")
 
     # ── Step 4: Combined portfolio metrics ────────────────────────────────────
     logger.info("\n" + "=" * 70)
@@ -347,7 +358,7 @@ def main():
 
     pivot = (all_trades.groupby(["trade_date", "strategy"])
              .size().unstack(fill_value=0))
-    for col in SURVIVORS:
+    for col in [s["key"] for s in survivor_data]:
         if col not in pivot.columns:
             pivot[col] = 0
 
@@ -381,15 +392,13 @@ def main():
     logger.info("\n" + "=" * 70)
     logger.info("  PORTFOLIO VERDICT")
     logger.info("=" * 70)
-    logger.info(f"  Individual survivors:   {len(survivor_data)}/5 loaded")
+    logger.info(f"  Individual survivors:   {len(survivor_data)}/8 loaded")
     logger.info(f"  Portfolio DSR:          {port_m['dsr']:+.3f}  ({'STRONG' if port_m['dsr'] > 5 else 'MODERATE' if port_m['dsr'] > 2 else 'WEAK'})")
     logger.info(f"  Portfolio Topstep:      {'PASS' if ts['pass'] else 'FAIL'}")
     logger.info(f"  Positive years:         {positive_years}/{len(annual)}")
-    gold_corr_str = ""
-    if len(gc_keys) == 2:
-        r = corr.loc[gc_keys[0], gc_keys[1]]
-        gold_corr_str = f"  Gold-Gold correlation:  {r:+.3f}  ({'RISK' if abs(r) > 0.5 else 'OK'})"
-        logger.info(gold_corr_str)
+    if len(gc_keys) >= 2:
+        max_gc_corr = max(corr.loc[k1, k2] for i, k1 in enumerate(gc_keys) for k2 in gc_keys[i+1:])
+        logger.info(f"  Max Gold-Gold corr:     {max_gc_corr:+.3f}  ({'RISK' if max_gc_corr > 0.5 else 'OK'})")
 
     overall = "PROCEED_TO_LIVE" if (
         port_m["dsr"] > 2.0 and ts["pass"] and positive_years >= len(annual) * 0.7

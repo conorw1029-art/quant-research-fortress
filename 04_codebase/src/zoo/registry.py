@@ -782,6 +782,182 @@ _STRATEGIES.extend([
     ),
 ])
 
+# ----- BATCH 5: TREND FOLLOWING FAMILY -----
+_STRATEGIES.extend(_multi(
+    "ma_trend_entry", "src.strategies.ma_trend_entry", "MATrendEntryStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["ES", "GC", "CL"], ["atr"],
+    "Batch5. SMA trend filter + cross-above/below entry.",
+))
+_STRATEGIES.extend(_multi(
+    "keltner_breakout", "src.strategies.keltner_breakout", "KeltnerBreakoutStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["ES", "GC", "CL"], ["atr"],
+    "Batch5. EMA ± ATR Keltner channel breakout.",
+))
+_STRATEGIES.extend(_multi(
+    "vol_adj_momentum", "src.strategies.vol_adj_momentum", "VolAdjMomentumStrategy",
+    "momentum", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["ES", "GC", "CL"], ["atr"],
+    "Batch5. Z-score of rolling returns momentum.",
+))
+_STRATEGIES.extend(_multi(
+    "donchian_intraday", "src.strategies.donchian_intraday", "DonchianIntradayStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["ES", "GC", "CL"], ["atr"],
+    "Batch5. Donchian channel breakout on 5-min bars (intraday, not 1D).",
+))
+
+
+# ----- BATCH 6: CALENDAR EXTENSION + GAP FILL + RTH ORB -----
+
+# FOMC drift extended to non-equity markets (GC, CL, M6E)
+# direction=[1,-1] lets IS period select long or short into FOMC.
+# ONE_SHOT_IS_OOS — only ~8 FOMC events/year, WFO folds too sparse.
+_STRATEGIES.extend([
+    StrategyEntry(
+        key="fomc_drift_extended_gc",
+        module_path="src.strategies.fomc_drift_extended",
+        class_name="FOMCDriftExtendedStrategy",
+        category="calendar",
+        status=Status.EXPERIMENTAL,
+        test_method=TestMethod.ONE_SHOT_IS_OOS,
+        timeframe="5min",
+        instrument="MGC",
+        data_path_key="GC",
+        requires_features=[],
+        notes="Batch6. FOMC pre-announcement drift on Gold. Direction learned IS.",
+    ),
+    StrategyEntry(
+        key="fomc_drift_extended_cl",
+        module_path="src.strategies.fomc_drift_extended",
+        class_name="FOMCDriftExtendedStrategy",
+        category="calendar",
+        status=Status.EXPERIMENTAL,
+        test_method=TestMethod.ONE_SHOT_IS_OOS,
+        timeframe="5min",
+        instrument="MCL",
+        data_path_key="CL",
+        requires_features=[],
+        notes="Batch6. FOMC pre-announcement drift on Crude Oil. Direction learned IS.",
+    ),
+    StrategyEntry(
+        key="fomc_drift_extended_m6e",
+        module_path="src.strategies.fomc_drift_extended",
+        class_name="FOMCDriftExtendedStrategy",
+        category="calendar",
+        status=Status.EXPERIMENTAL,
+        test_method=TestMethod.ONE_SHOT_IS_OOS,
+        timeframe="5min",
+        instrument="M6E",
+        data_path_key="6E",
+        requires_features=[],
+        notes="Batch6. FOMC pre-announcement drift on Euro FX. Direction learned IS.",
+    ),
+])
+
+_STRATEGIES.extend(_multi(
+    "pct_gap_fill", "src.strategies.gap_fill", "GapFillStrategy",
+    "mean_reversion", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["ES", "GC"], ["gap_pct", "prior_close", "atr"],
+    "Batch6. Overnight gap fade (pct-based) — enter against gap, target prior close.",
+))
+
+_STRATEGIES.extend(_multi(
+    "rth_orb", "src.strategies.rth_orb", "RTHORBStrategy",
+    "breakout", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["ES", "GC", "CL"], ["atr"],
+    "Batch6. RTH opening range breakout — first 30 or 60 min of US session.",
+))
+
+
+# ----- BATCH 7: PROVEN STRATEGIES ON NEW MARKETS -----
+
+# Bollinger RSI on equity indices (NQ/RTY not in PATH2_MKTS — add explicitly)
+_STRATEGIES.extend(_multi(
+    "bollinger_rsi", "src.strategies.bollinger_rsi", "BollingerRSIStrategy",
+    "mean_reversion", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["NQ", "RTY"], ["rsi", "atr"],
+    "Batch7. Bollinger+RSI mean-reversion on equity index futures.",
+))
+
+# VWAP reclaim on crypto + rates (proven on GC, SI metals)
+_STRATEGIES.extend(_multi(
+    "vwap_reclaim", "src.strategies.vwap_reclaim", "VWAPReclaimStrategy",
+    "vwap_mean_reversion", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["MBT", "ZN", "ZB"], ["session_vwap", "atr"],
+    "Batch7. VWAP reclaim/reject on Bitcoin and rate futures.",
+))
+
+# RTH ORB on additional markets (proven on GC)
+_STRATEGIES.extend(_multi(
+    "rth_orb", "src.strategies.rth_orb", "RTHORBStrategy",
+    "breakout", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["NQ", "RTY", "MBT", "ZN"], ["atr"],
+    "Batch7. RTH ORB on equity indices, Bitcoin, and bonds.",
+))
+
+# Vol-adj momentum on new trending assets (proven on GC)
+_STRATEGIES.extend(_multi(
+    "vol_adj_momentum", "src.strategies.vol_adj_momentum", "VolAdjMomentumStrategy",
+    "momentum", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["MBT", "ZN"], ["atr"],
+    "Batch7. Z-score momentum on Bitcoin and 10yr bonds.",
+))
+
+
+# ----- BATCH 10: REMAINING MARKET EXHAUSTION — INTRADAY -----
+# Final sweep: commodity-linked FX (6C=CAD tracks oil, 6A=AUD tracks metals) + Dow (YM/MYM).
+# All 5 proven intraday strategies. If Gold uniqueness holds, all 15 should fail.
+
+_STRATEGIES.extend(_multi(
+    "bollinger_rsi", "src.strategies.bollinger_rsi", "BollingerRSIStrategy",
+    "mean_reversion", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["6C", "6A", "YM"], ["rsi", "atr"],
+    "Batch10. Bollinger+RSI on commodity currencies (CAD/AUD) and Dow.",
+))
+_STRATEGIES.extend(_multi(
+    "vwap_reclaim", "src.strategies.vwap_reclaim", "VWAPReclaimStrategy",
+    "vwap_mean_reversion", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["6C", "6A", "YM"], ["session_vwap", "atr"],
+    "Batch10. VWAP reclaim on commodity currencies and Dow.",
+))
+_STRATEGIES.extend(_multi(
+    "rth_orb", "src.strategies.rth_orb", "RTHORBStrategy",
+    "breakout", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["6C", "6A", "YM"], ["atr"],
+    "Batch10. RTH ORB on commodity currencies and Dow.",
+))
+_STRATEGIES.extend(_multi(
+    "vol_adj_momentum", "src.strategies.vol_adj_momentum", "VolAdjMomentumStrategy",
+    "momentum", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["6C", "6A", "YM"], ["atr"],
+    "Batch10. Z-score momentum on commodity currencies and Dow.",
+))
+_STRATEGIES.extend(_multi(
+    "donchian_intraday", "src.strategies.donchian_intraday", "DonchianIntradayStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "5min", ["6C", "6A", "YM"], ["atr"],
+    "Batch10. Intraday Donchian on commodity currencies and Dow.",
+))
+
+# ----- BATCH 11: DAILY TREND ON REMAINING MARKETS -----
+# ZF (5yr T-Note), ZC (Corn), ZW (Wheat) not yet tested at daily timeframe.
+# 6C, 6A also untested at daily for TSM. ZC/ZW restricted at Topstep but testing for knowledge.
+
+_STRATEGIES.extend(_multi(
+    "donchian_breakout", "src.strategies.donchian_breakout", "DonchianBreakoutStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "1D", ["ZF", "ZC", "ZW"], [],
+    "Batch11. Daily Donchian channel breakout on 5yr bonds, corn, wheat.",
+))
+_STRATEGIES.extend(_multi(
+    "tsm", "src.strategies.tsm", "TimeSeriesMomentumStrategy",
+    "trend", Status.EXPERIMENTAL, TestMethod.WALK_FORWARD,
+    "1D", ["ZF", "ZC", "ZW", "6C", "6A"], [],
+    "Batch11. Time-series momentum on 5yr bonds, ag, and commodity FX.",
+))
+
 
 # ======================================================================
 # PUBLIC API
