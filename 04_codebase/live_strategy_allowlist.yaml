@@ -161,10 +161,61 @@ strategies:
     key: "NQ/trade_absorption_signal/30m"
     status: DISABLED_FOR_LIVE
     reason: >
-      Only 21 trades — statistically meaningless.
+      Only 21 trades -- statistically meaningless.
       Sharpe not reliable at n=21. Do not run until 100+ trades collected.
     worst_day_usd: -3234
     trade_count: 21
     sharpe_1t: 6.45
     topstep_compliant: true
     disabled_date: "2026-05-17"
+
+  # ── V5: key_level_cvd_rejection (stress-tested 2026-05-17) ─────────────────
+  # Strategy fires when price tests rolling high/low key level within ATR band
+  # AND CVD confirms rejection direction. All statuses REVIEW_REQUIRED until
+  # more historical data is available for ES/NQ (currently 5-month window only).
+
+  13:
+    key: "ES/key_level_cvd_rejection/15m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V5 strategy. 1t-Sharpe=1.89 on 125 trades (Dec 2025-May 2026 only).
+      Topstep 100% compliance in 5-month window. Annual regime check pending --
+      ES bar data only covers Dec 2025+. Re-evaluate when ES history reaches 2+ years.
+      Worst day $-3,180 full ES ($-318 micro). Runs dry-run only.
+    worst_day_usd: -3180
+    trade_count: 125
+    sharpe_1t: 1.89
+    topstep_compliant: true
+    added_date: "2026-05-17"
+    note: "Elevate to ENABLED_DRY_RUN when ES data reaches 2023+."
+
+  14:
+    key: "NQ/key_level_cvd_rejection/15m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V5 strategy. 1t-Sharpe=2.10 on 135 trades (Dec 2025-May 2026 only).
+      Topstep 100% compliance in 5-month window. Annual regime check pending --
+      NQ bar data only covers Dec 2025+. Re-evaluate when NQ history reaches 2+ years.
+      Worst day $-3,971 full NQ ($-397 micro). Runs dry-run only.
+    worst_day_usd: -3971
+    trade_count: 135
+    sharpe_1t: 2.10
+    topstep_compliant: true
+    added_date: "2026-05-17"
+    note: "Elevate to ENABLED_DRY_RUN when NQ data reaches 2023+."
+
+  15:
+    key: "GC/key_level_cvd_rejection/5m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V5 strategy. 7/7 years positive (2020-2026), Topstep 99.3% compliance,
+      3,315 trades. 1t-Sharpe=0.92 -- marginally below 1.0 threshold due to
+      high trade frequency and slippage cost at 5m. At 0.5t: Sharpe=1.03.
+      Worst day $-16,233 full GC ($-1,623 micro -- BUT risk manager caps at
+      $250/strategy/day in live trading). Runs dry-run only.
+    worst_day_usd: -16233
+    trade_count: 3315
+    sharpe_1t: 0.92
+    topstep_compliant: true
+    added_date: "2026-05-17"
+    note: "Elevate to ENABLED_DRY_RUN if 1t-Sharpe >= 1.0 confirmed on fresh data."

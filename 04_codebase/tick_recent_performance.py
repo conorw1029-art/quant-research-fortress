@@ -25,6 +25,10 @@ from tick_strategies    import STRATEGY_MAP
 from tick_strategies_v2 import STRAT_MAP
 from tick_strategies_v3 import STRAT_MAP_V3
 from tick_strategies_v4 import STRAT_MAP_V4
+try:
+    from tick_strategies_v5 import STRAT_MAP_V5
+except Exception:
+    STRAT_MAP_V5 = {}
 
 ROOT    = Path(__file__).parent.parent
 BAR_DIR = ROOT / "01_data" / "tick_bars"
@@ -58,9 +62,16 @@ PORTFOLIO = [
      "v4", False),
     (12, "NQ", 30,  "trade_absorption_signal",      {"ntrades_z": 1.2, "range_z": -0.3, "cvd_z": 0.4},
      "v4", False),
+    # V5 -- key_level_cvd_rejection (added 2026-05-17)
+    (13, "ES", 15,  "key_level_cvd_rejection",      {"key_level_window": 30, "cvd_window": 10, "rejection_atr_pct": 0.25},
+     "v5", False),
+    (14, "NQ", 15,  "key_level_cvd_rejection",      {"key_level_window": 30, "cvd_window": 20, "rejection_atr_pct": 0.5},
+     "v5", False),
+    (15, "GC",  5,  "key_level_cvd_rejection",      {"key_level_window": 10, "cvd_window": 10, "rejection_atr_pct": 1.0},
+     "v5", False),
 ]
 
-_STRAT_MAPS = {"v1": STRATEGY_MAP, "v2": STRAT_MAP, "v3": STRAT_MAP_V3, "v4": STRAT_MAP_V4}
+_STRAT_MAPS = {"v1": STRATEGY_MAP, "v2": STRAT_MAP, "v3": STRAT_MAP_V3, "v4": STRAT_MAP_V4, "v5": STRAT_MAP_V5}
 
 
 def load_recent(symbol: str, bar_min: int, days: int) -> pd.DataFrame | None:

@@ -103,20 +103,53 @@ context without creating an untested entry rule.
 
 ### Confirmed survivors (all passed Step 2 stress test)
 
-| ID | Strategy | Symbol | Worst Day | 1t-Sharpe | Topstep |
+| ID | Strategy | Symbol | Worst Day (micro) | 1t-Sharpe | Topstep |
 |---|---|---|---|---|---|
-| 2 | cvd_divergence_large_print/15m | ES | -$3,827 | 2.1 | 100% |
-| 7 | prev_session_sweep/3m | ES | -$2,800 | 1.45 | 100% |
-| 8 | range_contraction_break/30m | NQ | -$3,439 | 5.63 | 100% |
-| 9 | session_momentum_follow/3m | GC | -$3,042 | 3.22 | 100% |
-| 10 | trade_absorption_signal/30m | GC | -$4,542 | 4.65 | 100% |
+| 2 | cvd_divergence_large_print/15m | ES | -$383 | 2.1 | 100% |
+| 7 | prev_session_sweep/3m | ES | -$281 | 1.45 | 100% |
+| 8 | range_contraction_break/30m | NQ | -$344 | 5.63 | 100% |
+| 9 | session_momentum_follow/3m | GC | -$304 | 3.22 | 100% |
+| 10 | trade_absorption_signal/30m | GC | -$454 | 4.65 | 100% |
 
-All five pass on micro contracts (1/10 worst day = -$300 to -$454 — well within $1k remaining DD).
+All five pass on micro contracts (worst day capped at $454 — within $1k remaining DD).
+
+### V5 strategies added (REVIEW_REQUIRED — 2026-05-17)
+
+New `key_level_cvd_rejection` strategy from `tick_strategies_v5.py`. Fires when price
+tests a rolling N-bar high/low AND CVD net-change over the window confirms rejection.
+
+Full stress test run across 16 symbol/timeframe combos x 27 param combos:
+
+| ID | Strategy | Symbol/TF | Data | 1t-Sharpe | Topstep | Status |
+|---|---|---|---|---|---|---|
+| 13 | key_level_cvd_rejection/15m | ES | 5mo | 1.89 | 100% | REVIEW_REQUIRED |
+| 14 | key_level_cvd_rejection/15m | NQ | 5mo | 2.10 | 100% | REVIEW_REQUIRED |
+| 15 | key_level_cvd_rejection/5m  | GC | 7yr | 0.92* | 99.3% | REVIEW_REQUIRED |
+
+*GC/5m: borderline 1t-Sharpe but 7/7 years positive — added for monitoring.
+
+**Upgrade path for 13/14:** When ES/NQ bar data extends to 2023+, re-run
+`tick_v5_stress.py` to confirm annual regime stability. If pass: elevate to `ENABLED_DRY_RUN`.
+
+**SI/SIL:** SI/key_level_cvd_rejection/30m and /15m passed on 7-year data (Sharpe 1.50-1.64)
+but SIL micro risk per trade exceeds $200 max_trade_risk_usd — blocked by risk manager.
+Re-evaluate if account equity recovers to $5k+.
+
+### 150-day performance (Dec 15 2025 — May 14 2026, all 15 strategies, micro P&L)
+
+| Category | P&L | Trades | Win Rate | Max DD |
+|---|---|---|---|---|
+| Full portfolio (15 strats) | +$82,541 | 4,144 | 43% | -$5,318 |
+| 5 survivors only | +$26,058 | 1,111 | — | — |
+| V5 new (IDs 13-15) | +$14,270 | 397 | — | — |
+
+129 trading days: 93 positive, 36 negative. Avg day +$640. Worst day -$1,334.
 
 ### Portfolio correlation risk
 
-ES strategies (2, 3, 4, 7, 11) and NQ strategies (1, 5, 6, 8, 12) are ~90% correlated.
-The executor now warns when both are simultaneously in the same direction.
+ES strategies (2, 3, 4, 7, 11, 13) and NQ strategies (1, 5, 6, 8, 12, 14) are ~90% correlated.
+GC strategies (9, 10, 15) are uncorrelated from ES/NQ.
+The executor warns when ES and NQ are simultaneously in the same direction.
 
 **Safe practice:** Allow at most one ES + one NQ position simultaneously. The allowlist
 currently has only strategy 2 as `DEMO_CANDIDATE`, which naturally prevents this.
@@ -145,7 +178,12 @@ This divergence is small and acceptable. No rebacktest needed.
 - Signal logging to JSONL
 - Stale data warning (>20 min since last bar)
 - Correlation warning (ES+NQ same direction)
-- Key level annotation on alerts
+- Key level annotation on alerts (PDH/PDL, VWAP, volume POC, round numbers)
+- News directional bias (counter-bias entries blocked; aligned entries flagged news_confirmed)
+- Gate 7 startup reconciliation (fetch broker positions, populate tracker + risk manager)
+- Per-pass broker sync (detect stop/target hits while executor running)
+- Ratchet trailing stop (replaces impossible partial exits; locks 0.5R at +1.5R, 1.5R at +2.5R)
+- Consecutive loss circuit breaker (halts strategy after 3 losing trades in a row)
 
 ### What does NOT work yet
 

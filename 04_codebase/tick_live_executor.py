@@ -76,6 +76,13 @@ except Exception:
     _TRADOVATE_AVAILABLE = False
 
 try:
+    from tick_strategies_v5 import STRAT_MAP_V5
+    _V5_AVAILABLE = True
+except Exception:
+    _V5_AVAILABLE = False
+    STRAT_MAP_V5 = {}
+
+try:
     from tick_key_levels import compute_key_levels, annotate_alert as _kl_annotate
     _KEY_LEVELS_AVAILABLE = True
 except Exception:
@@ -296,6 +303,22 @@ PORTFOLIO = [
     (12, "NQ", 30, "trade_absorption_signal",
      {"ntrades_z": 1.2, "range_z": -0.3, "cvd_z": 0.4},
      None,            None,      "v4"),    # 1t-Sharpe=6.45, low trade count — monitor closely
+
+    # ── V5 — Key-level CVD rejection (stress-tested May 2026) ────────────────
+    # Fires when price tests rolling high/low AND CVD confirms rejection.
+    # ES/NQ: 5-month data only — regime check pending. REVIEW_REQUIRED.
+    # GC: 7/7 years positive (2020-2026), 99%+ TS compliance. REVIEW_REQUIRED.
+    (13, "ES", 15, "key_level_cvd_rejection",
+     {"key_level_window": 30, "cvd_window": 10, "rejection_atr_pct": 0.25},
+     None,            None,      "v5"),    # 1t-Sharpe=1.89, 125 trades, TS=100% (5-month window)
+
+    (14, "NQ", 15, "key_level_cvd_rejection",
+     {"key_level_window": 30, "cvd_window": 20, "rejection_atr_pct": 0.5},
+     None,            None,      "v5"),    # 1t-Sharpe=2.10, 135 trades, TS=100% (5-month window)
+
+    (15, "GC",  5, "key_level_cvd_rejection",
+     {"key_level_window": 10, "cvd_window": 10, "rejection_atr_pct": 1.0},
+     None,            None,      "v5"),    # 1t-Sharpe=0.92, 7/7 yrs, TS=99.3%, borderline Sharpe
 ]
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
@@ -419,6 +442,8 @@ def compute_signal(df: pd.DataFrame, strat_name: str,
         strat = STRAT_MAP.get(strat_name)
     elif version == "v3":
         strat = STRAT_MAP_V3.get(strat_name)
+    elif version == "v5":
+        strat = STRAT_MAP_V5.get(strat_name)
     else:
         strat = STRAT_MAP_V4.get(strat_name)
     if strat is None:
@@ -588,9 +613,9 @@ def _check_stale(df: pd.DataFrame, symbol: str, bar_min: int,
 # ES and NQ are ~90% correlated. Holding both long (or both short) at once
 # effectively doubles the position size. Log a warning when this occurs.
 
-_CORR_ES = frozenset({2, 3, 4, 7, 11})   # ES-based strategy IDs
-_CORR_NQ = frozenset({1, 5, 6, 8, 12})   # NQ-based strategy IDs
-_CORR_GC = frozenset({9, 10})             # GC-based strategy IDs
+_CORR_ES = frozenset({2, 3, 4, 7, 11, 13})   # ES-based strategy IDs
+_CORR_NQ = frozenset({1, 5, 6, 8, 12, 14})  # NQ-based strategy IDs
+_CORR_GC = frozenset({9, 10, 15})            # GC-based strategy IDs
 
 
 def _correlation_warning(tracker: PositionTracker) -> str | None:
