@@ -1,0 +1,98 @@
+[
+  {
+    "label": "SI/key_level_cvd_rejection/30m",
+    "symbol": "SI",
+    "bar_min": 30,
+    "strategy": "key_level_cvd_rejection",
+    "params": {
+      "key_level_window": 30,
+      "cvd_window": 10,
+      "rejection_atr_pct": 1.0
+    },
+    "sr1t": 1.636,
+    "regimes": "5/7 yrs",
+    "ts_pct": 0.9569,
+    "worst_day": -16486.0,
+    "long_history": true
+  },
+  {
+    "label": "SI/key_level_cvd_rejection/15m",
+    "symbol": "SI",
+    "bar_min": 15,
+    "strategy": "key_level_cvd_rejection",
+    "params": {
+      "key_level_window": 30,
+      "cvd_window": 20,
+      "rejection_atr_pct": 0.25
+    },
+    "sr1t": 1.499,
+    "regimes": "6/7 yrs",
+    "ts_pct": 0.9635,
+    "worst_day": -16008.0,
+    "long_history": true
+  },
+  {
+    "label": "ES/key_level_cvd_rejection/30m",
+    "symbol": "ES",
+    "bar_min": 30,
+    "strategy": "key_level_cvd_rejection",
+    "params": {
+      "key_level_window": 30,
+      "cvd_window": 5,
+      "rejection_atr_pct": 0.25
+    },
+    "sr1t": 5.144,
+    "regimes": "N/A (short)",
+    "ts_pct": 1.0,
+    "worst_day": -2718.0,
+    "long_history": false
+  },
+  {
+    "label": "NQ/key_level_cvd_rejection/30m",
+    "symbol": "NQ",
+    "bar_min": 30,
+    "strategy": "key_level_cvd_rejection",
+    "params": {
+      "key_level_window": 30,
+      "cvd_window": 10,
+      "rejection_atr_pct": 0.25
+    },
+    "sr1t": 2.952,
+    "regimes": "N/A (short)",
+    "ts_pct": 1.0,
+    "worst_day": -4033.0,
+    "long_history": false
+  },
+  {
+    "label": "NQ/key_level_cvd_rejection/15m",
+    "symbol": "NQ",
+    "bar_min": 15,
+    "strategy": "key_level_cvd_rejection",
+    "params": {
+      "key_level_window": 30,
+      "cvd_window": 20,
+      "rejection_atr_pct": 0.5
+    },
+    "sr1t": 2.103,
+    "regimes": "N/A (short)",
+    "ts_pct": 1.0,
+    "worst_day": -3971.0,
+    "long_history": false
+  },
+  {
+    "label": "ES/key_level_cvd_rejection/15m",
+    "symbol": "ES",
+    "bar_min": 15,
+    "strategy": "key_level_cvd_rejection",
+    "params": {
+      "key_level_window": 30,
+      "cvd_window": 10,
+      "rejection_atr_pct": 0.25
+    },
+    "sr1t": 1.886,
+    "regimes": "N/A (short)",
+    "ts_pct": 1.0,
+    "worst_day": -3180.0,
+    "long_history": false
+  }
+]
