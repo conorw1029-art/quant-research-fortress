@@ -1,0 +1,3146 @@
+{
+  "timestamp": "20260516_2257",
+  "n_analysed": 20,
+  "strategies": [
+    {
+      "rank": 1,
+      "tag": "ES/cvd_divergence_large_print/15m",
+      "symbol": "ES",
+      "strategy": "cvd_divergence_large_print",
+      "bar_min": 15,
+      "dsr": 2.072382045632833,
+      "grade": "EXCELLENT",
+      "params": {
+        "price_window": 20,
+        "cvd_window": 10,
+        "min_large": 1
+      },
+      "profile": {
+        "n_trading_days": 121,
+        "pct_positive_days": 0.595,
+        "pct_within_daily_limit": 1.0,
+        "worst_day": -3827.0,
+        "best_day": 6011.0,
+        "avg_daily_pnl": 458.0,
+        "daily_pnl_std": 1715.0,
+        "max_dd_duration_days": 32,
+        "max_consec_loss_days": 4,
+        "total_pnl": 55360.0,
+        "sharpe": 4.23
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 4.594591991242421,
+          "total_pnl": 61026.40990452327,
+          "n_trades": 377,
+          "pct_days_positive": 0.6033057851239669
+        },
+        "slip_0.5t": {
+          "sharpe": 4.234751338651923,
+          "total_pnl": 55360.36420164739,
+          "n_trades": 379,
+          "pct_days_positive": 0.5950413223140496
+        },
+        "slip_1.0t": {
+          "sharpe": 3.9869592189238263,
+          "total_pnl": 52183.9536995067,
+          "n_trades": 379,
+          "pct_days_positive": 0.5867768595041323
+        },
+        "slip_2.0t": {
+          "sharpe": 3.427316037424546,
+          "total_pnl": 44949.713969492455,
+          "n_trades": 382,
+          "pct_days_positive": 0.5619834710743802
+        },
+        "comm_3.0": {
+          "sharpe": 4.594591991242421,
+          "total_pnl": 61026.40990452327,
+          "n_trades": 377
+        },
+        "comm_5.0": {
+          "sharpe": 4.477799535552617,
+          "total_pnl": 59518.40990452327,
+          "n_trades": 377
+        },
+        "comm_8.0": {
+          "sharpe": 4.302822152632249,
+          "total_pnl": 57256.40990452327,
+          "n_trades": 377
+        },
+        "comm_10.0": {
+          "sharpe": 4.186317990026062,
+          "total_pnl": 55748.40990452327,
+          "n_trades": 377
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": 4.4,
+          "total_pnl": 7096.0,
+          "n_trades": 73,
+          "win_rate": 0.438,
+          "profitable": "True"
+        },
+        "2026Q1": {
+          "sharpe": 4.75,
+          "total_pnl": 40254.0,
+          "n_trades": 204,
+          "win_rate": 0.475,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 3.05,
+          "total_pnl": 8011.0,
+          "n_trades": 102,
+          "win_rate": 0.382,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 1
+          },
+          "sharpe": 4.23,
+          "total_pnl": 55360.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 1
+          },
+          "sharpe": 4.23,
+          "total_pnl": 55360.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 1
+          },
+          "sharpe": 4.23,
+          "total_pnl": 55360.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 1
+          },
+          "sharpe": 4.23,
+          "total_pnl": 55360.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 1
+          },
+          "sharpe": 4.23,
+          "total_pnl": 55360.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 2,
+      "tag": "ES/tape_absorption/15m",
+      "symbol": "ES",
+      "strategy": "tape_absorption",
+      "bar_min": 15,
+      "dsr": 1.7251607676679666,
+      "grade": "GOOD",
+      "params": {
+        "price_window": 5,
+        "vol_z_threshold": 1.5,
+        "price_threshold": 0.001
+      },
+      "profile": {
+        "n_trading_days": 116,
+        "pct_positive_days": 0.569,
+        "pct_within_daily_limit": 1.0,
+        "worst_day": -2871.0,
+        "best_day": 4328.0,
+        "avg_daily_pnl": 234.0,
+        "daily_pnl_std": 1360.0,
+        "max_dd_duration_days": 18,
+        "max_consec_loss_days": 5,
+        "total_pnl": 27132.0,
+        "sharpe": 2.73
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 3.3000251319611418,
+          "total_pnl": 32595.345089037022,
+          "n_trades": 419,
+          "pct_days_positive": 0.5948275862068966
+        },
+        "slip_0.5t": {
+          "sharpe": 2.7309278793241853,
+          "total_pnl": 27132.26622058545,
+          "n_trades": 420,
+          "pct_days_positive": 0.5689655172413793
+        },
+        "slip_1.0t": {
+          "sharpe": 2.3118480659925327,
+          "total_pnl": 22863.849393789445,
+          "n_trades": 419,
+          "pct_days_positive": 0.5431034482758621
+        },
+        "slip_2.0t": {
+          "sharpe": 0.7114497314643584,
+          "total_pnl": 6940.490599692326,
+          "n_trades": 419,
+          "pct_days_positive": 0.47413793103448276
+        },
+        "comm_3.0": {
+          "sharpe": 3.3000251319611418,
+          "total_pnl": 32595.345089037022,
+          "n_trades": 419
+        },
+        "comm_5.0": {
+          "sharpe": 3.1290054893947707,
+          "total_pnl": 30919.345089037022,
+          "n_trades": 419
+        },
+        "comm_8.0": {
+          "sharpe": 2.8726217468751387,
+          "total_pnl": 28405.345089037022,
+          "n_trades": 419
+        },
+        "comm_10.0": {
+          "sharpe": 2.7018141558357174,
+          "total_pnl": 26729.345089037022,
+          "n_trades": 419
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": -0.32,
+          "total_pnl": -347.0,
+          "n_trades": 99,
+          "win_rate": 0.394,
+          "profitable": "False"
+        },
+        "2026Q1": {
+          "sharpe": 3.34,
+          "total_pnl": 19757.0,
+          "n_trades": 194,
+          "win_rate": 0.412,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 2.8,
+          "total_pnl": 7722.0,
+          "n_trades": 127,
+          "win_rate": 0.386,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "price_window": 5,
+            "vol_z_threshold": 1.0,
+            "price_threshold": 0.001
+          },
+          "sharpe": -0.17,
+          "total_pnl": -2138.0,
+          "pass_dsr1": "False"
+        },
+        "-10%": {
+          "params": {
+            "price_window": 5,
+            "vol_z_threshold": 1.5,
+            "price_threshold": 0.001
+          },
+          "sharpe": 2.73,
+          "total_pnl": 27132.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "price_window": 5,
+            "vol_z_threshold": 1.5,
+            "price_threshold": 0.001
+          },
+          "sharpe": 2.73,
+          "total_pnl": 27132.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "price_window": 5,
+            "vol_z_threshold": 1.5,
+            "price_threshold": 0.001
+          },
+          "sharpe": 2.73,
+          "total_pnl": 27132.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "price_window": 5,
+            "vol_z_threshold": 2.0,
+            "price_threshold": 0.001
+          },
+          "sharpe": 0.0,
+          "total_pnl": 0,
+          "pass_dsr1": "False"
+        },
+        "_robustness_score": "3/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 3,
+      "tag": "GC/obi_threshold/1m",
+      "symbol": "GC",
+      "strategy": "obi_threshold",
+      "bar_min": 1,
+      "dsr": 1.7014381828223266,
+      "grade": "GOOD",
+      "params": {
+        "threshold": 0.3,
+        "smooth_window": 1
+      },
+      "profile": {
+        "n_trading_days": 1384,
+        "pct_positive_days": 0.543,
+        "pct_within_daily_limit": 0.993,
+        "worst_day": -9647.0,
+        "best_day": 30803.0,
+        "avg_daily_pnl": 339.0,
+        "daily_pnl_std": 1999.0,
+        "max_dd_duration_days": 88,
+        "max_consec_loss_days": 8,
+        "total_pnl": 468700.0,
+        "sharpe": 2.69
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 3.0439082096543753,
+          "total_pnl": 528627.5805158089,
+          "n_trades": 6950,
+          "pct_days_positive": 0.5524222704266089
+        },
+        "slip_0.5t": {
+          "sharpe": 2.6890617418810057,
+          "total_pnl": 468699.7827122312,
+          "n_trades": 6979,
+          "pct_days_positive": 0.5433526011560693
+        },
+        "slip_1.0t": {
+          "sharpe": 2.2986479939625473,
+          "total_pnl": 404055.05195902946,
+          "n_trades": 7021,
+          "pct_days_positive": 0.5277577505407354
+        },
+        "slip_2.0t": {
+          "sharpe": 1.550141054285943,
+          "total_pnl": 273258.6496696015,
+          "n_trades": 7140,
+          "pct_days_positive": 0.5032444124008651
+        },
+        "comm_3.0": {
+          "sharpe": 3.0439082096543753,
+          "total_pnl": 528627.5805158089,
+          "n_trades": 6950
+        },
+        "comm_5.0": {
+          "sharpe": 2.883758983401198,
+          "total_pnl": 500827.5805158089,
+          "n_trades": 6950
+        },
+        "comm_8.0": {
+          "sharpe": 2.642075308923917,
+          "total_pnl": 459127.5805158089,
+          "n_trades": 6950
+        },
+        "comm_10.0": {
+          "sharpe": 2.480191883674379,
+          "total_pnl": 431327.5805158089,
+          "n_trades": 6950
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 1.96,
+          "total_pnl": 35360.0,
+          "n_trades": 1278,
+          "win_rate": 0.39,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 0.8,
+          "total_pnl": 9257.0,
+          "n_trades": 937,
+          "win_rate": 0.366,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 3.01,
+          "total_pnl": 39025.0,
+          "n_trades": 1034,
+          "win_rate": 0.398,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": 1.32,
+          "total_pnl": 16111.0,
+          "n_trades": 969,
+          "win_rate": 0.372,
+          "profitable": "True"
+        },
+        "2024": {
+          "sharpe": 3.77,
+          "total_pnl": 57144.0,
+          "n_trades": 780,
+          "win_rate": 0.422,
+          "profitable": "True"
+        },
+        "2025": {
+          "sharpe": 4.57,
+          "total_pnl": 159079.0,
+          "n_trades": 1596,
+          "win_rate": 0.409,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": 4.95,
+          "total_pnl": 152723.0,
+          "n_trades": 385,
+          "win_rate": 0.423,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 2.69,
+          "total_pnl": 468700.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 2.69,
+          "total_pnl": 468700.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 2.69,
+          "total_pnl": 468700.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 2.69,
+          "total_pnl": 468700.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 2.69,
+          "total_pnl": 468700.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 4,
+      "tag": "NQ/cvd_breakout/3m",
+      "symbol": "NQ",
+      "strategy": "cvd_breakout",
+      "bar_min": 3,
+      "dsr": 1.6762577490422406,
+      "grade": "GOOD",
+      "params": {
+        "breakout_window": 20,
+        "confirm_bars": 2
+      },
+      "profile": {
+        "n_trading_days": 135,
+        "pct_positive_days": 0.504,
+        "pct_within_daily_limit": 0.941,
+        "worst_day": -9524.0,
+        "best_day": 10879.0,
+        "avg_daily_pnl": 453.0,
+        "daily_pnl_std": 3595.0,
+        "max_dd_duration_days": 29,
+        "max_consec_loss_days": 6,
+        "total_pnl": 61088.0,
+        "sharpe": 2.0
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.371578218722376,
+          "total_pnl": 72254.39662689959,
+          "n_trades": 2247,
+          "pct_days_positive": 0.5111111111111111
+        },
+        "slip_0.5t": {
+          "sharpe": 1.9980188505532694,
+          "total_pnl": 61087.700108345816,
+          "n_trades": 2250,
+          "pct_days_positive": 0.5037037037037037
+        },
+        "slip_1.0t": {
+          "sharpe": 1.4180852101667336,
+          "total_pnl": 43376.44563874147,
+          "n_trades": 2252,
+          "pct_days_positive": 0.4888888888888889
+        },
+        "slip_2.0t": {
+          "sharpe": 0.5652040955198253,
+          "total_pnl": 17263.884465454626,
+          "n_trades": 2254,
+          "pct_days_positive": 0.45185185185185184
+        },
+        "comm_3.0": {
+          "sharpe": 2.371578218722376,
+          "total_pnl": 72254.39662689959,
+          "n_trades": 2247
+        },
+        "comm_5.0": {
+          "sharpe": 2.0774101802602023,
+          "total_pnl": 63266.39662689959,
+          "n_trades": 2247
+        },
+        "comm_8.0": {
+          "sharpe": 1.63554303686932,
+          "total_pnl": 49784.39662689959,
+          "n_trades": 2247
+        },
+        "comm_10.0": {
+          "sharpe": 1.3406247896232195,
+          "total_pnl": 40796.39662689959,
+          "n_trades": 2247
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": -0.66,
+          "total_pnl": -3246.0,
+          "n_trades": 414,
+          "win_rate": 0.336,
+          "profitable": "False"
+        },
+        "2026Q1": {
+          "sharpe": 2.75,
+          "total_pnl": 46848.0,
+          "n_trades": 1203,
+          "win_rate": 0.365,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 2.0,
+          "total_pnl": 17485.0,
+          "n_trades": 633,
+          "win_rate": 0.348,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "breakout_window": 20,
+            "confirm_bars": 2
+          },
+          "sharpe": 2.0,
+          "total_pnl": 61088.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "breakout_window": 20,
+            "confirm_bars": 2
+          },
+          "sharpe": 2.0,
+          "total_pnl": 61088.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "breakout_window": 20,
+            "confirm_bars": 2
+          },
+          "sharpe": 2.0,
+          "total_pnl": 61088.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "breakout_window": 20,
+            "confirm_bars": 2
+          },
+          "sharpe": 2.0,
+          "total_pnl": 61088.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "breakout_window": 20,
+            "confirm_bars": 2
+          },
+          "sharpe": 2.0,
+          "total_pnl": 61088.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 5,
+      "tag": "NQ/cvd_divergence_large_print/30m",
+      "symbol": "NQ",
+      "strategy": "cvd_divergence_large_print",
+      "bar_min": 30,
+      "dsr": 1.6678202630322552,
+      "grade": "GOOD",
+      "params": {
+        "price_window": 20,
+        "cvd_window": 10,
+        "min_large": 2
+      },
+      "profile": {
+        "n_trading_days": 61,
+        "pct_positive_days": 0.541,
+        "pct_within_daily_limit": 0.984,
+        "worst_day": -4824.0,
+        "best_day": 9248.0,
+        "avg_daily_pnl": 1136.0,
+        "daily_pnl_std": 3318.0,
+        "max_dd_duration_days": 9,
+        "max_consec_loss_days": 4,
+        "total_pnl": 69287.0,
+        "sharpe": 5.44
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 5.452370573963296,
+          "total_pnl": 69509.58236697674,
+          "n_trades": 81,
+          "pct_days_positive": 0.5409836065573771
+        },
+        "slip_0.5t": {
+          "sharpe": 5.435151132511334,
+          "total_pnl": 69287.08236697674,
+          "n_trades": 81,
+          "pct_days_positive": 0.5409836065573771
+        },
+        "slip_1.0t": {
+          "sharpe": 5.417928828662412,
+          "total_pnl": 69064.58236697674,
+          "n_trades": 81,
+          "pct_days_positive": 0.5409836065573771
+        },
+        "slip_2.0t": {
+          "sharpe": 5.383475684336256,
+          "total_pnl": 68619.58236697674,
+          "n_trades": 81,
+          "pct_days_positive": 0.5409836065573771
+        },
+        "comm_3.0": {
+          "sharpe": 5.452370573963296,
+          "total_pnl": 69509.58236697674,
+          "n_trades": 81
+        },
+        "comm_5.0": {
+          "sharpe": 5.427239929713026,
+          "total_pnl": 69185.58236697674,
+          "n_trades": 81
+        },
+        "comm_8.0": {
+          "sharpe": 5.389534785690498,
+          "total_pnl": 68699.58236697674,
+          "n_trades": 81
+        },
+        "comm_10.0": {
+          "sharpe": 5.3643919491434575,
+          "total_pnl": 68375.58236697674,
+          "n_trades": 81
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": 9.15,
+          "total_pnl": 23405.0,
+          "n_trades": 19,
+          "win_rate": 0.579,
+          "profitable": "True"
+        },
+        "2026Q1": {
+          "sharpe": 4.62,
+          "total_pnl": 33235.0,
+          "n_trades": 43,
+          "win_rate": 0.442,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 4.15,
+          "total_pnl": 12647.0,
+          "n_trades": 19,
+          "win_rate": 0.474,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 2
+          },
+          "sharpe": 5.44,
+          "total_pnl": 69287.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 2
+          },
+          "sharpe": 5.44,
+          "total_pnl": 69287.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 2
+          },
+          "sharpe": 5.44,
+          "total_pnl": 69287.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 2
+          },
+          "sharpe": 5.44,
+          "total_pnl": 69287.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "price_window": 20,
+            "cvd_window": 10,
+            "min_large": 2
+          },
+          "sharpe": 5.44,
+          "total_pnl": 69287.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 6,
+      "tag": "ES/cvd_divergence/15m",
+      "symbol": "ES",
+      "strategy": "cvd_divergence",
+      "bar_min": 15,
+      "dsr": 1.6364681206243423,
+      "grade": "GOOD",
+      "params": {
+        "price_window": 40,
+        "cvd_window": 20,
+        "threshold": 0.3
+      },
+      "profile": {
+        "n_trading_days": 125,
+        "pct_positive_days": 0.552,
+        "pct_within_daily_limit": 0.984,
+        "worst_day": -5672.0,
+        "best_day": 6096.0,
+        "avg_daily_pnl": 257.0,
+        "daily_pnl_std": 1936.0,
+        "max_dd_duration_days": 27,
+        "max_consec_loss_days": 4,
+        "total_pnl": 32116.0,
+        "sharpe": 2.11
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.830408081142523,
+          "total_pnl": 42999.80753038794,
+          "n_trades": 727,
+          "pct_days_positive": 0.5714285714285714
+        },
+        "slip_0.5t": {
+          "sharpe": 2.1071022854060124,
+          "total_pnl": 32115.883333690064,
+          "n_trades": 731,
+          "pct_days_positive": 0.552
+        },
+        "slip_1.0t": {
+          "sharpe": 1.6017664448722546,
+          "total_pnl": 24366.627567875395,
+          "n_trades": 736,
+          "pct_days_positive": 0.536
+        },
+        "slip_2.0t": {
+          "sharpe": 0.6074841526746718,
+          "total_pnl": 9224.307586440955,
+          "n_trades": 742,
+          "pct_days_positive": 0.504
+        },
+        "comm_3.0": {
+          "sharpe": 2.830408081142523,
+          "total_pnl": 42999.80753038794,
+          "n_trades": 727
+        },
+        "comm_5.0": {
+          "sharpe": 2.635868688393562,
+          "total_pnl": 40091.80753038794,
+          "n_trades": 727
+        },
+        "comm_8.0": {
+          "sharpe": 2.3447240517812347,
+          "total_pnl": 35729.80753038794,
+          "n_trades": 727
+        },
+        "comm_10.0": {
+          "sharpe": 2.151107316785023,
+          "total_pnl": 32821.80753038794,
+          "n_trades": 727
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": 1.09,
+          "total_pnl": 2409.0,
+          "n_trades": 176,
+          "win_rate": 0.375,
+          "profitable": "True"
+        },
+        "2026Q1": {
+          "sharpe": 2.24,
+          "total_pnl": 21022.0,
+          "n_trades": 372,
+          "win_rate": 0.425,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 2.45,
+          "total_pnl": 8685.0,
+          "n_trades": 183,
+          "win_rate": 0.383,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 20,
+            "threshold": 0.3
+          },
+          "sharpe": 2.11,
+          "total_pnl": 32116.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 20,
+            "threshold": 0.3
+          },
+          "sharpe": 2.11,
+          "total_pnl": 32116.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 20,
+            "threshold": 0.3
+          },
+          "sharpe": 2.11,
+          "total_pnl": 32116.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 20,
+            "threshold": 0.3
+          },
+          "sharpe": 2.11,
+          "total_pnl": 32116.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 20,
+            "threshold": 0.3
+          },
+          "sharpe": 2.11,
+          "total_pnl": 32116.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 7,
+      "tag": "NQ/stop_hunt_reversal/3m",
+      "symbol": "NQ",
+      "strategy": "stop_hunt_reversal",
+      "bar_min": 3,
+      "dsr": 1.594280670683339,
+      "grade": "GOOD",
+      "params": {
+        "spike_bars": 1,
+        "spike_pct": 0.001,
+        "cvd_flip_window": 5
+      },
+      "profile": {
+        "n_trading_days": 119,
+        "pct_positive_days": 0.555,
+        "pct_within_daily_limit": 0.992,
+        "worst_day": -4582.0,
+        "best_day": 9253.0,
+        "avg_daily_pnl": 658.0,
+        "daily_pnl_std": 2677.0,
+        "max_dd_duration_days": 26,
+        "max_consec_loss_days": 5,
+        "total_pnl": 78244.0,
+        "sharpe": 3.9
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 4.088861597802823,
+          "total_pnl": 82095.57635571758,
+          "n_trades": 779,
+          "pct_days_positive": 0.5630252100840336
+        },
+        "slip_0.5t": {
+          "sharpe": 3.8990716685576405,
+          "total_pnl": 78243.63297098776,
+          "n_trades": 779,
+          "pct_days_positive": 0.5546218487394958
+        },
+        "slip_1.0t": {
+          "sharpe": 3.717098547337323,
+          "total_pnl": 74413.94207932477,
+          "n_trades": 780,
+          "pct_days_positive": 0.5378151260504201
+        },
+        "slip_2.0t": {
+          "sharpe": 3.3622550378982776,
+          "total_pnl": 67490.66988557547,
+          "n_trades": 781,
+          "pct_days_positive": 0.5378151260504201
+        },
+        "comm_3.0": {
+          "sharpe": 4.088861597802823,
+          "total_pnl": 82095.57635571758,
+          "n_trades": 779
+        },
+        "comm_5.0": {
+          "sharpe": 3.9422043497770485,
+          "total_pnl": 78979.57635571758,
+          "n_trades": 779
+        },
+        "comm_8.0": {
+          "sharpe": 3.7206775226679976,
+          "total_pnl": 74305.57635571758,
+          "n_trades": 779
+        },
+        "comm_10.0": {
+          "sharpe": 3.571988265807231,
+          "total_pnl": 71189.57635571758,
+          "n_trades": 779
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": 7.76,
+          "total_pnl": 14190.0,
+          "n_trades": 83,
+          "win_rate": 0.458,
+          "profitable": "True"
+        },
+        "2026Q1": {
+          "sharpe": 4.59,
+          "total_pnl": 59128.0,
+          "n_trades": 526,
+          "win_rate": 0.451,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 1.0,
+          "total_pnl": 4926.0,
+          "n_trades": 170,
+          "win_rate": 0.394,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "spike_bars": 1,
+            "spike_pct": 0.001,
+            "cvd_flip_window": 3
+          },
+          "sharpe": 2.21,
+          "total_pnl": 55321.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "spike_bars": 1,
+            "spike_pct": 0.001,
+            "cvd_flip_window": 5
+          },
+          "sharpe": 3.9,
+          "total_pnl": 78244.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "spike_bars": 1,
+            "spike_pct": 0.001,
+            "cvd_flip_window": 5
+          },
+          "sharpe": 3.9,
+          "total_pnl": 78244.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "spike_bars": 1,
+            "spike_pct": 0.001,
+            "cvd_flip_window": 5
+          },
+          "sharpe": 3.9,
+          "total_pnl": 78244.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "spike_bars": 1,
+            "spike_pct": 0.001,
+            "cvd_flip_window": 5
+          },
+          "sharpe": 3.9,
+          "total_pnl": 78244.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 8,
+      "tag": "GC/obi_breakout/1m",
+      "symbol": "GC",
+      "strategy": "obi_breakout",
+      "bar_min": 1,
+      "dsr": 1.436229029029916,
+      "grade": "MARGINAL",
+      "params": {
+        "breakout_window": 20
+      },
+      "profile": {
+        "n_trading_days": 1005,
+        "pct_positive_days": 0.479,
+        "pct_within_daily_limit": 0.998,
+        "worst_day": -9374.0,
+        "best_day": 10182.0,
+        "avg_daily_pnl": 133.0,
+        "daily_pnl_std": 1249.0,
+        "max_dd_duration_days": 95,
+        "max_consec_loss_days": 10,
+        "total_pnl": 133222.0,
+        "sharpe": 1.69
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.2764906897976633,
+          "total_pnl": 178948.19117647558,
+          "n_trades": 5301,
+          "pct_days_positive": 0.5029821073558648
+        },
+        "slip_0.5t": {
+          "sharpe": 1.685450789419381,
+          "total_pnl": 133222.31633116718,
+          "n_trades": 5310,
+          "pct_days_positive": 0.4786069651741294
+        },
+        "slip_1.0t": {
+          "sharpe": 1.0854637619218492,
+          "total_pnl": 87380.69511881968,
+          "n_trades": 5343,
+          "pct_days_positive": 0.4662027833001988
+        },
+        "slip_2.0t": {
+          "sharpe": -0.18153355079078765,
+          "total_pnl": -15297.339813954692,
+          "n_trades": 5397,
+          "pct_days_positive": 0.4393638170974155
+        },
+        "comm_3.0": {
+          "sharpe": 2.2764906897976633,
+          "total_pnl": 178948.19117647558,
+          "n_trades": 5301
+        },
+        "comm_5.0": {
+          "sharpe": 2.0033409247815372,
+          "total_pnl": 157744.19117647555,
+          "n_trades": 5301
+        },
+        "comm_8.0": {
+          "sharpe": 1.590543617303545,
+          "total_pnl": 125938.19117647558,
+          "n_trades": 5301
+        },
+        "comm_10.0": {
+          "sharpe": 1.315280213910056,
+          "total_pnl": 104734.19117647558,
+          "n_trades": 5301
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 2.1,
+          "total_pnl": 18467.0,
+          "n_trades": 945,
+          "win_rate": 0.389,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 0.63,
+          "total_pnl": 4328.0,
+          "n_trades": 922,
+          "win_rate": 0.392,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 2.79,
+          "total_pnl": 16822.0,
+          "n_trades": 781,
+          "win_rate": 0.391,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": 0.07,
+          "total_pnl": 371.0,
+          "n_trades": 729,
+          "win_rate": 0.376,
+          "profitable": "True"
+        },
+        "2024": {
+          "sharpe": 1.17,
+          "total_pnl": 8718.0,
+          "n_trades": 655,
+          "win_rate": 0.395,
+          "profitable": "True"
+        },
+        "2025": {
+          "sharpe": 2.21,
+          "total_pnl": 43902.0,
+          "n_trades": 1034,
+          "win_rate": 0.394,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": 3.62,
+          "total_pnl": 40615.0,
+          "n_trades": 244,
+          "win_rate": 0.414,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 1.69,
+          "total_pnl": 133222.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 1.69,
+          "total_pnl": 133222.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 1.69,
+          "total_pnl": 133222.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 1.69,
+          "total_pnl": 133222.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 1.69,
+          "total_pnl": 133222.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 9,
+      "tag": "GC/cvd_divergence/1m",
+      "symbol": "GC",
+      "strategy": "cvd_divergence",
+      "bar_min": 1,
+      "dsr": 1.4270451976712046,
+      "grade": "MARGINAL",
+      "params": {
+        "price_window": 10,
+        "cvd_window": 10,
+        "threshold": 0.5
+      },
+      "profile": {
+        "n_trading_days": 1362,
+        "pct_positive_days": 0.535,
+        "pct_within_daily_limit": 0.995,
+        "worst_day": -14647.0,
+        "best_day": 18983.0,
+        "avg_daily_pnl": 175.0,
+        "daily_pnl_std": 1693.0,
+        "max_dd_duration_days": 161,
+        "max_consec_loss_days": 13,
+        "total_pnl": 238569.0,
+        "sharpe": 1.64
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.5258636213266996,
+          "total_pnl": 362658.09803930786,
+          "n_trades": 13051,
+          "pct_days_positive": 0.5557184750733137
+        },
+        "slip_0.5t": {
+          "sharpe": 1.642817093792068,
+          "total_pnl": 238568.55604441208,
+          "n_trades": 13164,
+          "pct_days_positive": 0.5345080763582967
+        },
+        "slip_1.0t": {
+          "sharpe": 0.8413405004496194,
+          "total_pnl": 126440.90733479513,
+          "n_trades": 13285,
+          "pct_days_positive": 0.515018315018315
+        },
+        "slip_2.0t": {
+          "sharpe": -0.7436615182567652,
+          "total_pnl": -125960.50091397879,
+          "n_trades": 13573,
+          "pct_days_positive": 0.472953216374269
+        },
+        "comm_3.0": {
+          "sharpe": 2.5258636213266996,
+          "total_pnl": 362658.09803930786,
+          "n_trades": 13051
+        },
+        "comm_5.0": {
+          "sharpe": 2.157175455844239,
+          "total_pnl": 310454.0980393079,
+          "n_trades": 13051
+        },
+        "comm_8.0": {
+          "sharpe": 1.5964005109590549,
+          "total_pnl": 232148.09803930792,
+          "n_trades": 13051
+        },
+        "comm_10.0": {
+          "sharpe": 1.223539238583924,
+          "total_pnl": 179944.09803930792,
+          "n_trades": 13051
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 2.37,
+          "total_pnl": 43654.0,
+          "n_trades": 2382,
+          "win_rate": 0.375,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 0.89,
+          "total_pnl": 11175.0,
+          "n_trades": 2310,
+          "win_rate": 0.39,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 2.13,
+          "total_pnl": 27484.0,
+          "n_trades": 1956,
+          "win_rate": 0.4,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": -0.2,
+          "total_pnl": -2310.0,
+          "n_trades": 1846,
+          "win_rate": 0.361,
+          "profitable": "False"
+        },
+        "2024": {
+          "sharpe": 0.51,
+          "total_pnl": 7735.0,
+          "n_trades": 1783,
+          "win_rate": 0.376,
+          "profitable": "True"
+        },
+        "2025": {
+          "sharpe": 2.84,
+          "total_pnl": 93029.0,
+          "n_trades": 2413,
+          "win_rate": 0.399,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": 2.88,
+          "total_pnl": 57802.0,
+          "n_trades": 474,
+          "win_rate": 0.403,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "price_window": 10,
+            "cvd_window": 10,
+            "threshold": 0.5
+          },
+          "sharpe": 1.64,
+          "total_pnl": 238569.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "price_window": 10,
+            "cvd_window": 10,
+            "threshold": 0.5
+          },
+          "sharpe": 1.64,
+          "total_pnl": 238569.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "price_window": 10,
+            "cvd_window": 10,
+            "threshold": 0.5
+          },
+          "sharpe": 1.64,
+          "total_pnl": 238569.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "price_window": 10,
+            "cvd_window": 10,
+            "threshold": 0.5
+          },
+          "sharpe": 1.64,
+          "total_pnl": 238569.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "price_window": 10,
+            "cvd_window": 10,
+            "threshold": 0.5
+          },
+          "sharpe": 1.64,
+          "total_pnl": 238569.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 10,
+      "tag": "ES/cvd_breakout/15m",
+      "symbol": "ES",
+      "strategy": "cvd_breakout",
+      "bar_min": 15,
+      "dsr": 1.4266812580171453,
+      "grade": "MARGINAL",
+      "params": {
+        "breakout_window": 40,
+        "confirm_bars": 2
+      },
+      "profile": {
+        "n_trading_days": 119,
+        "pct_positive_days": 0.462,
+        "pct_within_daily_limit": 0.992,
+        "worst_day": -5133.0,
+        "best_day": 5620.0,
+        "avg_daily_pnl": 173.0,
+        "daily_pnl_std": 1831.0,
+        "max_dd_duration_days": 35,
+        "max_consec_loss_days": 8,
+        "total_pnl": 20608.0,
+        "sharpe": 1.5
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.8922030941676589,
+          "total_pnl": 25942.281570655636,
+          "n_trades": 383,
+          "pct_days_positive": 0.4957983193277311
+        },
+        "slip_0.5t": {
+          "sharpe": 1.5010132000066179,
+          "total_pnl": 20607.87664602913,
+          "n_trades": 383,
+          "pct_days_positive": 0.46218487394957986
+        },
+        "slip_1.0t": {
+          "sharpe": 1.1405730030734533,
+          "total_pnl": 15614.497867419595,
+          "n_trades": 383,
+          "pct_days_positive": 0.453781512605042
+        },
+        "slip_2.0t": {
+          "sharpe": -0.004928420057789875,
+          "total_pnl": -66.91614348634175,
+          "n_trades": 385,
+          "pct_days_positive": 0.42857142857142855
+        },
+        "comm_3.0": {
+          "sharpe": 1.8922030941676589,
+          "total_pnl": 25942.281570655636,
+          "n_trades": 383
+        },
+        "comm_5.0": {
+          "sharpe": 1.7802042389021848,
+          "total_pnl": 24410.281570655636,
+          "n_trades": 383
+        },
+        "comm_8.0": {
+          "sharpe": 1.6122453790716669,
+          "total_pnl": 22112.281570655636,
+          "n_trades": 383
+        },
+        "comm_10.0": {
+          "sharpe": 1.5003024895505042,
+          "total_pnl": 20580.281570655636,
+          "n_trades": 383
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": -2.88,
+          "total_pnl": -5277.0,
+          "n_trades": 74,
+          "win_rate": 0.324,
+          "profitable": "False"
+        },
+        "2026Q1": {
+          "sharpe": 2.01,
+          "total_pnl": 15423.0,
+          "n_trades": 194,
+          "win_rate": 0.397,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 2.54,
+          "total_pnl": 10462.0,
+          "n_trades": 115,
+          "win_rate": 0.4,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "breakout_window": 40,
+            "confirm_bars": 2
+          },
+          "sharpe": 1.5,
+          "total_pnl": 20608.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "breakout_window": 40,
+            "confirm_bars": 2
+          },
+          "sharpe": 1.5,
+          "total_pnl": 20608.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "breakout_window": 40,
+            "confirm_bars": 2
+          },
+          "sharpe": 1.5,
+          "total_pnl": 20608.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "breakout_window": 40,
+            "confirm_bars": 2
+          },
+          "sharpe": 1.5,
+          "total_pnl": 20608.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "breakout_window": 40,
+            "confirm_bars": 2
+          },
+          "sharpe": 1.5,
+          "total_pnl": 20608.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 11,
+      "tag": "ES/stacked_imbalance/15m",
+      "symbol": "ES",
+      "strategy": "stacked_imbalance",
+      "bar_min": 15,
+      "dsr": 1.3505620668806773,
+      "grade": "MARGINAL",
+      "params": {
+        "stack_n": 4,
+        "min_delta": 0.0
+      },
+      "profile": {
+        "n_trading_days": 125,
+        "pct_positive_days": 0.512,
+        "pct_within_daily_limit": 0.992,
+        "worst_day": -4663.0,
+        "best_day": 4874.0,
+        "avg_daily_pnl": 92.0,
+        "daily_pnl_std": 1681.0,
+        "max_dd_duration_days": 29,
+        "max_consec_loss_days": 6,
+        "total_pnl": 11477.0,
+        "sharpe": 0.87
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.5630135977530717,
+          "total_pnl": 20686.71388151979,
+          "n_trades": 599,
+          "pct_days_positive": 0.536
+        },
+        "slip_0.5t": {
+          "sharpe": 0.8671040122653602,
+          "total_pnl": 11476.827193637524,
+          "n_trades": 599,
+          "pct_days_positive": 0.512
+        },
+        "slip_1.0t": {
+          "sharpe": 0.26778790188897245,
+          "total_pnl": 3526.9560674506083,
+          "n_trades": 599,
+          "pct_days_positive": 0.496
+        },
+        "slip_2.0t": {
+          "sharpe": -1.150874762220636,
+          "total_pnl": -14821.637212705957,
+          "n_trades": 602,
+          "pct_days_positive": 0.456
+        },
+        "comm_3.0": {
+          "sharpe": 1.5630135977530717,
+          "total_pnl": 20686.71388151979,
+          "n_trades": 599
+        },
+        "comm_5.0": {
+          "sharpe": 1.382162148198498,
+          "total_pnl": 18290.71388151979,
+          "n_trades": 599
+        },
+        "comm_8.0": {
+          "sharpe": 1.110748757918258,
+          "total_pnl": 14696.713881519794,
+          "n_trades": 599
+        },
+        "comm_10.0": {
+          "sharpe": 0.9297335254542216,
+          "total_pnl": 12300.713881519794,
+          "n_trades": 599
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": -3.27,
+          "total_pnl": -4084.0,
+          "n_trades": 100,
+          "win_rate": 0.32,
+          "profitable": "False"
+        },
+        "2026Q1": {
+          "sharpe": 2.66,
+          "total_pnl": 19911.0,
+          "n_trades": 337,
+          "win_rate": 0.409,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": -1.04,
+          "total_pnl": -4350.0,
+          "n_trades": 162,
+          "win_rate": 0.327,
+          "profitable": "False"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "stack_n": 3,
+            "min_delta": 0.0
+          },
+          "sharpe": -3.76,
+          "total_pnl": -61245.0,
+          "pass_dsr1": "False"
+        },
+        "-10%": {
+          "params": {
+            "stack_n": 4,
+            "min_delta": 0.0
+          },
+          "sharpe": 0.87,
+          "total_pnl": 11477.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "stack_n": 4,
+            "min_delta": 0.0
+          },
+          "sharpe": 0.87,
+          "total_pnl": 11477.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "stack_n": 4,
+            "min_delta": 0.0
+          },
+          "sharpe": 0.87,
+          "total_pnl": 11477.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "stack_n": 5,
+            "min_delta": 0.0
+          },
+          "sharpe": 0.33,
+          "total_pnl": 3692.0,
+          "pass_dsr1": "False"
+        },
+        "_robustness_score": "3/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 12,
+      "tag": "ES/trade_deceleration/1m",
+      "symbol": "ES",
+      "strategy": "trade_deceleration",
+      "bar_min": 1,
+      "dsr": 1.3297708316820882,
+      "grade": "MARGINAL",
+      "params": {
+        "window": 20,
+        "z_threshold": -1.0
+      },
+      "profile": {
+        "n_trading_days": 132,
+        "pct_positive_days": 0.485,
+        "pct_within_daily_limit": 1.0,
+        "worst_day": -3711.0,
+        "best_day": 6518.0,
+        "avg_daily_pnl": 134.0,
+        "daily_pnl_std": 1548.0,
+        "max_dd_duration_days": 36,
+        "max_consec_loss_days": 5,
+        "total_pnl": 17639.0,
+        "sharpe": 1.37
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 3.213689171433906,
+          "total_pnl": 42420.25458179097,
+          "n_trades": 1690,
+          "pct_days_positive": 0.5378787878787878
+        },
+        "slip_0.5t": {
+          "sharpe": 1.369970435162346,
+          "total_pnl": 17638.550416142756,
+          "n_trades": 1706,
+          "pct_days_positive": 0.48484848484848486
+        },
+        "slip_1.0t": {
+          "sharpe": 0.04838267812474875,
+          "total_pnl": 609.7286399953337,
+          "n_trades": 1714,
+          "pct_days_positive": 0.4393939393939394
+        },
+        "slip_2.0t": {
+          "sharpe": -4.67266407274521,
+          "total_pnl": -53177.657411389955,
+          "n_trades": 1724,
+          "pct_days_positive": 0.2878787878787879
+        },
+        "comm_3.0": {
+          "sharpe": 3.213689171433906,
+          "total_pnl": 42420.25458179097,
+          "n_trades": 1690
+        },
+        "comm_5.0": {
+          "sharpe": 2.7266542334853265,
+          "total_pnl": 35660.25458179097,
+          "n_trades": 1690
+        },
+        "comm_8.0": {
+          "sharpe": 1.9768377861176292,
+          "total_pnl": 25520.25458179097,
+          "n_trades": 1690
+        },
+        "comm_10.0": {
+          "sharpe": 1.4649157999111522,
+          "total_pnl": 18760.25458179097,
+          "n_trades": 1690
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": 3.8,
+          "total_pnl": 3752.0,
+          "n_trades": 190,
+          "win_rate": 0.416,
+          "profitable": "True"
+        },
+        "2026Q1": {
+          "sharpe": 2.62,
+          "total_pnl": 23522.0,
+          "n_trades": 1200,
+          "win_rate": 0.398,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": -5.02,
+          "total_pnl": -9636.0,
+          "n_trades": 316,
+          "win_rate": 0.326,
+          "profitable": "False"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "window": 15,
+            "z_threshold": -1.0
+          },
+          "sharpe": -0.41,
+          "total_pnl": -4407.0,
+          "pass_dsr1": "False"
+        },
+        "-10%": {
+          "params": {
+            "window": 20,
+            "z_threshold": -1.0
+          },
+          "sharpe": 1.37,
+          "total_pnl": 17639.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "window": 20,
+            "z_threshold": -1.0
+          },
+          "sharpe": 1.37,
+          "total_pnl": 17639.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "window": 20,
+            "z_threshold": -1.0
+          },
+          "sharpe": 1.37,
+          "total_pnl": 17639.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "window": 20,
+            "z_threshold": -1.0
+          },
+          "sharpe": 1.37,
+          "total_pnl": 17639.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "4/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 13,
+      "tag": "ES/flow_momentum/30m",
+      "symbol": "ES",
+      "strategy": "flow_momentum",
+      "bar_min": 30,
+      "dsr": 1.3094689536668798,
+      "grade": "MARGINAL",
+      "params": {
+        "window": 20,
+        "z_threshold": 0.8
+      },
+      "profile": {
+        "n_trading_days": 118,
+        "pct_positive_days": 0.483,
+        "pct_within_daily_limit": 0.966,
+        "worst_day": -6431.0,
+        "best_day": 8704.0,
+        "avg_daily_pnl": 190.0,
+        "daily_pnl_std": 2621.0,
+        "max_dd_duration_days": 27,
+        "max_consec_loss_days": 9,
+        "total_pnl": 22385.0,
+        "sharpe": 1.15
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.689164588703805,
+          "total_pnl": 32792.038812101535,
+          "n_trades": 769,
+          "pct_days_positive": 0.5169491525423728
+        },
+        "slip_0.5t": {
+          "sharpe": 1.1489905034097765,
+          "total_pnl": 22385.411955188443,
+          "n_trades": 770,
+          "pct_days_positive": 0.4830508474576271
+        },
+        "slip_1.0t": {
+          "sharpe": 0.6296973455473143,
+          "total_pnl": 12304.867009521859,
+          "n_trades": 770,
+          "pct_days_positive": 0.4745762711864407
+        },
+        "slip_2.0t": {
+          "sharpe": -0.22445109248367387,
+          "total_pnl": -4429.087053656374,
+          "n_trades": 771,
+          "pct_days_positive": 0.4491525423728814
+        },
+        "comm_3.0": {
+          "sharpe": 1.689164588703805,
+          "total_pnl": 32792.038812101535,
+          "n_trades": 769
+        },
+        "comm_5.0": {
+          "sharpe": 1.5293599816453143,
+          "total_pnl": 29716.038812101535,
+          "n_trades": 769
+        },
+        "comm_8.0": {
+          "sharpe": 1.290157420965473,
+          "total_pnl": 25102.038812101535,
+          "n_trades": 769
+        },
+        "comm_10.0": {
+          "sharpe": 1.1310316500628603,
+          "total_pnl": 22026.038812101535,
+          "n_trades": 769
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": -2.64,
+          "total_pnl": -5726.0,
+          "n_trades": 139,
+          "win_rate": 0.381,
+          "profitable": "False"
+        },
+        "2026Q1": {
+          "sharpe": 0.55,
+          "total_pnl": 6122.0,
+          "n_trades": 423,
+          "win_rate": 0.407,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 3.76,
+          "total_pnl": 21990.0,
+          "n_trades": 208,
+          "win_rate": 0.466,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "window": 20,
+            "z_threshold": 0.8
+          },
+          "sharpe": 1.15,
+          "total_pnl": 22385.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "window": 20,
+            "z_threshold": 0.8
+          },
+          "sharpe": 1.15,
+          "total_pnl": 22385.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "window": 20,
+            "z_threshold": 0.8
+          },
+          "sharpe": 1.15,
+          "total_pnl": 22385.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "window": 20,
+            "z_threshold": 0.8
+          },
+          "sharpe": 1.15,
+          "total_pnl": 22385.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "window": 20,
+            "z_threshold": 1.0
+          },
+          "sharpe": 0.55,
+          "total_pnl": 10260.0,
+          "pass_dsr1": "False"
+        },
+        "_robustness_score": "4/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 14,
+      "tag": "NQ/multi_factor_momentum/15m",
+      "symbol": "NQ",
+      "strategy": "multi_factor_momentum",
+      "bar_min": 15,
+      "dsr": 1.3029530605100015,
+      "grade": "MARGINAL",
+      "params": {
+        "cvd_window": 15,
+        "cvd_z_min": 0.5,
+        "flow_window": 10,
+        "flow_z_min": 0.5,
+        "large_window": 5
+      },
+      "profile": {
+        "n_trading_days": 127,
+        "pct_positive_days": 0.551,
+        "pct_within_daily_limit": 0.835,
+        "worst_day": -12620.0,
+        "best_day": 11182.0,
+        "avg_daily_pnl": 322.0,
+        "daily_pnl_std": 4579.0,
+        "max_dd_duration_days": 44,
+        "max_consec_loss_days": 6,
+        "total_pnl": 40875.0,
+        "sharpe": 1.12
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.369678371052295,
+          "total_pnl": 50117.16222039118,
+          "n_trades": 1620,
+          "pct_days_positive": 0.5748031496062992
+        },
+        "slip_0.5t": {
+          "sharpe": 1.1158176585654627,
+          "total_pnl": 40875.215149165655,
+          "n_trades": 1621,
+          "pct_days_positive": 0.5511811023622047
+        },
+        "slip_1.0t": {
+          "sharpe": 0.9267852848280338,
+          "total_pnl": 33987.636137401205,
+          "n_trades": 1620,
+          "pct_days_positive": 0.5354330708661418
+        },
+        "slip_2.0t": {
+          "sharpe": 0.5321780434822543,
+          "total_pnl": 19545.277379059393,
+          "n_trades": 1621,
+          "pct_days_positive": 0.5196850393700787
+        },
+        "comm_3.0": {
+          "sharpe": 1.369678371052295,
+          "total_pnl": 50117.16222039118,
+          "n_trades": 1620
+        },
+        "comm_5.0": {
+          "sharpe": 1.1915128884533863,
+          "total_pnl": 43637.16222039118,
+          "n_trades": 1620
+        },
+        "comm_8.0": {
+          "sharpe": 0.924837599984071,
+          "total_pnl": 33917.16222039118,
+          "n_trades": 1620
+        },
+        "comm_10.0": {
+          "sharpe": 0.747446408523891,
+          "total_pnl": 27437.162220391183,
+          "n_trades": 1620
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": -5.45,
+          "total_pnl": -26938.0,
+          "n_trades": 330,
+          "win_rate": 0.373,
+          "profitable": "False"
+        },
+        "2026Q1": {
+          "sharpe": 1.49,
+          "total_pnl": 32334.0,
+          "n_trades": 865,
+          "win_rate": 0.407,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": 3.77,
+          "total_pnl": 35479.0,
+          "n_trades": 426,
+          "win_rate": 0.43,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "cvd_window": 10,
+            "cvd_z_min": 0.5,
+            "flow_window": 10,
+            "flow_z_min": 0.5,
+            "large_window": 3
+          },
+          "sharpe": 0.02,
+          "total_pnl": 641.0,
+          "pass_dsr1": "False"
+        },
+        "-10%": {
+          "params": {
+            "cvd_window": 15,
+            "cvd_z_min": 0.5,
+            "flow_window": 10,
+            "flow_z_min": 0.5,
+            "large_window": 5
+          },
+          "sharpe": 1.12,
+          "total_pnl": 40875.0,
+          "pass_dsr1": "False"
+        },
+        "+0%": {
+          "params": {
+            "cvd_window": 15,
+            "cvd_z_min": 0.5,
+            "flow_window": 10,
+            "flow_z_min": 0.5,
+            "large_window": 5
+          },
+          "sharpe": 1.12,
+          "total_pnl": 40875.0,
+          "pass_dsr1": "False"
+        },
+        "+10%": {
+          "params": {
+            "cvd_window": 15,
+            "cvd_z_min": 0.5,
+            "flow_window": 10,
+            "flow_z_min": 0.5,
+            "large_window": 5
+          },
+          "sharpe": 1.12,
+          "total_pnl": 40875.0,
+          "pass_dsr1": "False"
+        },
+        "+20%": {
+          "params": {
+            "cvd_window": 15,
+            "cvd_z_min": 0.5,
+            "flow_window": 10,
+            "flow_z_min": 0.5,
+            "large_window": 5
+          },
+          "sharpe": 1.12,
+          "total_pnl": 40875.0,
+          "pass_dsr1": "False"
+        },
+        "_robustness_score": "0/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 15,
+      "tag": "NQ/cvd_divergence/15m",
+      "symbol": "NQ",
+      "strategy": "cvd_divergence",
+      "bar_min": 15,
+      "dsr": 1.2773347592757966,
+      "grade": "MARGINAL",
+      "params": {
+        "price_window": 40,
+        "cvd_window": 10,
+        "threshold": 0.3
+      },
+      "profile": {
+        "n_trading_days": 126,
+        "pct_positive_days": 0.508,
+        "pct_within_daily_limit": 0.913,
+        "worst_day": -7744.0,
+        "best_day": 10218.0,
+        "avg_daily_pnl": 279.0,
+        "daily_pnl_std": 3333.0,
+        "max_dd_duration_days": 40,
+        "max_consec_loss_days": 5,
+        "total_pnl": 35136.0,
+        "sharpe": 1.33
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.4491075628160854,
+          "total_pnl": 38245.41975955665,
+          "n_trades": 632,
+          "pct_days_positive": 0.5238095238095238
+        },
+        "slip_0.5t": {
+          "sharpe": 1.328134477978511,
+          "total_pnl": 35135.63922330226,
+          "n_trades": 636,
+          "pct_days_positive": 0.5079365079365079
+        },
+        "slip_1.0t": {
+          "sharpe": 1.2027270808497337,
+          "total_pnl": 31727.616713606985,
+          "n_trades": 635,
+          "pct_days_positive": 0.5079365079365079
+        },
+        "slip_2.0t": {
+          "sharpe": 0.9602634902291548,
+          "total_pnl": 25297.99113143247,
+          "n_trades": 637,
+          "pct_days_positive": 0.5079365079365079
+        },
+        "comm_3.0": {
+          "sharpe": 1.4491075628160854,
+          "total_pnl": 38245.41975955665,
+          "n_trades": 632
+        },
+        "comm_5.0": {
+          "sharpe": 1.3525805284656645,
+          "total_pnl": 35717.41975955665,
+          "n_trades": 632
+        },
+        "comm_8.0": {
+          "sharpe": 1.2079624606227033,
+          "total_pnl": 31925.41975955665,
+          "n_trades": 632
+        },
+        "comm_10.0": {
+          "sharpe": 1.1116700081876685,
+          "total_pnl": 29397.41975955665,
+          "n_trades": 632
+        }
+      },
+      "regime": {
+        "2025Q4": {
+          "sharpe": 2.25,
+          "total_pnl": 11706.0,
+          "n_trades": 159,
+          "win_rate": 0.377,
+          "profitable": "True"
+        },
+        "2026Q1": {
+          "sharpe": 2.21,
+          "total_pnl": 30420.0,
+          "n_trades": 298,
+          "win_rate": 0.43,
+          "profitable": "True"
+        },
+        "2026Q2": {
+          "sharpe": -0.92,
+          "total_pnl": -6990.0,
+          "n_trades": 179,
+          "win_rate": 0.358,
+          "profitable": "False"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 10,
+            "threshold": 0.3
+          },
+          "sharpe": 1.33,
+          "total_pnl": 35136.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 10,
+            "threshold": 0.3
+          },
+          "sharpe": 1.33,
+          "total_pnl": 35136.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 10,
+            "threshold": 0.3
+          },
+          "sharpe": 1.33,
+          "total_pnl": 35136.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 10,
+            "threshold": 0.3
+          },
+          "sharpe": 1.33,
+          "total_pnl": 35136.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "price_window": 40,
+            "cvd_window": 10,
+            "threshold": 0.3
+          },
+          "sharpe": 1.33,
+          "total_pnl": 35136.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 16,
+      "tag": "SI/obi_threshold/5m",
+      "symbol": "SI",
+      "strategy": "obi_threshold",
+      "bar_min": 5,
+      "dsr": 1.275724915669643,
+      "grade": "MARGINAL",
+      "params": {
+        "threshold": 0.3,
+        "smooth_window": 1
+      },
+      "profile": {
+        "n_trading_days": 1006,
+        "pct_positive_days": 0.503,
+        "pct_within_daily_limit": 0.975,
+        "worst_day": -44685.0,
+        "best_day": 73781.0,
+        "avg_daily_pnl": 564.0,
+        "daily_pnl_std": 4746.0,
+        "max_dd_duration_days": 309,
+        "max_consec_loss_days": 9,
+        "total_pnl": 566911.0,
+        "sharpe": 1.88
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.079505995461837,
+          "total_pnl": 626322.471237667,
+          "n_trades": 2382,
+          "pct_days_positive": 0.5168650793650794
+        },
+        "slip_0.5t": {
+          "sharpe": 1.8849127484629782,
+          "total_pnl": 566911.3077974372,
+          "n_trades": 2399,
+          "pct_days_positive": 0.5029821073558648
+        },
+        "slip_1.0t": {
+          "sharpe": 1.705319734355581,
+          "total_pnl": 508418.7458046123,
+          "n_trades": 2410,
+          "pct_days_positive": 0.4945382323733863
+        },
+        "slip_2.0t": {
+          "sharpe": 1.3790820736232778,
+          "total_pnl": 410717.5076301192,
+          "n_trades": 2429,
+          "pct_days_positive": 0.4781746031746032
+        },
+        "comm_3.0": {
+          "sharpe": 2.079505995461837,
+          "total_pnl": 626322.471237667,
+          "n_trades": 2382
+        },
+        "comm_5.0": {
+          "sharpe": 2.047922658326928,
+          "total_pnl": 616794.471237667,
+          "n_trades": 2382
+        },
+        "comm_8.0": {
+          "sharpe": 2.000529653560635,
+          "total_pnl": 602502.471237667,
+          "n_trades": 2382
+        },
+        "comm_10.0": {
+          "sharpe": 1.9689228699276726,
+          "total_pnl": 592974.471237667,
+          "n_trades": 2382
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 4.06,
+          "total_pnl": 64711.0,
+          "n_trades": 354,
+          "win_rate": 0.432,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 2.49,
+          "total_pnl": 33690.0,
+          "n_trades": 324,
+          "win_rate": 0.414,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 2.0,
+          "total_pnl": 27604.0,
+          "n_trades": 387,
+          "win_rate": 0.413,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": 0.27,
+          "total_pnl": 3183.0,
+          "n_trades": 293,
+          "win_rate": 0.379,
+          "profitable": "True"
+        },
+        "2024": {
+          "sharpe": -0.69,
+          "total_pnl": -11076.0,
+          "n_trades": 305,
+          "win_rate": 0.348,
+          "profitable": "False"
+        },
+        "2025": {
+          "sharpe": 4.91,
+          "total_pnl": 193160.0,
+          "n_trades": 456,
+          "win_rate": 0.436,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": 3.36,
+          "total_pnl": 255639.0,
+          "n_trades": 280,
+          "win_rate": 0.407,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 1.88,
+          "total_pnl": 566911.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 1.88,
+          "total_pnl": 566911.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 1.88,
+          "total_pnl": 566911.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 1.88,
+          "total_pnl": 566911.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "threshold": 0.3,
+            "smooth_window": 1
+          },
+          "sharpe": 1.88,
+          "total_pnl": 566911.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 17,
+      "tag": "SI/obi_breakout/1m",
+      "symbol": "SI",
+      "strategy": "obi_breakout",
+      "bar_min": 1,
+      "dsr": 1.2620314130151045,
+      "grade": "MARGINAL",
+      "params": {
+        "breakout_window": 20
+      },
+      "profile": {
+        "n_trading_days": 594,
+        "pct_positive_days": 0.487,
+        "pct_within_daily_limit": 0.976,
+        "worst_day": -22881.0,
+        "best_day": 18238.0,
+        "avg_daily_pnl": 80.0,
+        "daily_pnl_std": 3101.0,
+        "max_dd_duration_days": 64,
+        "max_consec_loss_days": 8,
+        "total_pnl": 47250.0,
+        "sharpe": 0.41
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.0640304167398953,
+          "total_pnl": 121332.68688287867,
+          "n_trades": 2553,
+          "pct_days_positive": 0.5025295109612141
+        },
+        "slip_0.5t": {
+          "sharpe": 0.40727341741358236,
+          "total_pnl": 47250.319270232634,
+          "n_trades": 2576,
+          "pct_days_positive": 0.48653198653198654
+        },
+        "slip_1.0t": {
+          "sharpe": -0.11772922848804639,
+          "total_pnl": -13620.818497993121,
+          "n_trades": 2604,
+          "pct_days_positive": 0.45791245791245794
+        },
+        "slip_2.0t": {
+          "sharpe": -1.1864519780629412,
+          "total_pnl": -140424.9907576843,
+          "n_trades": 2658,
+          "pct_days_positive": 0.40939597315436244
+        },
+        "comm_3.0": {
+          "sharpe": 1.0640304167398953,
+          "total_pnl": 121332.68688287867,
+          "n_trades": 2553
+        },
+        "comm_5.0": {
+          "sharpe": 0.9748831423150777,
+          "total_pnl": 111120.68688287867,
+          "n_trades": 2553
+        },
+        "comm_8.0": {
+          "sharpe": 0.8407764739755516,
+          "total_pnl": 95802.68688287867,
+          "n_trades": 2553
+        },
+        "comm_10.0": {
+          "sharpe": 0.7511755612053305,
+          "total_pnl": 85590.68688287867,
+          "n_trades": 2553
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 3.14,
+          "total_pnl": 24062.0,
+          "n_trades": 456,
+          "win_rate": 0.36,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 1.94,
+          "total_pnl": 13188.0,
+          "n_trades": 410,
+          "win_rate": 0.39,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 0.4,
+          "total_pnl": 2218.0,
+          "n_trades": 358,
+          "win_rate": 0.352,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": 0.95,
+          "total_pnl": 4729.0,
+          "n_trades": 319,
+          "win_rate": 0.411,
+          "profitable": "True"
+        },
+        "2024": {
+          "sharpe": 0.39,
+          "total_pnl": 2459.0,
+          "n_trades": 348,
+          "win_rate": 0.394,
+          "profitable": "True"
+        },
+        "2025": {
+          "sharpe": 0.41,
+          "total_pnl": 6736.0,
+          "n_trades": 463,
+          "win_rate": 0.369,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": -0.19,
+          "total_pnl": -6143.0,
+          "n_trades": 222,
+          "win_rate": 0.41,
+          "profitable": "False"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 0.41,
+          "total_pnl": 47250.0,
+          "pass_dsr1": "False"
+        },
+        "-10%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 0.41,
+          "total_pnl": 47250.0,
+          "pass_dsr1": "False"
+        },
+        "+0%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 0.41,
+          "total_pnl": 47250.0,
+          "pass_dsr1": "False"
+        },
+        "+10%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 0.41,
+          "total_pnl": 47250.0,
+          "pass_dsr1": "False"
+        },
+        "+20%": {
+          "params": {
+            "breakout_window": 20
+          },
+          "sharpe": 0.41,
+          "total_pnl": 47250.0,
+          "pass_dsr1": "False"
+        },
+        "_robustness_score": "0/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 18,
+      "tag": "GC/cvd_mean_reversion/1m",
+      "symbol": "GC",
+      "strategy": "cvd_mean_reversion",
+      "bar_min": 1,
+      "dsr": 1.2519478977032243,
+      "grade": "MARGINAL",
+      "params": {
+        "window": 60,
+        "z_entry": 1.5
+      },
+      "profile": {
+        "n_trading_days": 992,
+        "pct_positive_days": 0.488,
+        "pct_within_daily_limit": 0.988,
+        "worst_day": -7762.0,
+        "best_day": 16287.0,
+        "avg_daily_pnl": 101.0,
+        "daily_pnl_std": 1649.0,
+        "max_dd_duration_days": 235,
+        "max_consec_loss_days": 9,
+        "total_pnl": 100261.0,
+        "sharpe": 0.97
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 1.4032878888100104,
+          "total_pnl": 143931.73851744185,
+          "n_trades": 4992,
+          "pct_days_positive": 0.5146022155085599
+        },
+        "slip_0.5t": {
+          "sharpe": 0.9728245057986806,
+          "total_pnl": 100261.26117204093,
+          "n_trades": 5068,
+          "pct_days_positive": 0.4879032258064516
+        },
+        "slip_1.0t": {
+          "sharpe": 0.5128881953719553,
+          "total_pnl": 53204.55351634644,
+          "n_trades": 5138,
+          "pct_days_positive": 0.4818913480885312
+        },
+        "slip_2.0t": {
+          "sharpe": -0.309380892862427,
+          "total_pnl": -32903.35154184238,
+          "n_trades": 5274,
+          "pct_days_positive": 0.45875251509054327
+        },
+        "comm_3.0": {
+          "sharpe": 1.4032878888100104,
+          "total_pnl": 143931.73851744185,
+          "n_trades": 4992
+        },
+        "comm_5.0": {
+          "sharpe": 1.2087219990710687,
+          "total_pnl": 123963.73851744185,
+          "n_trades": 4992
+        },
+        "comm_8.0": {
+          "sharpe": 0.9157405653426501,
+          "total_pnl": 94011.73851744185,
+          "n_trades": 4992
+        },
+        "comm_10.0": {
+          "sharpe": 0.7201951919311135,
+          "total_pnl": 74043.73851744186,
+          "n_trades": 4992
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 2.29,
+          "total_pnl": 23301.0,
+          "n_trades": 904,
+          "win_rate": 0.383,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 1.05,
+          "total_pnl": 8829.0,
+          "n_trades": 833,
+          "win_rate": 0.341,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 3.75,
+          "total_pnl": 29710.0,
+          "n_trades": 739,
+          "win_rate": 0.383,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": 2.29,
+          "total_pnl": 14798.0,
+          "n_trades": 691,
+          "win_rate": 0.394,
+          "profitable": "True"
+        },
+        "2024": {
+          "sharpe": -0.58,
+          "total_pnl": -6306.0,
+          "n_trades": 626,
+          "win_rate": 0.363,
+          "profitable": "False"
+        },
+        "2025": {
+          "sharpe": 1.58,
+          "total_pnl": 37106.0,
+          "n_trades": 1028,
+          "win_rate": 0.371,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": -0.44,
+          "total_pnl": -7176.0,
+          "n_trades": 247,
+          "win_rate": 0.348,
+          "profitable": "False"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "window": 40,
+            "z_entry": 1.5
+          },
+          "sharpe": 0.91,
+          "total_pnl": 94663.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "window": 60,
+            "z_entry": 1.5
+          },
+          "sharpe": 0.97,
+          "total_pnl": 100261.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "window": 60,
+            "z_entry": 1.5
+          },
+          "sharpe": 0.97,
+          "total_pnl": 100261.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "window": 60,
+            "z_entry": 1.5
+          },
+          "sharpe": 0.97,
+          "total_pnl": 100261.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "window": 60,
+            "z_entry": 2.0
+          },
+          "sharpe": 1.03,
+          "total_pnl": 67921.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 19,
+      "tag": "GC/obi_mean_reversion/1m",
+      "symbol": "GC",
+      "strategy": "obi_mean_reversion",
+      "bar_min": 1,
+      "dsr": 1.2482279888934866,
+      "grade": "MARGINAL",
+      "params": {
+        "window": 15,
+        "z_entry": 1.5
+      },
+      "profile": {
+        "n_trading_days": 1114,
+        "pct_positive_days": 0.51,
+        "pct_within_daily_limit": 0.993,
+        "worst_day": -7938.0,
+        "best_day": 13189.0,
+        "avg_daily_pnl": 153.0,
+        "daily_pnl_std": 1341.0,
+        "max_dd_duration_days": 83,
+        "max_consec_loss_days": 9,
+        "total_pnl": 169996.0,
+        "sharpe": 1.81
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.3558788806028836,
+          "total_pnl": 221832.52637090546,
+          "n_trades": 6078,
+          "pct_days_positive": 0.5268817204301075
+        },
+        "slip_0.5t": {
+          "sharpe": 1.80698944985952,
+          "total_pnl": 169995.7697606202,
+          "n_trades": 6095,
+          "pct_days_positive": 0.5098743267504489
+        },
+        "slip_1.0t": {
+          "sharpe": 1.2579839746556178,
+          "total_pnl": 119980.46267005234,
+          "n_trades": 6134,
+          "pct_days_positive": 0.49460431654676257
+        },
+        "slip_2.0t": {
+          "sharpe": 0.1677373964926839,
+          "total_pnl": 16800.56273826424,
+          "n_trades": 6191,
+          "pct_days_positive": 0.4733994589720469
+        },
+        "comm_3.0": {
+          "sharpe": 2.3558788806028836,
+          "total_pnl": 221832.52637090546,
+          "n_trades": 6078
+        },
+        "comm_5.0": {
+          "sharpe": 2.0963808346457173,
+          "total_pnl": 197520.52637090546,
+          "n_trades": 6078
+        },
+        "comm_8.0": {
+          "sharpe": 1.7028595438340326,
+          "total_pnl": 161052.52637090546,
+          "n_trades": 6078
+        },
+        "comm_10.0": {
+          "sharpe": 1.4394523994832575,
+          "total_pnl": 136740.52637090546,
+          "n_trades": 6078
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 1.36,
+          "total_pnl": 15603.0,
+          "n_trades": 1078,
+          "win_rate": 0.384,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 1.84,
+          "total_pnl": 16168.0,
+          "n_trades": 1053,
+          "win_rate": 0.379,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 1.87,
+          "total_pnl": 13900.0,
+          "n_trades": 879,
+          "win_rate": 0.379,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": 0.75,
+          "total_pnl": 4957.0,
+          "n_trades": 859,
+          "win_rate": 0.356,
+          "profitable": "True"
+        },
+        "2024": {
+          "sharpe": 2.8,
+          "total_pnl": 26158.0,
+          "n_trades": 790,
+          "win_rate": 0.399,
+          "profitable": "True"
+        },
+        "2025": {
+          "sharpe": 3.1,
+          "total_pnl": 73016.0,
+          "n_trades": 1173,
+          "win_rate": 0.413,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": 1.56,
+          "total_pnl": 20194.0,
+          "n_trades": 263,
+          "win_rate": 0.373,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "window": 15,
+            "z_entry": 1.5
+          },
+          "sharpe": 1.81,
+          "total_pnl": 169996.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "window": 15,
+            "z_entry": 1.5
+          },
+          "sharpe": 1.81,
+          "total_pnl": 169996.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "window": 15,
+            "z_entry": 1.5
+          },
+          "sharpe": 1.81,
+          "total_pnl": 169996.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "window": 15,
+            "z_entry": 1.5
+          },
+          "sharpe": 1.81,
+          "total_pnl": 169996.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "window": 15,
+            "z_entry": 2.0
+          },
+          "sharpe": 1.8,
+          "total_pnl": 144750.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    },
+    {
+      "rank": 20,
+      "tag": "GC/cvd_breakout/1m",
+      "symbol": "GC",
+      "strategy": "cvd_breakout",
+      "bar_min": 1,
+      "dsr": 1.1897674855266351,
+      "grade": "MARGINAL",
+      "params": {
+        "breakout_window": 10,
+        "confirm_bars": 1
+      },
+      "profile": {
+        "n_trading_days": 1293,
+        "pct_positive_days": 0.514,
+        "pct_within_daily_limit": 0.995,
+        "worst_day": -15553.0,
+        "best_day": 9984.0,
+        "avg_daily_pnl": 165.0,
+        "daily_pnl_std": 1583.0,
+        "max_dd_duration_days": 258,
+        "max_consec_loss_days": 7,
+        "total_pnl": 213103.0,
+        "sharpe": 1.65
+      },
+      "slippage": {
+        "slip_0.0t": {
+          "sharpe": 2.2749485586804186,
+          "total_pnl": 288661.3986609195,
+          "n_trades": 8158,
+          "pct_days_positive": 0.5266821345707656
+        },
+        "slip_0.5t": {
+          "sharpe": 1.6531372133227142,
+          "total_pnl": 213103.0776263041,
+          "n_trades": 8221,
+          "pct_days_positive": 0.5135344160866203
+        },
+        "slip_1.0t": {
+          "sharpe": 1.0567621667425964,
+          "total_pnl": 139161.88985919263,
+          "n_trades": 8295,
+          "pct_days_positive": 0.500772797527048
+        },
+        "slip_2.0t": {
+          "sharpe": -0.0701471080711484,
+          "total_pnl": -9880.939297574558,
+          "n_trades": 8435,
+          "pct_days_positive": 0.4699074074074074
+        },
+        "comm_3.0": {
+          "sharpe": 2.2749485586804186,
+          "total_pnl": 288661.3986609195,
+          "n_trades": 8158
+        },
+        "comm_5.0": {
+          "sharpe": 2.0073744248235648,
+          "total_pnl": 256029.3986609195,
+          "n_trades": 8158
+        },
+        "comm_8.0": {
+          "sharpe": 1.6063975548343288,
+          "total_pnl": 207081.39866091948,
+          "n_trades": 8158
+        },
+        "comm_10.0": {
+          "sharpe": 1.341215251177849,
+          "total_pnl": 174449.39866091948,
+          "n_trades": 8158
+        }
+      },
+      "regime": {
+        "2020": {
+          "sharpe": 1.96,
+          "total_pnl": 29470.0,
+          "n_trades": 1505,
+          "win_rate": 0.366,
+          "profitable": "True"
+        },
+        "2021": {
+          "sharpe": 2.16,
+          "total_pnl": 22469.0,
+          "n_trades": 1368,
+          "win_rate": 0.382,
+          "profitable": "True"
+        },
+        "2022": {
+          "sharpe": 1.42,
+          "total_pnl": 14391.0,
+          "n_trades": 1183,
+          "win_rate": 0.38,
+          "profitable": "True"
+        },
+        "2023": {
+          "sharpe": -0.11,
+          "total_pnl": -1149.0,
+          "n_trades": 1175,
+          "win_rate": 0.334,
+          "profitable": "False"
+        },
+        "2024": {
+          "sharpe": 1.2,
+          "total_pnl": 16800.0,
+          "n_trades": 1055,
+          "win_rate": 0.355,
+          "profitable": "True"
+        },
+        "2025": {
+          "sharpe": 2.6,
+          "total_pnl": 75085.0,
+          "n_trades": 1573,
+          "win_rate": 0.385,
+          "profitable": "True"
+        },
+        "2026": {
+          "sharpe": 2.87,
+          "total_pnl": 56037.0,
+          "n_trades": 362,
+          "win_rate": 0.387,
+          "profitable": "True"
+        }
+      },
+      "perturb": {
+        "-20%": {
+          "params": {
+            "breakout_window": 10,
+            "confirm_bars": 1
+          },
+          "sharpe": 1.65,
+          "total_pnl": 213103.0,
+          "pass_dsr1": "True"
+        },
+        "-10%": {
+          "params": {
+            "breakout_window": 10,
+            "confirm_bars": 1
+          },
+          "sharpe": 1.65,
+          "total_pnl": 213103.0,
+          "pass_dsr1": "True"
+        },
+        "+0%": {
+          "params": {
+            "breakout_window": 10,
+            "confirm_bars": 1
+          },
+          "sharpe": 1.65,
+          "total_pnl": 213103.0,
+          "pass_dsr1": "True"
+        },
+        "+10%": {
+          "params": {
+            "breakout_window": 10,
+            "confirm_bars": 1
+          },
+          "sharpe": 1.65,
+          "total_pnl": 213103.0,
+          "pass_dsr1": "True"
+        },
+        "+20%": {
+          "params": {
+            "breakout_window": 10,
+            "confirm_bars": 1
+          },
+          "sharpe": 1.65,
+          "total_pnl": 213103.0,
+          "pass_dsr1": "True"
+        },
+        "_robustness_score": "5/5 param combos pass DSR>=1.0"
+      }
+    }
+  ],
+  "top_recommended": [
+    "NQ/cvd_divergence_large_print/30m",
+    "ES/cvd_divergence_large_print/15m",
+    "NQ/stop_hunt_reversal/3m",
+    "GC/obi_threshold/1m",
+    "ES/tape_absorption/15m",
+    "ES/cvd_divergence/15m"
+  ]
+}

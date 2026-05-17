@@ -1,0 +1,286 @@
+You are working inside the Quant Trading Research Factory (“the fortress”).
+
+Current high-level state:
+- The system now reportedly contains:
+  - OHLCV strategy layer
+  - L2/tick order-flow strategy layer
+  - tick_strategies.py / v2 / v3 / v4
+  - tick_backtest_engine.py
+  - tick_deep_analysis.py
+  - tick_risk_manager.py
+  - tick_live_executor.py
+  - tick_news_monitor.py
+  - tick_tradovate_client.py
+  - tick_bar_builder.py
+  - 20 historical parquet bar files ending May 14 2026
+  - 12 accepted L2/order-flow strategies
+- There is a potential live execution path through Tradovate/Lucid.
+- The current breakdown says place_order() currently places market entries and bracket order support still needs to be added.
+- This means the system is NOT live-ready yet.
+
+Your job now is NOT to add new strategies.
+Your job now is to perform a live-readiness audit and harden the system before any real trading.
+
+Absolute rules:
+1. Do not run live trading.
+2. Do not place real orders.
+3. Do not ask for or store real credentials in code.
+4. Do not hard-code API secrets.
+5. Do not loosen strategy validation rules.
+6. Do not delete or manually edit historical result files.
+7. Do not start V5 research.
+8. Do not run multiple strategies in demo until single-strategy demo is proven safe.
+9. Any command that could place orders must default to dry-run unless explicitly passed --demo-auto-trade.
+10. Live mode must remain disabled unless a separate LIVE_ENABLE flag exists and is false by default.
+
+Project root:
+C:\Users\conor\Desktop\quant-research\
+
+Working directory:
+C:\Users\conor\Desktop\quant-research\04_codebase\
+
+Python:
+C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe
+
+Create a full safety and live-readiness phase.
+
+==================================================
+TASK 1 — CREATE LIVE READINESS AUDIT REPORT
+==================================================
+
+Create:
+
+08_docs/live_readiness_audit.md
+
+Audit the actual repository files, not memory.
+
+Check and document:
+
+1. Data layer
+   - Confirm what files exist in 01_data/tick_bars/
+   - Confirm symbols, bar sizes, date ranges, row counts
+   - Confirm whether these files are true L2-derived bars or only simulated/order-flow proxy bars
+   - Confirm whether OBI, CVD, buy_volume, sell_volume, large_prints, n_trades, book_pressure columns exist
+   - Confirm whether any columns are forward-filled or could leak future information
+
+2. Strategy layer
+   - List all V1/V2/V3/V4 strategy functions/classes
+   - Confirm the 12 accepted live strategies from actual code/results
+   - For each accepted strategy, report:
+     - symbol
+     - bar size
+     - strategy name
+     - version
+     - Sharpe/DSR if available
+     - worst day
+     - trade count
+     - date range tested
+     - slippage assumptions
+     - stress-test pass/fail
+     - regime pass/fail
+   - Flag any strategy with missing metrics.
+   - Flag any strategy with worst day above account risk limits.
+   - Flag any strategy whose performance depends on less than 200 trades.
+   - Flag any strategy tested on stale data only.
+
+3. Backtest integrity
+   - Check whether tick_backtest_engine.py uses next-bar execution or same-bar execution.
+   - Check whether entries/exits can use future bar information.
+   - Check whether ATR, CVD, OBI, and large print signals are computed using only information available at signal time.
+   - Check whether transaction costs include:
+     - commission
+     - exchange fees
+     - spread
+     - slippage
+     - market-order adverse selection
+   - Check whether 1-tick, 2-tick, and stress slippage are all tested.
+   - Check whether rejected strategies are actually excluded from live portfolio code.
+
+4. Risk manager
+   - Audit tick_risk_manager.py.
+   - Confirm:
+     - per-trade risk cap
+     - daily strategy halt
+     - portfolio daily halt
+     - account trailing DD halt
+     - max contracts
+     - news window block
+     - weekend flatten
+     - duplicate order prevention
+     - cooldown after loss
+     - account state persistence
+   - Flag anything that exists only in comments but is not enforced in code.
+   - Confirm whether partial TP is realistic with 1 micro contract.
+   - If max contracts is 1, recommend full exit only, no partial TP.
+
+5. Live executor
+   - Audit tick_live_executor.py.
+   - Confirm default mode is dry-run / alert-only.
+   - Confirm --auto-trade cannot accidentally place live orders.
+   - Confirm there is a clear DEMO_ONLY mode.
+   - Confirm no real account endpoint is used by default.
+   - Confirm every order decision is logged.
+   - Confirm every skipped signal is logged with reason.
+   - Confirm there is duplicate signal protection.
+   - Confirm there is position reconciliation against broker state.
+   - Confirm there is an emergency kill-switch file or flag.
+   - Confirm there is a heartbeat/status output.
+
+6. Tradovate client
+   - Audit tick_tradovate_client.py.
+   - Confirm whether it supports:
+     - authentication
+     - account lookup
+     - contract lookup
+     - market order
+     - bracket/OCO/OSO order
+     - cancel order
+     - flatten position
+     - position reconciliation
+     - order status polling
+   - If bracket/OCO/OSO is missing, mark system NOT LIVE READY.
+   - Confirm credentials are loaded from environment variables or .env, not hard-coded.
+   - Confirm demo endpoint is used by default.
+   - Confirm live endpoint requires an explicit extra flag.
+
+7. Bar builder
+   - Audit tick_bar_builder.py.
+   - Confirm REST polling mode works separately from WebSocket mode.
+   - Confirm logs are written.
+   - Confirm parquet files are append-only.
+   - Confirm duplicate bars are prevented.
+   - Confirm contract rollover mapping is configurable.
+   - Confirm missing data gaps are detected.
+   - Confirm stale data halts the executor.
+
+8. News monitor
+   - Audit tick_news_monitor.py.
+   - Confirm source of economic calendar.
+   - Confirm high-impact events are parsed correctly.
+   - Confirm timezone handling.
+   - Confirm executor receives news gate correctly.
+   - If unreliable, default to blocking trading around manually configured high-impact windows.
+
+9. Remote operations
+   - Confirm scripts folder exists.
+   - Confirm check_fortress_status.ps1 exists.
+   - Confirm log folder exists.
+   - Confirm RustDesk/Tailscale remote workflow is documented if already documented.
+   - Confirm long-running jobs write to logs.
+
+10. Final readiness classification
+   Classify the system as one of:
+   - RESEARCH ONLY
+   - PAPER READY
+   - DEMO READY
+   - LIMITED LIVE READY
+   - FULL LIVE READY
+
+I expect the answer currently to be either RESEARCH ONLY, PAPER READY, or DEMO READY.
+Do not call it live-ready unless bracket orders, kill switch, reconciliation, and demo proof all exist.
+
+==================================================
+TASK 2 — CREATE SAFETY CHECKLIST
+==================================================
+
+Create:
+
+08_docs/live_safety_checklist.md
+
+Include mandatory gates:
+
+Gate 0 — Code audit complete
+Gate 1 — No hard-coded secrets
+Gate 2 — Dry-run executor works
+Gate 3 — REST bar builder works
+Gate 4 — WebSocket bar builder works
+Gate 5 — One strategy signal replay matches backtest
+Gate 6 — Bracket/OCO/OSO order support exists
+Gate 7 — Broker state reconciliation exists
+Gate 8 — Kill switch tested
+Gate 9 — Demo account only, one strategy only, one micro contract only
+Gate 10 — One full week demo with logs
+Gate 11 — Post-demo slippage and execution report
+Gate 12 — Manual approval before any live/funded account
+
+For each gate, include:
+- status: PASS/FAIL/UNKNOWN
+- evidence file
+- command to test
+- failure action
+
+==================================================
+TASK 3 — PATCH EXECUTOR DEFAULTS FOR SAFETY
+==================================================
+
+If not already done, patch tick_live_executor.py so that:
+
+1. Default mode is dry-run / alert-only.
+2. Auto-trade requires:
+   --auto-trade
+   AND --demo
+   AND a typed confirmation or config flag.
+3. Live trading requires:
+   --live
+   AND an environment variable FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND
+   AND should still refuse to run if bracket orders are unavailable.
+4. If bracket order support is missing, auto-trading must refuse to start.
+5. Executor must print a huge warning banner showing:
+   - mode: DRY_RUN / DEMO / LIVE
+   - account
+   - endpoint
+   - strategies enabled
+   - max contracts
+   - daily halt
+   - account halt
+6. Add --strategy allowlist so only one strategy can be enabled for the first demo.
+7. Add --max-runtime-minutes for testing.
+8. Add --kill-switch-file, default:
+   C:\Users\conor\Desktop\quant-research\KILL_SWITCH.txt
+9. If kill-switch file contains STOP, executor must:
+   - stop new entries
+   - attempt to flatten demo positions if auto-trade is on
+   - exit safely
+10. Every signal must log:
+   - timestamp
+   - strategy
+   - symbol
+   - signal side
+   - entry
+   - stop
+   - target
+   - risk
+   - accepted/rejected
+   - rejection reason
+
+==================================================
+TASK 4 — DO NOT IMPLEMENT LIVE TRADING YET
+==================================================
+
+Do not connect to live accounts.
+Do not place live orders.
+Do not start demo auto-trading yet.
+
+Only prepare the safety infrastructure and reports.
+
+==================================================
+TASK 5 — PRODUCE NEXT ACTION REPORT
+==================================================
+
+After completing the audit and safety patches, produce:
+
+08_docs/next_action_report.md
+
+It must answer:
+
+1. Is the system safe to run in dry-run mode?
+2. Is the system safe to connect to Tradovate demo?
+3. Is bracket order support implemented?
+4. Are stops/targets broker-native or only internally tracked?
+5. Are the 12 live strategies actually eligible, or should some be demoted?
+6. Which single strategy should be used first in demo?
+7. Which strategies should be disabled immediately due to worst-day risk?
+8. What exact command should I run next?
+9. What should I avoid doing?
+
+Do not start demo trading until I explicitly approve after reading the report.

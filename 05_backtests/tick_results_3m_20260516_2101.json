@@ -1,0 +1,4125 @@
+[
+  {
+    "symbol": "GC",
+    "strategy": "vpin_approximation",
+    "bar_minutes": 3,
+    "description": "VPIN informed trading proxy \u2014 directional bias when toxicity high",
+    "n_folds": 9,
+    "n_oos_trades": 4463,
+    "param_stability": {
+      "bucket_window": 1.0,
+      "vpin_threshold": 0.6666666666666666,
+      "trend_window": 0.7777777777777778
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.85,
+          "trend_window": 5
+        },
+        "is_sharpe": 0.6242845937745748,
+        "oos_n_trades": 84,
+        "oos_win_rate": 0.40476190476190477,
+        "oos_avg_win": 591.1654405627023,
+        "oos_avg_loss": -353.7687271299851,
+        "oos_payoff": 1.6710505910419002,
+        "oos_total_pnl": 2411.188622632627,
+        "oos_max_dd": 5418.065675347735,
+        "oos_sharpe": 0.5216809329290735,
+        "oos_dsr": 0.33094050456928675,
+        "oos_calmar": 0.5933700985091572,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.7,
+          "trend_window": 5
+        },
+        "is_sharpe": 1.6449750881681526,
+        "oos_n_trades": 324,
+        "oos_win_rate": 0.5,
+        "oos_avg_win": 341.88385429289974,
+        "oos_avg_loss": -231.32286714239865,
+        "oos_payoff": 1.4779509631550671,
+        "oos_total_pnl": 17910.879918381175,
+        "oos_max_dd": 3431.9348031786494,
+        "oos_sharpe": 3.2886797250672934,
+        "oos_dsr": 2.0862509225126766,
+        "oos_calmar": 6.292629297649673,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.7,
+          "trend_window": 5
+        },
+        "is_sharpe": 1.8631408949674733,
+        "oos_n_trades": 330,
+        "oos_win_rate": 0.4484848484848485,
+        "oos_avg_win": 409.66129683507495,
+        "oos_avg_loss": -248.90861288721794,
+        "oos_payoff": 1.6458301385524778,
+        "oos_total_pnl": 15328.50438611742,
+        "oos_max_dd": 3253.845426776017,
+        "oos_sharpe": 2.1123316301765067,
+        "oos_dsr": 1.3400069877641458,
+        "oos_calmar": 5.2997500411285365,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 5
+        },
+        "is_sharpe": 2.1342031628901585,
+        "oos_n_trades": 503,
+        "oos_win_rate": 0.3797216699801193,
+        "oos_avg_win": 409.93605351705423,
+        "oos_avg_loss": -278.8705969035879,
+        "oos_payoff": 1.469986646382726,
+        "oos_total_pnl": -8709.840012162062,
+        "oos_max_dd": 12849.502453308643,
+        "oos_sharpe": -0.8665365773059281,
+        "oos_dsr": -0.549707750504187,
+        "oos_calmar": -0.5829842023851252,
+        "oos_max_consec_loss": 14
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 3
+        },
+        "is_sharpe": 1.6504412579297987,
+        "oos_n_trades": 714,
+        "oos_win_rate": 0.3795518207282913,
+        "oos_avg_win": 359.1640885744944,
+        "oos_avg_loss": -223.30082543045046,
+        "oos_payoff": 1.6084315312410704,
+        "oos_total_pnl": -1588.7976620015788,
+        "oos_max_dd": 10591.68127153856,
+        "oos_sharpe": -0.14772074615955724,
+        "oos_dsr": -0.0937101112645839,
+        "oos_calmar": -0.15181157375160048,
+        "oos_max_consec_loss": 14
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 5
+        },
+        "is_sharpe": 1.464742546712833,
+        "oos_n_trades": 655,
+        "oos_win_rate": 0.4198473282442748,
+        "oos_avg_win": 569.2975252871806,
+        "oos_avg_loss": -341.32045574537,
+        "oos_payoff": 1.6679267700025715,
+        "oos_total_pnl": 26855.046270734096,
+        "oos_max_dd": 7820.963614271779,
+        "oos_sharpe": 1.7880609594336356,
+        "oos_dsr": 1.1342983014410117,
+        "oos_calmar": 2.9332168042829845,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 5
+        },
+        "is_sharpe": 1.5067262432342472,
+        "oos_n_trades": 633,
+        "oos_win_rate": 0.42338072669826227,
+        "oos_avg_win": 624.7743446499467,
+        "oos_avg_loss": -356.64185837580163,
+        "oos_payoff": 1.7518256199517885,
+        "oos_total_pnl": 37265.24605901809,
+        "oos_max_dd": 9543.29665308575,
+        "oos_sharpe": 2.6232486726846727,
+        "oos_dsr": 1.664119166622882,
+        "oos_calmar": 4.3734442198865215,
+        "oos_max_consec_loss": 15
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 5
+        },
+        "is_sharpe": 1.63526428438226,
+        "oos_n_trades": 627,
+        "oos_win_rate": 0.4098883572567783,
+        "oos_avg_win": 815.7554648461299,
+        "oos_avg_loss": -520.2832848835893,
+        "oos_payoff": 1.5679063474596364,
+        "oos_total_pnl": 17144.33905852733,
+        "oos_max_dd": 17698.680578348154,
+        "oos_sharpe": 1.04077695827697,
+        "oos_dsr": 0.6602412125403413,
+        "oos_calmar": 1.4444206608936023,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 3
+        },
+        "is_sharpe": 1.591113330352319,
+        "oos_n_trades": 593,
+        "oos_win_rate": 0.448566610455312,
+        "oos_avg_win": 1926.0723790861637,
+        "oos_avg_loss": -1103.5155656570262,
+        "oos_payoff": 1.745396656855848,
+        "oos_total_pnl": 151485.66286707195,
+        "oos_max_dd": 24068.95577499611,
+        "oos_sharpe": 3.0639185372421744,
+        "oos_dsr": 1.943668404710459,
+        "oos_calmar": 7.144335632885471,
+        "oos_max_consec_loss": 11
+      }
+    ],
+    "n_trades": 4463,
+    "win_rate": 0.41944880125476136,
+    "avg_win": 725.2813497084152,
+    "avg_loss": -424.40156586099357,
+    "payoff": 1.7089506921045865,
+    "total_pnl": 258102.22950831905,
+    "max_dd": 24068.95577499608,
+    "sharpe": 1.4224894056447932,
+    "dsr": 0.9023894337203159,
+    "calmar": 1.3010636737173433,
+    "max_consec_loss": 15,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "GC",
+    "strategy": "stacked_imbalance",
+    "bar_minutes": 3,
+    "description": "N consecutive same-direction delta bars (footprint concept)",
+    "n_folds": 9,
+    "n_oos_trades": 2246,
+    "param_stability": {
+      "stack_n": 0.8888888888888888,
+      "min_delta": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.2187271695418251,
+        "oos_n_trades": 82,
+        "oos_win_rate": 0.3170731707317073,
+        "oos_avg_win": 517.2034014268685,
+        "oos_avg_loss": -254.60148391015125,
+        "oos_payoff": 2.031423358119112,
+        "oos_total_pnl": -810.3946618698883,
+        "oos_max_dd": 3983.058742158919,
+        "oos_sharpe": -0.2392915939828864,
+        "oos_dsr": -0.17876709732657,
+        "oos_calmar": -0.26985272006323213,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.0096597012343718,
+        "oos_n_trades": 300,
+        "oos_win_rate": 0.37333333333333335,
+        "oos_avg_win": 352.2883920583577,
+        "oos_avg_loss": -206.54287010175707,
+        "oos_payoff": 1.7056429586980972,
+        "oos_total_pnl": 626.2403314057337,
+        "oos_max_dd": 5245.615289043033,
+        "oos_sharpe": 0.12167348643645325,
+        "oos_dsr": 0.09089837060220397,
+        "oos_calmar": 0.1453365319179408,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.7730162907592302,
+        "oos_n_trades": 258,
+        "oos_win_rate": 0.437984496124031,
+        "oos_avg_win": 400.5434658120358,
+        "oos_avg_loss": -235.69187693337204,
+        "oos_payoff": 1.6994368708144565,
+        "oos_total_pnl": 11086.089481421099,
+        "oos_max_dd": 4113.4110079401435,
+        "oos_sharpe": 2.0866418446677035,
+        "oos_dsr": 1.558863391407233,
+        "oos_calmar": 3.059312492070876,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.0066474799442295,
+        "oos_n_trades": 249,
+        "oos_win_rate": 0.41365461847389556,
+        "oos_avg_win": 367.0922191932076,
+        "oos_avg_loss": -236.0381297522468,
+        "oos_payoff": 1.5552242325361558,
+        "oos_total_pnl": 3348.9316330723623,
+        "oos_max_dd": 5120.088916183303,
+        "oos_sharpe": 0.5619017972122383,
+        "oos_dsr": 0.41977886309453366,
+        "oos_calmar": 0.5644772820218292,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.9121674905990207,
+        "oos_n_trades": 293,
+        "oos_win_rate": 0.34812286689419797,
+        "oos_avg_win": 351.34195547432535,
+        "oos_avg_loss": -209.82395964757384,
+        "oos_payoff": 1.6744606100487716,
+        "oos_total_pnl": -4239.496834305426,
+        "oos_max_dd": 7905.803907606074,
+        "oos_sharpe": -0.6943933285379315,
+        "oos_dsr": -0.5187590490727356,
+        "oos_calmar": -0.5427120580728839,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.6734629200928851,
+        "oos_n_trades": 271,
+        "oos_win_rate": 0.3874538745387454,
+        "oos_avg_win": 592.6332147662208,
+        "oos_avg_loss": -288.65338717229645,
+        "oos_payoff": 2.0530963470471235,
+        "oos_total_pnl": 14310.02527985197,
+        "oos_max_dd": 5826.417018728094,
+        "oos_sharpe": 1.4994911556070971,
+        "oos_dsr": 1.1202218886715922,
+        "oos_calmar": 2.0980573736689143,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.8355031079932166,
+        "oos_n_trades": 272,
+        "oos_win_rate": 0.39705882352941174,
+        "oos_avg_win": 685.8553926125564,
+        "oos_avg_loss": -340.6101460412237,
+        "oos_payoff": 2.0136082280107654,
+        "oos_total_pnl": 18212.31845139543,
+        "oos_max_dd": 4840.099364980761,
+        "oos_sharpe": 1.807154765714367,
+        "oos_dsr": 1.3500675327096512,
+        "oos_calmar": 4.233148270893257,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.9842729363942508,
+        "oos_n_trades": 273,
+        "oos_win_rate": 0.3772893772893773,
+        "oos_avg_win": 868.0559004901513,
+        "oos_avg_loss": -506.46457342343194,
+        "oos_payoff": 1.7139518656212294,
+        "oos_total_pnl": 3310.7802685021506,
+        "oos_max_dd": 8280.458872533396,
+        "oos_sharpe": 0.31838808742442554,
+        "oos_dsr": 0.23785755807324077,
+        "oos_calmar": 0.5926899637026601,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.8629533116974359,
+        "oos_n_trades": 248,
+        "oos_win_rate": 0.375,
+        "oos_avg_win": 2653.051942463996,
+        "oos_avg_loss": -1263.9689367720484,
+        "oos_payoff": 2.0989850820538503,
+        "oos_total_pnl": 50818.645449484044,
+        "oos_max_dd": 24283.575685817174,
+        "oos_sharpe": 1.5620639936800604,
+        "oos_dsr": 1.1669680549184065,
+        "oos_calmar": 2.4302517030723196,
+        "oos_max_consec_loss": 14
+      }
+    ],
+    "n_trades": 2246,
+    "win_rate": 0.38512911843276937,
+    "avg_win": 744.8032790426853,
+    "avg_loss": -396.51824545471777,
+    "payoff": 1.8783581526962585,
+    "total_pnl": 96663.13939895749,
+    "max_dd": 24283.57568581715,
+    "sharpe": 0.8096226040762201,
+    "dsr": 0.6048431557985933,
+    "calmar": 0.4838931774487013,
+    "max_consec_loss": 14,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "GC",
+    "strategy": "vwap_cvd_divergence",
+    "bar_minutes": 3,
+    "description": "Price deviates from VWAP while CVD contradicts it",
+    "n_folds": 9,
+    "n_oos_trades": 2154,
+    "param_stability": {
+      "vwap_window": 0.7777777777777778,
+      "dev_threshold": 0.5555555555555556,
+      "cvd_window": 1.0,
+      "cvd_z_thresh": 0.7777777777777778
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.6974431275390478,
+        "oos_n_trades": 234,
+        "oos_win_rate": 0.36752136752136755,
+        "oos_avg_win": 708.2659914499902,
+        "oos_avg_loss": -396.5977805592376,
+        "oos_payoff": 1.7858546521649041,
+        "oos_total_pnl": 2214.4037419319793,
+        "oos_max_dd": 13776.328131248054,
+        "oos_sharpe": 0.24120938983699633,
+        "oos_dsr": 0.1530168195554088,
+        "oos_calmar": 0.2131916878875851,
+        "oos_max_consec_loss": 17
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.021544944330632,
+        "oos_n_trades": 213,
+        "oos_win_rate": 0.3333333333333333,
+        "oos_avg_win": 585.842618516373,
+        "oos_avg_loss": -273.70359408285333,
+        "oos_payoff": 2.1404272036670133,
+        "oos_total_pnl": 2728.9155548973185,
+        "oos_max_dd": 5279.761345492186,
+        "oos_sharpe": 0.4806194983964869,
+        "oos_dsr": 0.3048922229381073,
+        "oos_calmar": 0.6384783538366481,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.0005,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.2603515621263333,
+        "oos_n_trades": 291,
+        "oos_win_rate": 0.4261168384879725,
+        "oos_avg_win": 552.491470915735,
+        "oos_avg_loss": -286.9552763476121,
+        "oos_payoff": 1.9253574213650546,
+        "oos_total_pnl": 20587.41124349995,
+        "oos_max_dd": 4961.596472730018,
+        "oos_sharpe": 2.34582690490947,
+        "oos_dsr": 1.4881301779309926,
+        "oos_calmar": 4.796498874295066,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.0005,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.5238519273565587,
+        "oos_n_trades": 291,
+        "oos_win_rate": 0.3539518900343643,
+        "oos_avg_win": 540.257848234929,
+        "oos_avg_loss": -317.36710404933564,
+        "oos_payoff": 1.702312058627678,
+        "oos_total_pnl": -4018.457193077412,
+        "oos_max_dd": 8508.482266677831,
+        "oos_sharpe": -0.46735341892631255,
+        "oos_dsr": -0.2964765750652481,
+        "oos_calmar": -0.4075913301913366,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 1.1824304283594627,
+        "oos_n_trades": 209,
+        "oos_win_rate": 0.37799043062200954,
+        "oos_avg_win": 539.2942188872463,
+        "oos_avg_loss": -287.34458141862103,
+        "oos_payoff": 1.8768205623532177,
+        "oos_total_pnl": 5249.447707671717,
+        "oos_max_dd": 7138.585950008606,
+        "oos_sharpe": 0.7012874773960022,
+        "oos_dsr": 0.4448781179608665,
+        "oos_calmar": 0.7442221894924537,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 1.1084147219933176,
+        "oos_n_trades": 203,
+        "oos_win_rate": 0.4039408866995074,
+        "oos_avg_win": 685.9550342896666,
+        "oos_avg_loss": -391.9060303948865,
+        "oos_payoff": 1.7503048718043324,
+        "oos_total_pnl": 8827.683133971397,
+        "oos_max_dd": 6458.978542511071,
+        "oos_sharpe": 0.9614311831898622,
+        "oos_dsr": 0.6099063638132964,
+        "oos_calmar": 1.2042520709246594,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.101859622601009,
+        "oos_n_trades": 234,
+        "oos_win_rate": 0.36752136752136755,
+        "oos_avg_win": 857.9413953592175,
+        "oos_avg_loss": -434.2478868474736,
+        "oos_payoff": 1.9756950381213096,
+        "oos_total_pnl": 9514.272747466608,
+        "oos_max_dd": 5727.087591643953,
+        "oos_sharpe": 0.9343090161845921,
+        "oos_dsr": 0.5927007826483108,
+        "oos_calmar": 1.860629038171182,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.0636017866023468,
+        "oos_n_trades": 233,
+        "oos_win_rate": 0.31759656652360513,
+        "oos_avg_win": 1271.0407074317723,
+        "oos_avg_loss": -607.1168177318926,
+        "oos_payoff": 2.0935686021352704,
+        "oos_total_pnl": -2474.561669419789,
+        "oos_max_dd": 12191.236591690618,
+        "oos_sharpe": -0.20722505911187003,
+        "oos_dsr": -0.1314580642938821,
+        "oos_calmar": -0.31189413965803053,
+        "oos_max_consec_loss": 13
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 0.8541762813466508,
+        "oos_n_trades": 246,
+        "oos_win_rate": 0.3902439024390244,
+        "oos_avg_win": 3130.111457933506,
+        "oos_avg_loss": -1454.777947542771,
+        "oos_payoff": 2.15160771664191,
+        "oos_total_pnl": 82274.00783020092,
+        "oos_max_dd": 16776.620478130037,
+        "oos_sharpe": 2.283737043590996,
+        "oos_dsr": 1.4487420218065161,
+        "oos_calmar": 5.721434933435807,
+        "oos_max_consec_loss": 9
+      }
+    ],
+    "n_trades": 2154,
+    "win_rate": 0.37186629526462395,
+    "avg_win": 991.0667045660625,
+    "avg_loss": -494.41338304528705,
+    "payoff": 2.0045304972565505,
+    "total_pnl": 124903.12309714268,
+    "max_dd": 16776.620478130033,
+    "sharpe": 0.9067679536230987,
+    "dsr": 0.5752294652871411,
+    "calmar": 0.9033017714512893,
+    "max_consec_loss": 17,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "GC",
+    "strategy": "buying_climax",
+    "bar_minutes": 3,
+    "description": "Wyckoff buying/selling climax \u2014 huge volume + price reversal",
+    "n_folds": 9,
+    "n_oos_trades": 663,
+    "param_stability": {
+      "vol_z_spike": 0.8888888888888888,
+      "price_up_pct": 0.8888888888888888,
+      "reversal_window": 0.7777777777777778
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.002,
+          "reversal_window": 5
+        },
+        "is_sharpe": 1.4037856090152951,
+        "oos_n_trades": 14,
+        "oos_win_rate": 0.21428571428571427,
+        "oos_avg_win": 1216.3459129498376,
+        "oos_avg_loss": -531.4481339357363,
+        "oos_payoff": 2.2887387033273887,
+        "oos_total_pnl": -2196.8917344435877,
+        "oos_max_dd": 3117.4134370812444,
+        "oos_sharpe": -0.8955886597912324,
+        "oos_dsr": -0.5681376187044539,
+        "oos_calmar": -0.9921144192444717,
+        "oos_max_consec_loss": 5
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 0.6417423595197341,
+        "oos_n_trades": 85,
+        "oos_win_rate": 0.4235294117647059,
+        "oos_avg_win": 452.65731134365615,
+        "oos_avg_loss": -279.5858777221117,
+        "oos_payoff": 1.6190278101012134,
+        "oos_total_pnl": 2595.955199988148,
+        "oos_max_dd": 1734.9151008127437,
+        "oos_sharpe": 0.8248097601941662,
+        "oos_dsr": 0.5232373678672307,
+        "oos_calmar": 1.866672534457115,
+        "oos_max_consec_loss": 4
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 0.6580011284839199,
+        "oos_n_trades": 87,
+        "oos_win_rate": 0.3448275862068966,
+        "oos_avg_win": 614.5064771666616,
+        "oos_avg_loss": -264.0093634345379,
+        "oos_payoff": 2.32759349582323,
+        "oos_total_pnl": 3386.660599231189,
+        "oos_max_dd": 2889.4664098540807,
+        "oos_sharpe": 0.770665303733426,
+        "oos_dsr": 0.4888895651976184,
+        "oos_calmar": 1.3932168068799815,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.8421629381056909,
+        "oos_n_trades": 80,
+        "oos_win_rate": 0.3625,
+        "oos_avg_win": 508.9996184838544,
+        "oos_avg_loss": -336.8622478841003,
+        "oos_payoff": 1.5110022618473384,
+        "oos_total_pnl": -2418.9857060573377,
+        "oos_max_dd": 5292.2705499041485,
+        "oos_sharpe": -0.5232373164932529,
+        "oos_dsr": -0.3319278328949377,
+        "oos_calmar": -0.40133765445146147,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.558926474870062,
+        "oos_n_trades": 61,
+        "oos_win_rate": 0.36065573770491804,
+        "oos_avg_win": 614.587594343867,
+        "oos_avg_loss": -258.5391898475094,
+        "oos_payoff": 2.377154483644668,
+        "oos_total_pnl": 3437.8986715122064,
+        "oos_max_dd": 3736.837422852116,
+        "oos_sharpe": 0.8841837742931697,
+        "oos_dsr": 0.5609026627705805,
+        "oos_calmar": 0.9348409509929145,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.5987146846143934,
+        "oos_n_trades": 67,
+        "oos_win_rate": 0.373134328358209,
+        "oos_avg_win": 785.5499496181947,
+        "oos_avg_loss": -415.81587937040683,
+        "oos_payoff": 1.8891773705410382,
+        "oos_total_pnl": 2174.4818068977775,
+        "oos_max_dd": 2881.8213953009817,
+        "oos_sharpe": 0.39576181520890197,
+        "oos_dsr": 0.2510607663560089,
+        "oos_calmar": 0.6489655416445549,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.5799003852319206,
+        "oos_n_trades": 80,
+        "oos_win_rate": 0.4,
+        "oos_avg_win": 755.4475645467608,
+        "oos_avg_loss": -426.85518225722655,
+        "oos_payoff": 1.769798273390814,
+        "oos_total_pnl": 3685.2733171494674,
+        "oos_max_dd": 4811.583643883159,
+        "oos_sharpe": 0.6547938028662923,
+        "oos_dsr": 0.4153837677998375,
+        "oos_calmar": 0.8655204638427713,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.5891975403884989,
+        "oos_n_trades": 82,
+        "oos_win_rate": 0.36585365853658536,
+        "oos_avg_win": 1242.3192773441197,
+        "oos_avg_loss": -594.3308540331436,
+        "oos_payoff": 2.0902823215616535,
+        "oos_total_pnl": 6364.373910600132,
+        "oos_max_dd": 10264.26949119208,
+        "oos_sharpe": 0.9764412923088125,
+        "oos_dsr": 0.619428377695565,
+        "oos_calmar": 1.0416862280343777,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.6226982863097213,
+        "oos_n_trades": 107,
+        "oos_win_rate": 0.45794392523364486,
+        "oos_avg_win": 2914.679925410599,
+        "oos_avg_loss": -1448.3649292194432,
+        "oos_payoff": 2.0123933316870537,
+        "oos_total_pnl": 58814.15045039164,
+        "oos_max_dd": 12862.34415158048,
+        "oos_sharpe": 2.2698798001410854,
+        "oos_dsr": 1.4399513552327843,
+        "oos_calmar": 5.310097673016267,
+        "oos_max_consec_loss": 7
+      }
+    ],
+    "n_trades": 663,
+    "win_rate": 0.3861236802413273,
+    "avg_win": 1135.0147529109845,
+    "avg_loss": -527.5696811546495,
+    "payoff": 2.151402541607146,
+    "total_pnl": 75842.91651526964,
+    "max_dd": 12862.344151580488,
+    "sharpe": 0.8377451408115109,
+    "dsr": 0.5314432291860722,
+    "calmar": 0.7195738702146427,
+    "max_consec_loss": 14,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "GC",
+    "strategy": "level_delta_flip",
+    "bar_minutes": 3,
+    "description": "Price at key level + CVD flips direction (absorption confirmed)",
+    "n_folds": 9,
+    "n_oos_trades": 3656,
+    "param_stability": {
+      "price_tolerance": 1.0,
+      "lookback": 0.8888888888888888,
+      "flip_confirm": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 20,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.8858650344026822,
+        "oos_n_trades": 340,
+        "oos_win_rate": 0.43823529411764706,
+        "oos_avg_win": 314.8711944021083,
+        "oos_avg_loss": -221.2832881065312,
+        "oos_payoff": 1.4229325544481317,
+        "oos_total_pnl": 4650.699937566684,
+        "oos_max_dd": 6749.284110203969,
+        "oos_sharpe": 0.775292174141016,
+        "oos_dsr": 0.4918247286866637,
+        "oos_calmar": 0.9139186702739882,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 2.0841785104955854,
+        "oos_n_trades": 492,
+        "oos_win_rate": 0.4268292682926829,
+        "oos_avg_win": 252.07650173218406,
+        "oos_avg_loss": -161.4775112397756,
+        "oos_payoff": 1.5610625888200578,
+        "oos_total_pnl": 7399.407194141939,
+        "oos_max_dd": 3923.2519956263595,
+        "oos_sharpe": 1.2924556418332844,
+        "oos_dsr": 0.819899473496535,
+        "oos_calmar": 2.2850090736667332,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.8480335732286355,
+        "oos_n_trades": 445,
+        "oos_win_rate": 0.45393258426966293,
+        "oos_avg_win": 292.518461714368,
+        "oos_avg_loss": -196.8061622731898,
+        "oos_payoff": 1.4863277568937014,
+        "oos_total_pnl": 11264.831833917224,
+        "oos_max_dd": 3276.337249487243,
+        "oos_sharpe": 1.6801217103009696,
+        "oos_dsr": 1.0658245135066324,
+        "oos_calmar": 3.885364708327357,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.8016777928043417,
+        "oos_n_trades": 458,
+        "oos_win_rate": 0.44541484716157204,
+        "oos_avg_win": 296.374212316476,
+        "oos_avg_loss": -177.429286815013,
+        "oos_payoff": 1.670379324837587,
+        "oos_total_pnl": 15393.300461547802,
+        "oos_max_dd": 2782.389176301145,
+        "oos_sharpe": 1.8674318953093825,
+        "oos_dsr": 1.1846491115029685,
+        "oos_calmar": 4.758244909421347,
+        "oos_max_consec_loss": 13
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.8306657041417096,
+        "oos_n_trades": 539,
+        "oos_win_rate": 0.41187384044526903,
+        "oos_avg_win": 209.00363534994534,
+        "oos_avg_loss": -144.3919893043164,
+        "oos_payoff": 1.4474738962800442,
+        "oos_total_pnl": 626.5464382195578,
+        "oos_max_dd": 6316.8411004412565,
+        "oos_sharpe": 0.10030866349806875,
+        "oos_dsr": 0.06363314741893192,
+        "oos_calmar": 0.10038169084908106,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.5624557468609293,
+        "oos_n_trades": 428,
+        "oos_win_rate": 0.4088785046728972,
+        "oos_avg_win": 340.1673675230751,
+        "oos_avg_loss": -243.0174753173771,
+        "oos_payoff": 1.399765046027335,
+        "oos_total_pnl": -1954.1319387582625,
+        "oos_max_dd": 11843.676752387137,
+        "oos_sharpe": -0.19931273110053876,
+        "oos_dsr": -0.12643869391036902,
+        "oos_calmar": -0.14046760153643736,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.23663985280828,
+        "oos_n_trades": 391,
+        "oos_win_rate": 0.4296675191815857,
+        "oos_avg_win": 513.3988755487385,
+        "oos_avg_loss": -302.6240968713272,
+        "oos_payoff": 1.6964904013147064,
+        "oos_total_pnl": 18765.8374898821,
+        "oos_max_dd": 4872.876155258124,
+        "oos_sharpe": 1.8455786273897954,
+        "oos_dsr": 1.170785979739287,
+        "oos_calmar": 4.31320996450701,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.3179470040389716,
+        "oos_n_trades": 315,
+        "oos_win_rate": 0.38095238095238093,
+        "oos_avg_win": 645.4949718272995,
+        "oos_avg_loss": -421.17089477964083,
+        "oos_payoff": 1.5326200832681622,
+        "oos_total_pnl": -4668.927862754017,
+        "oos_max_dd": 16164.387178997375,
+        "oos_sharpe": -0.46346152545900743,
+        "oos_dsr": -0.2940076613931148,
+        "oos_calmar": -0.4306969097502093,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 10,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.047268822187324,
+        "oos_n_trades": 248,
+        "oos_win_rate": 0.4435483870967742,
+        "oos_avg_win": 1879.3673256970324,
+        "oos_avg_loss": -984.740056968024,
+        "oos_payoff": 1.9084907863741531,
+        "oos_total_pnl": 70836.27796508622,
+        "oos_max_dd": 16699.86357596005,
+        "oos_sharpe": 2.397804157566667,
+        "oos_dsr": 1.521103164165927,
+        "oos_calmar": 4.836721454727998,
+        "oos_max_consec_loss": 8
+      }
+    ],
+    "n_trades": 3656,
+    "win_rate": 0.42669584245076586,
+    "avg_win": 446.0063152633973,
+    "avg_loss": -273.59542475765767,
+    "payoff": 1.6301673014395466,
+    "total_pnl": 122313.84151884925,
+    "max_dd": 16699.863575960015,
+    "sharpe": 1.0672801765100532,
+    "dsr": 0.6770541490713359,
+    "calmar": 0.888641778412117,
+    "max_consec_loss": 13,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "GC",
+    "strategy": "composite_order_flow_score",
+    "bar_minutes": 3,
+    "description": "Normalised composite: CVD + flow + large prints combined score",
+    "n_folds": 9,
+    "n_oos_trades": 2411,
+    "param_stability": {
+      "cvd_weight": 1.0,
+      "flow_weight": 0.7777777777777778,
+      "large_weight": 0.6666666666666666,
+      "threshold": 0.7777777777777778
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 1.09610087779245,
+        "oos_n_trades": 260,
+        "oos_win_rate": 0.38076923076923075,
+        "oos_avg_win": 502.87019243426835,
+        "oos_avg_loss": -316.2171609661606,
+        "oos_payoff": 1.5902685069267386,
+        "oos_total_pnl": -1126.813864559299,
+        "oos_max_dd": 11199.50360557323,
+        "oos_sharpe": -0.158485599390092,
+        "oos_dsr": -0.10053904775594659,
+        "oos_calmar": -0.1334443983409357,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.5914873551882311,
+        "oos_n_trades": 253,
+        "oos_win_rate": 0.3794466403162055,
+        "oos_avg_win": 401.0137877934326,
+        "oos_avg_loss": -232.84037347131923,
+        "oos_payoff": 1.7222691314864627,
+        "oos_total_pnl": 1941.3849931724208,
+        "oos_max_dd": 5336.803547036658,
+        "oos_sharpe": 0.37400930969232943,
+        "oos_dsr": 0.237261555580024,
+        "oos_calmar": 0.4428540770236515,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.5121533448721372,
+        "oos_n_trades": 256,
+        "oos_win_rate": 0.40625,
+        "oos_avg_win": 463.54643991313,
+        "oos_avg_loss": -265.93351306592683,
+        "oos_payoff": 1.7430914763955059,
+        "oos_total_pnl": 7786.935764944646,
+        "oos_max_dd": 4708.195932322919,
+        "oos_sharpe": 1.234242201195992,
+        "oos_dsr": 0.7829704155203274,
+        "oos_calmar": 1.9118601083205715,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.643534324073758,
+        "oos_n_trades": 272,
+        "oos_win_rate": 0.36764705882352944,
+        "oos_avg_win": 459.7114193068946,
+        "oos_avg_loss": -269.5615382101773,
+        "oos_payoff": 1.705404347961753,
+        "oos_total_pnl": -393.4426414610307,
+        "oos_max_dd": 5999.453845871296,
+        "oos_sharpe": -0.049792804081507394,
+        "oos_dsr": -0.031587230175602506,
+        "oos_calmar": -0.056403055428513496,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.5944243712153626,
+        "oos_n_trades": 320,
+        "oos_win_rate": 0.36875,
+        "oos_avg_win": 402.3497195610033,
+        "oos_avg_loss": -217.3499162660032,
+        "oos_payoff": 1.8511611436214612,
+        "oos_total_pnl": 3572.583822465758,
+        "oos_max_dd": 5772.378963256803,
+        "oos_sharpe": 0.5701799639264852,
+        "oos_dsr": 0.36170699952107194,
+        "oos_calmar": 0.6263668799405591,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 2.0
+        },
+        "is_sharpe": 0.6099416628019486,
+        "oos_n_trades": 219,
+        "oos_win_rate": 0.3972602739726027,
+        "oos_avg_win": 586.3094752665471,
+        "oos_avg_loss": -293.35910687575364,
+        "oos_payoff": 1.9986066957684963,
+        "oos_total_pnl": 12285.522240590113,
+        "oos_max_dd": 4665.461077246619,
+        "oos_sharpe": 1.431252629726764,
+        "oos_dsr": 0.9079485899330185,
+        "oos_calmar": 2.2418568686797746,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 2.0
+        },
+        "is_sharpe": 0.7720079275699877,
+        "oos_n_trades": 227,
+        "oos_win_rate": 0.3656387665198238,
+        "oos_avg_win": 688.031215875709,
+        "oos_avg_loss": -359.3198176759495,
+        "oos_payoff": 1.914815665681446,
+        "oos_total_pnl": 5364.537172347116,
+        "oos_max_dd": 7069.075315705793,
+        "oos_sharpe": 0.633401827399253,
+        "oos_dsr": 0.40181326769540243,
+        "oos_calmar": 0.8499388342460868,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 2.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.7607331676444604,
+        "oos_n_trades": 317,
+        "oos_win_rate": 0.41009463722397477,
+        "oos_avg_win": 930.0063320448199,
+        "oos_avg_loss": -494.3259518253519,
+        "oos_payoff": 1.8813625475471623,
+        "oos_total_pnl": 28461.870174485783,
+        "oos_max_dd": 6797.934217372227,
+        "oos_sharpe": 2.545090163626761,
+        "oos_dsr": 1.6145374878776382,
+        "oos_calmar": 6.280261605448688,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 2.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.9871200274822557,
+        "oos_n_trades": 287,
+        "oos_win_rate": 0.39372822299651566,
+        "oos_avg_win": 2291.224421759769,
+        "oos_avg_loss": -1258.9667889561126,
+        "oos_payoff": 1.8199244347498358,
+        "oos_total_pnl": 39848.13838049029,
+        "oos_max_dd": 29000.84125931162,
+        "oos_sharpe": 1.1443757308234068,
+        "oos_dsr": 0.725961517606461,
+        "oos_calmar": 1.5597141317718826,
+        "oos_max_consec_loss": 8
+      }
+    ],
+    "n_trades": 2411,
+    "win_rate": 0.3857320613853173,
+    "avg_win": 771.8961390963113,
+    "avg_loss": -418.71890163206865,
+    "payoff": 1.8434709684412147,
+    "total_pnl": 97740.7160424758,
+    "max_dd": 29000.841259311623,
+    "sharpe": 0.7714524577778695,
+    "dsr": 0.4893889147812408,
+    "calmar": 0.40871437977557457,
+    "max_consec_loss": 12,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "SI",
+    "strategy": "vpin_approximation",
+    "bar_minutes": 3,
+    "description": "VPIN informed trading proxy \u2014 directional bias when toxicity high",
+    "n_folds": 4,
+    "n_oos_trades": 3271,
+    "param_stability": {
+      "bucket_window": 1.0,
+      "vpin_threshold": 1.0,
+      "trend_window": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "bucket_window": 20,
+          "vpin_threshold": 0.5,
+          "trend_window": 3
+        },
+        "is_sharpe": 2.181959811971019,
+        "oos_n_trades": 924,
+        "oos_win_rate": 0.42857142857142855,
+        "oos_avg_win": 498.44282214512623,
+        "oos_avg_loss": -290.7948801873661,
+        "oos_payoff": 1.7140701439584065,
+        "oos_total_pnl": 43843.66083054068,
+        "oos_max_dd": 9927.05489020975,
+        "oos_sharpe": 1.9398094316867962,
+        "oos_dsr": 1.2305634949820359,
+        "oos_calmar": 2.5763400223603488,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "bucket_window": 20,
+          "vpin_threshold": 0.5,
+          "trend_window": 3
+        },
+        "is_sharpe": 2.043497016013771,
+        "oos_n_trades": 854,
+        "oos_win_rate": 0.42857142857142855,
+        "oos_avg_win": 554.5827376948083,
+        "oos_avg_loss": -353.1468832744002,
+        "oos_payoff": 1.5704024697958032,
+        "oos_total_pnl": 30641.602958392563,
+        "oos_max_dd": 12553.890175791708,
+        "oos_sharpe": 1.2480823535368006,
+        "oos_dsr": 0.7917502399491527,
+        "oos_calmar": 1.2527147888557988,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "bucket_window": 20,
+          "vpin_threshold": 0.5,
+          "trend_window": 3
+        },
+        "is_sharpe": 1.8301395751868295,
+        "oos_n_trades": 802,
+        "oos_win_rate": 0.40648379052369077,
+        "oos_avg_win": 636.7806192292325,
+        "oos_avg_loss": -379.50923946218234,
+        "oos_payoff": 1.677905444757128,
+        "oos_total_pnl": 26944.083884730993,
+        "oos_max_dd": 13262.78453605956,
+        "oos_sharpe": 0.9162433385063987,
+        "oos_dsr": 0.5812403973652239,
+        "oos_calmar": 0.9551343382258278,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "bucket_window": 20,
+          "vpin_threshold": 0.5,
+          "trend_window": 3
+        },
+        "is_sharpe": 1.5867265550631264,
+        "oos_n_trades": 691,
+        "oos_win_rate": 0.38929088277858176,
+        "oos_avg_win": 2513.432114575054,
+        "oos_avg_loss": -1355.0093097986735,
+        "oos_payoff": 1.8549187052807028,
+        "oos_total_pnl": 104299.3100856494,
+        "oos_max_dd": 81473.82060343033,
+        "oos_sharpe": 1.0629734353239872,
+        "oos_dsr": 0.6743220670434121,
+        "oos_calmar": 0.9296819930975846,
+        "oos_max_consec_loss": 11
+      }
+    ],
+    "n_trades": 3271,
+    "win_rate": 0.41485784163864264,
+    "avg_win": 946.2522920082456,
+    "avg_loss": -563.3937839581378,
+    "payoff": 1.6795575651550951,
+    "total_pnl": 205728.6577593136,
+    "max_dd": 81473.82060343042,
+    "sharpe": 0.8573605204250747,
+    "dsr": 0.5438867041472579,
+    "calmar": 0.3509776379407776,
+    "max_consec_loss": 11,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "SI",
+    "strategy": "stacked_imbalance",
+    "bar_minutes": 3,
+    "description": "N consecutive same-direction delta bars (footprint concept)",
+    "n_folds": 4,
+    "n_oos_trades": 654,
+    "param_stability": {
+      "stack_n": 1.0,
+      "min_delta": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "stack_n": 4,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.41314920908931957,
+        "oos_n_trades": 161,
+        "oos_win_rate": 0.37267080745341613,
+        "oos_avg_win": 737.9563922609184,
+        "oos_avg_loss": -370.35825456788206,
+        "oos_payoff": 1.9925474406448263,
+        "oos_total_pnl": 6871.199824299026,
+        "oos_max_dd": 6359.570521182598,
+        "oos_sharpe": 0.6152674529500676,
+        "oos_dsr": 0.45964663786418575,
+        "oos_calmar": 0.6317249965024879,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "stack_n": 4,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.4954335693417619,
+        "oos_n_trades": 165,
+        "oos_win_rate": 0.3939393939393939,
+        "oos_avg_win": 767.9561921421865,
+        "oos_avg_loss": -385.0217404903258,
+        "oos_payoff": 1.9945787766794496,
+        "oos_total_pnl": 11414.978440209541,
+        "oos_max_dd": 4165.917599399543,
+        "oos_sharpe": 1.016288258995236,
+        "oos_dsr": 0.7592364574271045,
+        "oos_calmar": 1.4149631800341396,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "stack_n": 4,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.6502936153301127,
+        "oos_n_trades": 170,
+        "oos_win_rate": 0.4411764705882353,
+        "oos_avg_win": 691.755557630658,
+        "oos_avg_loss": -380.51242175996634,
+        "oos_payoff": 1.8179578853986247,
+        "oos_total_pnl": 15732.986755102553,
+        "oos_max_dd": 5240.393129576118,
+        "oos_sharpe": 1.1979948927206499,
+        "oos_dsr": 0.8949836725106298,
+        "oos_calmar": 1.4115070757057662,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "stack_n": 4,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.7967044848604415,
+        "oos_n_trades": 158,
+        "oos_win_rate": 0.34177215189873417,
+        "oos_avg_win": 3524.2958503847394,
+        "oos_avg_loss": -993.6066554303997,
+        "oos_payoff": 3.5469728701224565,
+        "oos_total_pnl": 86976.88375601436,
+        "oos_max_dd": 20575.54199160574,
+        "oos_sharpe": 1.554937472646272,
+        "oos_dsr": 1.1616440589599932,
+        "oos_calmar": 3.1893826948126347,
+        "oos_max_consec_loss": 7
+      }
+    ],
+    "n_trades": 654,
+    "win_rate": 0.38837920489296635,
+    "avg_win": 1324.3629085353248,
+    "avg_loss": -538.4803249808676,
+    "payoff": 2.459445307648668,
+    "total_pnl": 120996.04877562547,
+    "max_dd": 20575.541991605725,
+    "sharpe": 0.88973512264157,
+    "dsr": 0.6646926564228098,
+    "calmar": 0.8232807104424472,
+    "max_consec_loss": 10,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "SI",
+    "strategy": "vwap_cvd_divergence",
+    "bar_minutes": 3,
+    "description": "Price deviates from VWAP while CVD contradicts it",
+    "n_folds": 4,
+    "n_oos_trades": 1248,
+    "param_stability": {
+      "vwap_window": 0.75,
+      "dev_threshold": 0.75,
+      "cvd_window": 1.0,
+      "cvd_z_thresh": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.0005,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 2.5975569614829106,
+        "oos_n_trades": 315,
+        "oos_win_rate": 0.38412698412698415,
+        "oos_avg_win": 810.3226837875268,
+        "oos_avg_loss": -386.4543742094553,
+        "oos_payoff": 2.0968133313153756,
+        "oos_total_pnl": 23076.89614165641,
+        "oos_max_dd": 7836.015916410198,
+        "oos_sharpe": 1.4168832397183153,
+        "oos_dsr": 0.8988330312081696,
+        "oos_calmar": 1.7179039569213266,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.0005,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 2.0576825259618743,
+        "oos_n_trades": 309,
+        "oos_win_rate": 0.3818770226537217,
+        "oos_avg_win": 798.0294276206668,
+        "oos_avg_loss": -456.8847116155722,
+        "oos_payoff": 1.74667570906189,
+        "oos_total_pnl": 6902.492540664382,
+        "oos_max_dd": 12920.176157912545,
+        "oos_sharpe": 0.39942856016107653,
+        "oos_dsr": 0.2533868518002022,
+        "oos_calmar": 0.27419312395800016,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.0005,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.5651065330557092,
+        "oos_n_trades": 324,
+        "oos_win_rate": 0.3611111111111111,
+        "oos_avg_win": 1040.3131222692077,
+        "oos_avg_loss": -565.7846071538912,
+        "oos_payoff": 1.8387087755928408,
+        "oos_total_pnl": 4599.221624641816,
+        "oos_max_dd": 12189.782268648,
+        "oos_sharpe": 0.1799071753172638,
+        "oos_dsr": 0.1141283256047718,
+        "oos_calmar": 0.18249509939318084,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 1.2411247417696378,
+        "oos_n_trades": 300,
+        "oos_win_rate": 0.3433333333333333,
+        "oos_avg_win": 4726.885460832195,
+        "oos_avg_loss": -1954.8598583138519,
+        "oos_payoff": 2.4180175579999537,
+        "oos_total_pnl": 101761.81037788733,
+        "oos_max_dd": 43314.9515244723,
+        "oos_sharpe": 1.1032055974728228,
+        "oos_dsr": 0.6998442803370676,
+        "oos_calmar": 1.706153329187039,
+        "oos_max_consec_loss": 8
+      }
+    ],
+    "n_trades": 1248,
+    "win_rate": 0.36778846153846156,
+    "avg_win": 1744.6674400190475,
+    "avg_loss": -842.157077672868,
+    "payoff": 2.0716651160138504,
+    "total_pnl": 136340.42068484996,
+    "max_dd": 43314.9515244723,
+    "sharpe": 0.615840395877282,
+    "dsr": 0.3906727627583929,
+    "calmar": 0.4372703751024791,
+    "max_consec_loss": 12,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "SI",
+    "strategy": "buying_climax",
+    "bar_minutes": 3,
+    "description": "Wyckoff buying/selling climax \u2014 huge volume + price reversal",
+    "n_folds": 4,
+    "n_oos_trades": 216,
+    "param_stability": {
+      "vol_z_spike": 0.5,
+      "price_up_pct": 0.5,
+      "reversal_window": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vol_z_spike": 2.5,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 1.251630003369229,
+        "oos_n_trades": 82,
+        "oos_win_rate": 0.47560975609756095,
+        "oos_avg_win": 782.9551127511805,
+        "oos_avg_loss": -373.5619926074112,
+        "oos_payoff": 2.0959174869109725,
+        "oos_total_pnl": 14472.083715177361,
+        "oos_max_dd": 2684.561965801642,
+        "oos_sharpe": 1.6117698410976062,
+        "oos_dsr": 1.0224639061802183,
+        "oos_calmar": 3.151961497596081,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vol_z_spike": 2.5,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 1.4363919728017343,
+        "oos_n_trades": 75,
+        "oos_win_rate": 0.38666666666666666,
+        "oos_avg_win": 819.3280272599535,
+        "oos_avg_loss": -435.6027051171356,
+        "oos_payoff": 1.880906655617835,
+        "oos_total_pnl": 3722.788355150416,
+        "oos_max_dd": 4377.937270854198,
+        "oos_sharpe": 0.4093863012649782,
+        "oos_dsr": 0.25970377783158466,
+        "oos_calmar": 0.43643328084952465,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.002,
+          "reversal_window": 5
+        },
+        "is_sharpe": 1.1461036639764481,
+        "oos_n_trades": 24,
+        "oos_win_rate": 0.4583333333333333,
+        "oos_avg_win": 1342.131519433313,
+        "oos_avg_loss": -649.6171713147737,
+        "oos_payoff": 2.066034548805022,
+        "oos_total_pnl": 6318.42348667439,
+        "oos_max_dd": 5037.831874609799,
+        "oos_sharpe": 0.7553331768318348,
+        "oos_dsr": 0.4791632718013006,
+        "oos_calmar": 0.6437008898851089,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.002,
+          "reversal_window": 5
+        },
+        "is_sharpe": 1.0567000827659734,
+        "oos_n_trades": 35,
+        "oos_win_rate": 0.34285714285714286,
+        "oos_avg_win": 6910.013020394478,
+        "oos_avg_loss": -2255.09159923826,
+        "oos_payoff": 3.064182857462902,
+        "oos_total_pnl": 31053.049462253744,
+        "oos_max_dd": 17825.606083148625,
+        "oos_sharpe": 0.6348765766690764,
+        "oos_dsr": 0.40274880939658797,
+        "oos_calmar": 1.2761509502029345,
+        "oos_max_consec_loss": 6
+      }
+    ],
+    "n_trades": 216,
+    "win_rate": 0.4212962962962963,
+    "avg_win": 1670.1029136959876,
+    "avg_loss": -771.3041610166316,
+    "payoff": 2.1652974249415142,
+    "total_pnl": 55566.34501925592,
+    "max_dd": 17825.606083148625,
+    "sharpe": 0.47823849207370916,
+    "dsr": 0.3033817758734264,
+    "calmar": 0.4330427620782194,
+    "max_consec_loss": 11,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "SI",
+    "strategy": "level_delta_flip",
+    "bar_minutes": 3,
+    "description": "Price at key level + CVD flips direction (absorption confirmed)",
+    "n_folds": 4,
+    "n_oos_trades": 734,
+    "param_stability": {
+      "price_tolerance": 0.75,
+      "lookback": 0.75,
+      "flip_confirm": 0.75
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 20,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.2609513600752809,
+        "oos_n_trades": 213,
+        "oos_win_rate": 0.3615023474178404,
+        "oos_avg_win": 675.6333552334718,
+        "oos_avg_loss": -315.84120147147416,
+        "oos_payoff": 2.1391552213129894,
+        "oos_total_pnl": 9069.36495285685,
+        "oos_max_dd": 4184.438883986024,
+        "oos_sharpe": 0.803658278322613,
+        "oos_dsr": 0.5098194305014586,
+        "oos_calmar": 1.2672518089227143,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 20,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 1.0355825641175478,
+        "oos_n_trades": 166,
+        "oos_win_rate": 0.37349397590361444,
+        "oos_avg_win": 730.7490075713038,
+        "oos_avg_loss": -342.66871443283577,
+        "oos_payoff": 2.13252327041526,
+        "oos_total_pnl": 9668.892168405904,
+        "oos_max_dd": 4419.597295136042,
+        "oos_sharpe": 0.8109543703175878,
+        "oos_dsr": 0.5144478771511067,
+        "oos_calmar": 1.1205453964731447,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 20,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 0.9642334776404214,
+        "oos_n_trades": 184,
+        "oos_win_rate": 0.3423913043478261,
+        "oos_avg_win": 692.1485757509006,
+        "oos_avg_loss": -408.0911772793308,
+        "oos_payoff": 1.6960635619846733,
+        "oos_total_pnl": -5773.672178492287,
+        "oos_max_dd": 12152.400777574945,
+        "oos_sharpe": -0.41535587266401536,
+        "oos_dsr": -0.26349071510714794,
+        "oos_calmar": -0.23068705283041332,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 0.7564010600428072,
+        "oos_n_trades": 171,
+        "oos_win_rate": 0.36257309941520466,
+        "oos_avg_win": 2619.246594250237,
+        "oos_avg_loss": -1757.990309311225,
+        "oos_payoff": 1.4899095748010407,
+        "oos_total_pnl": -29227.654871408762,
+        "oos_max_dd": 69145.19329928167,
+        "oos_sharpe": -0.5021802054477149,
+        "oos_dsr": -0.318569761870461,
+        "oos_calmar": -0.3096521313187118,
+        "oos_max_consec_loss": 10
+      }
+    ],
+    "n_trades": 734,
+    "win_rate": 0.35967302452316074,
+    "avg_win": 1148.9729391599226,
+    "avg_loss": -679.9828209933147,
+    "payoff": 1.6897087745268475,
+    "total_pnl": -16263.069928638302,
+    "max_dd": 69145.19329928167,
+    "sharpe": -0.11637173144272832,
+    "dsr": -0.07382313036634226,
+    "calmar": -0.03274631990828978,
+    "max_consec_loss": 10,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "SI",
+    "strategy": "composite_order_flow_score",
+    "bar_minutes": 3,
+    "description": "Normalised composite: CVD + flow + large prints combined score",
+    "n_folds": 4,
+    "n_oos_trades": 1400,
+    "param_stability": {
+      "cvd_weight": 0.75,
+      "flow_weight": 0.75,
+      "large_weight": 0.5,
+      "threshold": 0.5
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 2.0,
+          "large_weight": 1.0,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.711709292912906,
+        "oos_n_trades": 431,
+        "oos_win_rate": 0.39675174013921116,
+        "oos_avg_win": 572.3239951714838,
+        "oos_avg_loss": -359.36037577063763,
+        "oos_payoff": 1.592618534929323,
+        "oos_total_pnl": 4433.705473957957,
+        "oos_max_dd": 12256.819771196433,
+        "oos_sharpe": 0.28203540299381175,
+        "oos_dsr": 0.17891575612916652,
+        "oos_calmar": 0.2110113586902878,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.7222011013479089,
+        "oos_n_trades": 517,
+        "oos_win_rate": 0.34235976789168276,
+        "oos_avg_win": 592.7953117073462,
+        "oos_avg_loss": -358.4016076338134,
+        "oos_payoff": 1.6539973568227346,
+        "oos_total_pnl": -16931.7764232963,
+        "oos_max_dd": 19348.64746682438,
+        "oos_sharpe": -0.9499111486977851,
+        "oos_dsr": -0.6025983604211503,
+        "oos_calmar": -0.4482159957098229,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 2.0
+        },
+        "is_sharpe": 0.5505398185325728,
+        "oos_n_trades": 208,
+        "oos_win_rate": 0.3269230769230769,
+        "oos_avg_win": 1046.8083121801433,
+        "oos_avg_loss": -478.5655155272807,
+        "oos_payoff": 2.1873876788359397,
+        "oos_total_pnl": 4183.7930544304345,
+        "oos_max_dd": 13323.53020294571,
+        "oos_sharpe": 0.21723776535241637,
+        "oos_dsr": 0.13780985874560872,
+        "oos_calmar": 0.14818702103207287,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 0.49125420912072837,
+        "oos_n_trades": 244,
+        "oos_win_rate": 0.3442622950819672,
+        "oos_avg_win": 3460.62273734495,
+        "oos_avg_loss": -1362.0516408239985,
+        "oos_payoff": 2.5407426808365225,
+        "oos_total_pnl": 72764.04740513612,
+        "oos_max_dd": 28910.20764358512,
+        "oos_sharpe": 1.2641707583329524,
+        "oos_dsr": 0.8019562959210648,
+        "oos_calmar": 1.8225814007026662,
+        "oos_max_consec_loss": 13
+      }
+    ],
+    "n_trades": 1400,
+    "win_rate": 0.35714285714285715,
+    "avg_win": 1129.3348970234993,
+    "avg_loss": -555.7974211128015,
+    "payoff": 2.0319182027911853,
+    "total_pnl": 64449.76951022822,
+    "max_dd": 43715.86669736965,
+    "sharpe": 0.4469740681573791,
+    "dsr": 0.28354845712848953,
+    "calmar": 0.2048073477930222,
+    "max_consec_loss": 13,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "ES",
+    "strategy": "vpin_approximation",
+    "bar_minutes": 3,
+    "description": "VPIN informed trading proxy \u2014 directional bias when toxicity high",
+    "n_folds": 9,
+    "n_oos_trades": 4,
+    "param_stability": {
+      "bucket_window": 1.0,
+      "vpin_threshold": 1.0,
+      "trend_window": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 7,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 5
+        },
+        "is_sharpe": 0.0,
+        "oos_n_trades": NaN,
+        "oos_win_rate": NaN,
+        "oos_avg_win": NaN,
+        "oos_avg_loss": NaN,
+        "oos_payoff": NaN,
+        "oos_total_pnl": NaN,
+        "oos_max_dd": NaN,
+        "oos_sharpe": NaN,
+        "oos_dsr": NaN,
+        "oos_calmar": NaN,
+        "oos_max_consec_loss": NaN
+      }
+    ],
+    "n_trades": NaN,
+    "win_rate": NaN,
+    "avg_win": NaN,
+    "avg_loss": NaN,
+    "payoff": NaN,
+    "total_pnl": NaN,
+    "max_dd": NaN,
+    "sharpe": NaN,
+    "dsr": NaN,
+    "calmar": NaN,
+    "max_consec_loss": NaN,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "ES",
+    "strategy": "stacked_imbalance",
+    "bar_minutes": 3,
+    "description": "N consecutive same-direction delta bars (footprint concept)",
+    "n_folds": 9,
+    "n_oos_trades": 1542,
+    "param_stability": {
+      "stack_n": 1.0,
+      "min_delta": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": -0.43396862712381645,
+        "oos_n_trades": 157,
+        "oos_win_rate": 0.37579617834394907,
+        "oos_avg_win": 308.87078530269207,
+        "oos_avg_loss": -155.63585943655838,
+        "oos_payoff": 1.984573390868167,
+        "oos_total_pnl": 2971.0621080761102,
+        "oos_max_dd": 2255.920955856176,
+        "oos_sharpe": 4.0440949579528205,
+        "oos_dsr": 3.021214013050315,
+        "oos_calmar": 17.467662487105073,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.738842851851635,
+        "oos_n_trades": 166,
+        "oos_win_rate": 0.35542168674698793,
+        "oos_avg_win": 317.1773469577347,
+        "oos_avg_loss": -178.67173511667704,
+        "oos_payoff": 1.7751959858150483,
+        "oos_total_pnl": -404.4121869781029,
+        "oos_max_dd": 4999.272675849044,
+        "oos_sharpe": -0.42816750506084733,
+        "oos_dsr": -0.319870250246907,
+        "oos_calmar": -1.1991376219797563,
+        "oos_max_consec_loss": 20
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.9554900395612489,
+        "oos_n_trades": 184,
+        "oos_win_rate": 0.3695652173913043,
+        "oos_avg_win": 440.8616856571516,
+        "oos_avg_loss": -247.78149127102418,
+        "oos_payoff": 1.7792357427332444,
+        "oos_total_pnl": 1235.9416372475116,
+        "oos_max_dd": 7249.5970955813245,
+        "oos_sharpe": 0.8686159390150185,
+        "oos_dsr": 0.6489151897262763,
+        "oos_calmar": 2.685125880790397,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.8436105580518839,
+        "oos_n_trades": 173,
+        "oos_win_rate": 0.3179190751445087,
+        "oos_avg_win": 530.4312362299601,
+        "oos_avg_loss": -280.0261160437354,
+        "oos_payoff": 1.8942205952930318,
+        "oos_total_pnl": -3869.363700512975,
+        "oos_max_dd": 9143.674521540679,
+        "oos_sharpe": -2.868864175607332,
+        "oos_dsr": -2.143236679405397,
+        "oos_calmar": -6.664987707022051,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": -0.024555919532598742,
+        "oos_n_trades": 176,
+        "oos_win_rate": 0.38636363636363635,
+        "oos_avg_win": 529.2442493381592,
+        "oos_avg_loss": -313.3243337445867,
+        "oos_payoff": 1.6891259067340247,
+        "oos_total_pnl": 2149.580910579465,
+        "oos_max_dd": 9512.793693319358,
+        "oos_sharpe": 1.0181075246538391,
+        "oos_dsr": 0.7605955726205854,
+        "oos_calmar": 3.796251707119058,
+        "oos_max_consec_loss": 13
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.2923162883546838,
+        "oos_n_trades": 194,
+        "oos_win_rate": 0.3247422680412371,
+        "oos_avg_win": 707.4753032821435,
+        "oos_avg_loss": -353.7164980784138,
+        "oos_payoff": 2.0001196074413996,
+        "oos_total_pnl": -1765.917141497188,
+        "oos_max_dd": 9638.8167204167,
+        "oos_sharpe": -1.1433145945929941,
+        "oos_dsr": -0.8541337704537628,
+        "oos_calmar": -3.0779097515478218,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.0561330550254386,
+        "oos_n_trades": 166,
+        "oos_win_rate": 0.35542168674698793,
+        "oos_avg_win": 617.1838123889208,
+        "oos_avg_loss": -403.22409645441815,
+        "oos_payoff": 1.530622345777119,
+        "oos_total_pnl": -6731.133389676412,
+        "oos_max_dd": 11669.967133072249,
+        "oos_sharpe": -2.905275176403793,
+        "oos_dsr": -2.1704381736777125,
+        "oos_calmar": -7.6500716702798925,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": -0.5342087605966457,
+        "oos_n_trades": 155,
+        "oos_win_rate": 0.3096774193548387,
+        "oos_avg_win": 425.8639694068092,
+        "oos_avg_loss": -231.22805102493308,
+        "oos_payoff": 1.8417487303946904,
+        "oos_total_pnl": -4299.930928141002,
+        "oos_max_dd": 6518.096796814163,
+        "oos_sharpe": -5.311086016185586,
+        "oos_dsr": -3.9677425143197294,
+        "oos_calmar": -10.39013599051215,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": -0.8326665933780896,
+        "oos_n_trades": 171,
+        "oos_win_rate": 0.3508771929824561,
+        "oos_avg_win": 458.5146972250715,
+        "oos_avg_loss": -251.8601073640263,
+        "oos_payoff": 1.820513387466943,
+        "oos_total_pnl": -445.5900839026308,
+        "oos_max_dd": 5886.436906452387,
+        "oos_sharpe": -0.35816719499416133,
+        "oos_dsr": -0.2675752572039158,
+        "oos_calmar": -1.1922397085023784,
+        "oos_max_consec_loss": 11
+      }
+    ],
+    "n_trades": 1542,
+    "win_rate": 0.34954604409857326,
+    "avg_win": 484.25770459823116,
+    "avg_loss": -271.36058380184625,
+    "payoff": 1.7845543292015,
+    "total_pnl": -11159.762774805224,
+    "max_dd": 24819.09529223452,
+    "sharpe": -0.8742833484725037,
+    "dsr": -0.6531491300883779,
+    "calmar": -0.7923800262586627,
+    "max_consec_loss": 20,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "ES",
+    "strategy": "vwap_cvd_divergence",
+    "bar_minutes": 3,
+    "description": "Price deviates from VWAP while CVD contradicts it",
+    "n_folds": 9,
+    "n_oos_trades": 768,
+    "param_stability": {
+      "vwap_window": 0.7777777777777778,
+      "dev_threshold": 0.7777777777777778,
+      "cvd_window": 1.0,
+      "cvd_z_thresh": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 3.026370776402888,
+        "oos_n_trades": 13,
+        "oos_win_rate": 0.38461538461538464,
+        "oos_avg_win": 890.3609378170895,
+        "oos_avg_loss": -480.60073797977316,
+        "oos_payoff": 1.8526000221301402,
+        "oos_total_pnl": 606.9987852472623,
+        "oos_max_dd": 1383.3746177825378,
+        "oos_sharpe": 1.0481777640335699,
+        "oos_dsr": 0.6649360868144629,
+        "oos_calmar": 6.910804018486928,
+        "oos_max_consec_loss": 2
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 2.589697544821258,
+        "oos_n_trades": 35,
+        "oos_win_rate": 0.4,
+        "oos_avg_win": 480.75710616500317,
+        "oos_avg_loss": -250.53210597777928,
+        "oos_payoff": 1.9189440981573973,
+        "oos_total_pnl": 1469.4252607766794,
+        "oos_max_dd": 2885.348800290123,
+        "oos_sharpe": 1.523615313811016,
+        "oos_dsr": 0.9665410194139935,
+        "oos_calmar": 7.129797842397769,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 2.5644084490493104,
+        "oos_n_trades": 99,
+        "oos_win_rate": 0.36363636363636365,
+        "oos_avg_win": 717.755802670788,
+        "oos_avg_loss": -389.71313383014484,
+        "oos_payoff": 1.841754204218376,
+        "oos_total_pnl": 1287.281464849235,
+        "oos_max_dd": 4606.79523122608,
+        "oos_sharpe": 0.9931489854409431,
+        "oos_dsr": 0.6300272937117036,
+        "oos_calmar": 4.401038477670609,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 2.002386504274574,
+        "oos_n_trades": 112,
+        "oos_win_rate": 0.3482142857142857,
+        "oos_avg_win": 817.8306936164382,
+        "oos_avg_loss": -503.0273547258548,
+        "oos_payoff": 1.6258175344403452,
+        "oos_total_pnl": -4825.599843946313,
+        "oos_max_dd": 7038.205001825061,
+        "oos_sharpe": -3.629331958118412,
+        "oos_dsr": -2.3023516361339635,
+        "oos_calmar": -11.518572897106003,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 0.5521363443207714,
+        "oos_n_trades": 101,
+        "oos_win_rate": 0.33663366336633666,
+        "oos_avg_win": 798.4867786391225,
+        "oos_avg_loss": -458.45437399460013,
+        "oos_payoff": 1.7416930101064483,
+        "oos_total_pnl": -3567.8925839080475,
+        "oos_max_dd": 5931.712141049282,
+        "oos_sharpe": -4.167067222588335,
+        "oos_dsr": -2.643476581508515,
+        "oos_calmar": -10.105108606813157,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": -0.14328979666991334,
+        "oos_n_trades": 140,
+        "oos_win_rate": 0.37142857142857144,
+        "oos_avg_win": 791.1788618804478,
+        "oos_avg_loss": -470.25244108428956,
+        "oos_payoff": 1.6824556190631967,
+        "oos_total_pnl": -240.9139976341885,
+        "oos_max_dd": 8839.143246587179,
+        "oos_sharpe": -0.12298982282415419,
+        "oos_dsr": -0.07802147146490891,
+        "oos_calmar": -0.4578899840566633,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": -0.26360599243231436,
+        "oos_n_trades": 149,
+        "oos_win_rate": 0.3959731543624161,
+        "oos_avg_win": 916.7148549549081,
+        "oos_avg_loss": -419.3355394643776,
+        "oos_payoff": 2.1861129541413047,
+        "oos_total_pnl": 16345.977890545606,
+        "oos_max_dd": 5942.993096972206,
+        "oos_sharpe": 5.625759125402596,
+        "oos_dsr": 3.568831916268501,
+        "oos_calmar": 38.506470852915534,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 1.1916140397063535,
+        "oos_n_trades": 67,
+        "oos_win_rate": 0.3283582089552239,
+        "oos_avg_win": 682.9262581775566,
+        "oos_avg_loss": -421.30383009970643,
+        "oos_payoff": 1.6209827905336969,
+        "oos_total_pnl": -3934.294674580544,
+        "oos_max_dd": 7733.421561817779,
+        "oos_sharpe": -4.974834953700992,
+        "oos_dsr": -3.1559029395283034,
+        "oos_calmar": -8.546818507772763,
+        "oos_max_consec_loss": 16
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "vwap_window": 30,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 0.8163739059279561,
+        "oos_n_trades": 52,
+        "oos_win_rate": 0.36538461538461536,
+        "oos_avg_win": 684.6731058441652,
+        "oos_avg_loss": -364.39362369358213,
+        "oos_payoff": 1.8789382177002785,
+        "oos_total_pnl": 983.7994291509294,
+        "oos_max_dd": 4008.180542127122,
+        "oos_sharpe": 0.6941873805722489,
+        "oos_dsr": 0.44037400543340494,
+        "oos_calmar": 3.865804158837641,
+        "oos_max_consec_loss": 11
+      }
+    ],
+    "n_trades": 768,
+    "win_rate": 0.3645833333333333,
+    "avg_win": 783.307873383512,
+    "avg_loss": -432.78980085426787,
+    "payoff": 1.8099037265604905,
+    "total_pnl": 8124.781730500617,
+    "max_dd": 15906.790612172337,
+    "sharpe": 0.6146267039424818,
+    "dsr": 0.38990282888513583,
+    "calmar": 0.9064447432889163,
+    "max_consec_loss": 16,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "ES",
+    "strategy": "buying_climax",
+    "bar_minutes": 3,
+    "description": "Wyckoff buying/selling climax \u2014 huge volume + price reversal",
+    "n_folds": 9,
+    "n_oos_trades": 275,
+    "param_stability": {
+      "vol_z_spike": 1.0,
+      "price_up_pct": 1.0,
+      "reversal_window": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 10.781658250690818,
+        "oos_n_trades": 16,
+        "oos_win_rate": 0.625,
+        "oos_avg_win": 519.453920825953,
+        "oos_avg_loss": -254.93477619798432,
+        "oos_payoff": 2.0375953746794475,
+        "oos_total_pnl": 3664.930551071624,
+        "oos_max_dd": 414.08159759612863,
+        "oos_sharpe": 6.435509874413349,
+        "oos_dsr": 4.082516248084803,
+        "oos_calmar": 139.39923076629316,
+        "oos_max_consec_loss": 2
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 8.030328702165068,
+        "oos_n_trades": 18,
+        "oos_win_rate": 0.5,
+        "oos_avg_win": 579.2575781585276,
+        "oos_avg_loss": -220.58808925786394,
+        "oos_payoff": 2.6259694261252013,
+        "oos_total_pnl": 3228.025400105973,
+        "oos_max_dd": 677.7416050745323,
+        "oos_sharpe": 7.793030691678427,
+        "oos_dsr": 4.943691337821303,
+        "oos_calmar": 80.01696563370416,
+        "oos_max_consec_loss": 3
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 7.929984959049646,
+        "oos_n_trades": 18,
+        "oos_win_rate": 0.2777777777777778,
+        "oos_avg_win": 892.0339979755627,
+        "oos_avg_loss": -290.63372918697763,
+        "oos_payoff": 3.069272105722036,
+        "oos_total_pnl": 681.9315104471043,
+        "oos_max_dd": 2870.2103754694326,
+        "oos_sharpe": 0.9137805387475435,
+        "oos_dsr": 0.5796780627208035,
+        "oos_calmar": 4.276608883082411,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 5.075804921817147,
+        "oos_n_trades": 33,
+        "oos_win_rate": 0.2727272727272727,
+        "oos_avg_win": 577.4924635220281,
+        "oos_avg_loss": -374.6753976206205,
+        "oos_payoff": 1.5413140739674906,
+        "oos_total_pnl": -3794.77737119664,
+        "oos_max_dd": 3517.190901359123,
+        "oos_sharpe": -9.030104856805655,
+        "oos_dsr": -5.728458275915425,
+        "oos_calmar": -18.12590263766127,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 2.7003864031825353,
+        "oos_n_trades": 38,
+        "oos_win_rate": 0.3157894736842105,
+        "oos_avg_win": 696.6522943382929,
+        "oos_avg_loss": -361.2930741773655,
+        "oos_payoff": 1.9282193436021786,
+        "oos_total_pnl": -1033.7923965519876,
+        "oos_max_dd": 2684.4467892176726,
+        "oos_sharpe": -1.6515118316694541,
+        "oos_dsr": -1.0476751676664098,
+        "oos_calmar": -6.469754711411082,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 1.8952906294575718,
+        "oos_n_trades": 48,
+        "oos_win_rate": 0.4166666666666667,
+        "oos_avg_win": 783.0375408097475,
+        "oos_avg_loss": -447.19503129657494,
+        "oos_payoff": 1.7509978555429107,
+        "oos_total_pnl": 3139.289939890852,
+        "oos_max_dd": 4142.852913827688,
+        "oos_sharpe": 2.288549881276548,
+        "oos_dsr": 1.4517951579890556,
+        "oos_calmar": 12.730374958313067,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 1.7919112431881918,
+        "oos_n_trades": 51,
+        "oos_win_rate": 0.39215686274509803,
+        "oos_avg_win": 731.1094544891025,
+        "oos_avg_loss": -434.62282456274795,
+        "oos_payoff": 1.682169948678224,
+        "oos_total_pnl": 1148.881528336864,
+        "oos_max_dd": 4553.232240853222,
+        "oos_sharpe": 1.3744708928177551,
+        "oos_dsr": 0.8719277667116669,
+        "oos_calmar": 3.5325106530700663,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 1.7404403621567337,
+        "oos_n_trades": 30,
+        "oos_win_rate": 0.23333333333333334,
+        "oos_avg_win": 599.1262165752958,
+        "oos_avg_loss": -328.82496769003444,
+        "oos_payoff": 1.8220216694130713,
+        "oos_total_pnl": -3369.0907408437215,
+        "oos_max_dd": 5054.057630250958,
+        "oos_sharpe": -6.636951495770424,
+        "oos_dsr": -4.210305453334958,
+        "oos_calmar": -11.199065896556471,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 1.028253482383366,
+        "oos_n_trades": 23,
+        "oos_win_rate": 0.34782608695652173,
+        "oos_avg_win": 647.9023777418436,
+        "oos_avg_loss": -343.50425471765084,
+        "oos_payoff": 1.8861553207671269,
+        "oos_total_pnl": 30.655201169985958,
+        "oos_max_dd": 2411.825608457648,
+        "oos_sharpe": 0.10000332065393869,
+        "oos_dsr": 0.06343944604223858,
+        "oos_calmar": 0.21353425299481296,
+        "oos_max_consec_loss": 5
+      }
+    ],
+    "n_trades": 275,
+    "win_rate": 0.36363636363636365,
+    "avg_win": 680.8532954926067,
+    "avg_loss": -367.9387195818893,
+    "payoff": 1.8504529674569201,
+    "total_pnl": 3696.053622430054,
+    "max_dd": 7147.683714334684,
+    "sharpe": 0.5685764665364054,
+    "dsr": 0.36068978343772945,
+    "calmar": 0.9241753162442362,
+    "max_consec_loss": 12,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "ES",
+    "strategy": "level_delta_flip",
+    "bar_minutes": 3,
+    "description": "Price at key level + CVD flips direction (absorption confirmed)",
+    "n_folds": 9,
+    "n_oos_trades": 2737,
+    "param_stability": {
+      "price_tolerance": 1.0,
+      "lookback": 0.3333333333333333,
+      "flip_confirm": 0.6666666666666666
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 20,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 4.772680348704132,
+        "oos_n_trades": 475,
+        "oos_win_rate": 0.4105263157894737,
+        "oos_avg_win": 171.2132165689259,
+        "oos_avg_loss": -114.70491652276282,
+        "oos_payoff": 1.492640610003401,
+        "oos_total_pnl": 1269.2006045669586,
+        "oos_max_dd": 2658.933389943468,
+        "oos_sharpe": 1.0980139463708343,
+        "oos_dsr": 0.6965508350014425,
+        "oos_calmar": 6.330962664252727,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 30,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 3.393379293203274,
+        "oos_n_trades": 258,
+        "oos_win_rate": 0.4186046511627907,
+        "oos_avg_win": 203.75410023226175,
+        "oos_avg_loss": -166.46258430200518,
+        "oos_payoff": 1.224023410946212,
+        "oos_total_pnl": -2963.9448202165095,
+        "oos_max_dd": 5871.834992385926,
+        "oos_sharpe": -3.858697785800507,
+        "oos_dsr": -2.447855214955359,
+        "oos_calmar": -7.482520076653984,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 20,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 3.329271006855074,
+        "oos_n_trades": 310,
+        "oos_win_rate": 0.3774193548387097,
+        "oos_avg_win": 318.39528723844603,
+        "oos_avg_loss": -236.78181017354632,
+        "oos_payoff": 1.3446779843649397,
+        "oos_total_pnl": -8446.640756596262,
+        "oos_max_dd": 10411.355988858006,
+        "oos_sharpe": -4.792766873496735,
+        "oos_dsr": -3.0404037933539305,
+        "oos_calmar": -12.777835284737328,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 30,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 2.265136764510087,
+        "oos_n_trades": 184,
+        "oos_win_rate": 0.42391304347826086,
+        "oos_avg_win": 491.27924698382503,
+        "oos_avg_loss": -289.5380721305944,
+        "oos_payoff": 1.6967690755440152,
+        "oos_total_pnl": 7628.745618895342,
+        "oos_max_dd": 4487.285955952051,
+        "oos_sharpe": 4.216875829593101,
+        "oos_dsr": 2.6750738366381968,
+        "oos_calmar": 26.77626179321778,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 2.8981688318126326,
+        "oos_n_trades": 331,
+        "oos_win_rate": 0.4199395770392749,
+        "oos_avg_win": 279.33422557758166,
+        "oos_avg_loss": -242.9700479342936,
+        "oos_payoff": 1.1496652692480105,
+        "oos_total_pnl": -7822.791848100529,
+        "oos_max_dd": 12808.857139868662,
+        "oos_sharpe": -5.017979570307281,
+        "oos_dsr": -3.1832727364441413,
+        "oos_calmar": -9.61904487357306,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 30,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 1.7666121631997391,
+        "oos_n_trades": 131,
+        "oos_win_rate": 0.37404580152671757,
+        "oos_avg_win": 617.4519408800949,
+        "oos_avg_loss": -343.7776416165328,
+        "oos_payoff": 1.796079401722211,
+        "oos_total_pnl": 2065.378490568959,
+        "oos_max_dd": 5516.821918859032,
+        "oos_sharpe": 1.8687818599880965,
+        "oos_dsr": 1.1855054931794387,
+        "oos_calmar": 6.289555681132932,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 2.078210669505568,
+        "oos_n_trades": 294,
+        "oos_win_rate": 0.41496598639455784,
+        "oos_avg_win": 394.1121640325735,
+        "oos_avg_loss": -319.5232229680622,
+        "oos_payoff": 1.233438247059641,
+        "oos_total_pnl": -6876.310338532734,
+        "oos_max_dd": 10752.12449323633,
+        "oos_sharpe": -4.095014698770132,
+        "oos_dsr": -2.597768377350077,
+        "oos_calmar": -8.482192501634607,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 1.2803325708081852,
+        "oos_n_trades": 421,
+        "oos_win_rate": 0.42042755344418054,
+        "oos_avg_win": 189.78297729564048,
+        "oos_avg_loss": -193.70920172875222,
+        "oos_payoff": 0.9797313478240979,
+        "oos_total_pnl": -13673.458240487185,
+        "oos_max_dd": 17821.60815675243,
+        "oos_sharpe": -8.4479822068321,
+        "oos_dsr": -5.359175154100331,
+        "oos_calmar": -12.084036715063593,
+        "oos_max_consec_loss": 14
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 20,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 0.7127341161934136,
+        "oos_n_trades": 333,
+        "oos_win_rate": 0.4594594594594595,
+        "oos_avg_win": 267.3511234984101,
+        "oos_avg_loss": -196.11583136891886,
+        "oos_payoff": 1.3632307072420309,
+        "oos_total_pnl": 5603.87224885135,
+        "oos_max_dd": 3732.7073437603613,
+        "oos_sharpe": 2.85611967220586,
+        "oos_dsr": 1.8118463332041717,
+        "oos_calmar": 23.645300794059548,
+        "oos_max_consec_loss": 8
+      }
+    ],
+    "n_trades": 2737,
+    "win_rate": 0.4157837047862623,
+    "avg_win": 283.50144575977936,
+    "avg_loss": -216.2855499159972,
+    "payoff": 1.310773862932073,
+    "total_pnl": -23215.94904105061,
+    "max_dd": 34809.82840053655,
+    "sharpe": -1.6943278305552896,
+    "dsr": -1.0748364982432412,
+    "calmar": -1.1753008838646373,
+    "max_consec_loss": 14,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "ES",
+    "strategy": "composite_order_flow_score",
+    "bar_minutes": 3,
+    "description": "Normalised composite: CVD + flow + large prints combined score",
+    "n_folds": 9,
+    "n_oos_trades": 4307,
+    "param_stability": {
+      "cvd_weight": 0.7777777777777778,
+      "flow_weight": 0.5555555555555556,
+      "large_weight": 1.0,
+      "threshold": 0.7777777777777778
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 2.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 2.2392423207649026,
+        "oos_n_trades": 563,
+        "oos_win_rate": 0.369449378330373,
+        "oos_avg_win": 211.53206710372567,
+        "oos_avg_loss": -131.5289109446189,
+        "oos_payoff": 1.6082552921980218,
+        "oos_total_pnl": -2694.093427764781,
+        "oos_max_dd": 7154.951914283682,
+        "oos_sharpe": -1.7555880896924583,
+        "oos_dsr": -1.1136983768153994,
+        "oos_calmar": -4.994049847390823,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 2.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.5451709284367581,
+        "oos_n_trades": 586,
+        "oos_win_rate": 0.4044368600682594,
+        "oos_avg_win": 218.36369055157428,
+        "oos_avg_loss": -139.72859699541766,
+        "oos_payoff": 1.5627702220379085,
+        "oos_total_pnl": 2986.914309322341,
+        "oos_max_dd": 2859.278621689873,
+        "oos_sharpe": 2.5069987360091845,
+        "oos_dsr": 1.5903732996165365,
+        "oos_calmar": 14.624947709992135,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 2.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 1.075314924555289,
+        "oos_n_trades": 589,
+        "oos_win_rate": 0.40407470288624786,
+        "oos_avg_win": 302.42876526803997,
+        "oos_avg_loss": -205.72314780466277,
+        "oos_payoff": 1.4700765008476373,
+        "oos_total_pnl": -230.77874564313242,
+        "oos_max_dd": 8226.353781616239,
+        "oos_sharpe": -0.11097920922571486,
+        "oos_dsr": -0.0704022577395059,
+        "oos_calmar": -0.4418440223178938,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 2.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.7140614157555343,
+        "oos_n_trades": 564,
+        "oos_win_rate": 0.36524822695035464,
+        "oos_avg_win": 423.59735854074887,
+        "oos_avg_loss": -245.06001971831213,
+        "oos_payoff": 1.7285453540224927,
+        "oos_total_pnl": -470.431199761455,
+        "oos_max_dd": 8250.615915339364,
+        "oos_sharpe": -0.325792107935156,
+        "oos_dsr": -0.20667384560020083,
+        "oos_calmar": -0.8980288832095219,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 2.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.5561177749614625,
+        "oos_n_trades": 539,
+        "oos_win_rate": 0.39888682745825604,
+        "oos_avg_win": 374.04504482147723,
+        "oos_avg_loss": -251.8303151699471,
+        "oos_payoff": 1.4853058678382458,
+        "oos_total_pnl": -1173.337478445259,
+        "oos_max_dd": 8066.302687401032,
+        "oos_sharpe": -0.7068357652963118,
+        "oos_dsr": -0.448397804193052,
+        "oos_calmar": -2.2910205582016308,
+        "oos_max_consec_loss": 14
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.612753309677914,
+        "oos_n_trades": 565,
+        "oos_win_rate": 0.3734513274336283,
+        "oos_avg_win": 426.433364782599,
+        "oos_avg_loss": -298.8837699754049,
+        "oos_payoff": 1.4267531650102319,
+        "oos_total_pnl": -15827.414602164927,
+        "oos_max_dd": 21972.16053785956,
+        "oos_sharpe": -8.092100755741901,
+        "oos_dsr": -5.133413429727221,
+        "oos_calmar": -12.10170319200998,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": -0.8986964616292403,
+        "oos_n_trades": 545,
+        "oos_win_rate": 0.3798165137614679,
+        "oos_avg_win": 488.5553277236923,
+        "oos_avg_loss": -303.59103964705315,
+        "oos_payoff": 1.6092547668457993,
+        "oos_total_pnl": -1482.8185618996667,
+        "oos_max_dd": 13486.497476028992,
+        "oos_sharpe": -0.45575786248583805,
+        "oos_dsr": -0.2891206625582944,
+        "oos_calmar": -1.4582627365391143,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 2.0
+        },
+        "is_sharpe": -0.34945485651232433,
+        "oos_n_trades": 178,
+        "oos_win_rate": 0.43820224719101125,
+        "oos_avg_win": 477.1972800741287,
+        "oos_avg_loss": -224.67740702214772,
+        "oos_payoff": 2.1239219661596356,
+        "oos_total_pnl": 14753.64714356727,
+        "oos_max_dd": 2236.343486034375,
+        "oos_sharpe": 6.203735476639489,
+        "oos_dsr": 3.9354847364770134,
+        "oos_calmar": 103.90619507347573,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 2.0
+        },
+        "is_sharpe": 0.7252893080652801,
+        "oos_n_trades": 178,
+        "oos_win_rate": 0.39325842696629215,
+        "oos_avg_win": 439.8803593750697,
+        "oos_avg_loss": -244.80186798822427,
+        "oos_payoff": 1.7968831814479018,
+        "oos_total_pnl": 4353.023413526655,
+        "oos_max_dd": 4248.232008572819,
+        "oos_sharpe": 3.1697856452726283,
+        "oos_dsr": 2.010827681458749,
+        "oos_calmar": 16.13850623616891,
+        "oos_max_consec_loss": 10
+      }
+    ],
+    "n_trades": 4307,
+    "win_rate": 0.3877408869282563,
+    "avg_win": 356.00662099285813,
+    "avg_loss": -225.3759371283034,
+    "payoff": 1.579612382444309,
+    "total_pnl": 214.71085073705035,
+    "max_dd": 28979.67394230755,
+    "sharpe": 0.012454008277063902,
+    "dsr": 0.007900491513041279,
+    "calmar": 0.013056446731742895,
+    "max_consec_loss": 14,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "NQ",
+    "strategy": "vpin_approximation",
+    "bar_minutes": 3,
+    "description": "VPIN informed trading proxy \u2014 directional bias when toxicity high",
+    "n_folds": 9,
+    "n_oos_trades": 24,
+    "param_stability": {
+      "bucket_window": 0.6666666666666666,
+      "vpin_threshold": 0.3333333333333333,
+      "trend_window": 0.6666666666666666
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.85,
+          "trend_window": 3
+        },
+        "is_sharpe": -Infinity,
+        "oos_n_trades": NaN,
+        "oos_win_rate": NaN,
+        "oos_avg_win": NaN,
+        "oos_avg_loss": NaN,
+        "oos_payoff": NaN,
+        "oos_total_pnl": NaN,
+        "oos_max_dd": NaN,
+        "oos_sharpe": NaN,
+        "oos_dsr": NaN,
+        "oos_calmar": NaN,
+        "oos_max_consec_loss": NaN
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "bucket_window": 10,
+          "vpin_threshold": 0.5,
+          "trend_window": 5
+        },
+        "is_sharpe": 2.7579035274784256,
+        "oos_n_trades": 14,
+        "oos_win_rate": 0.35714285714285715,
+        "oos_avg_win": 384.5279106366361,
+        "oos_avg_loss": -351.2352003658517,
+        "oos_payoff": 1.0947875105801075,
+        "oos_total_pnl": -1238.4772501094849,
+        "oos_max_dd": 1832.9400005673378,
+        "oos_sharpe": -6.740914343783912,
+        "oos_dsr": -4.276256718191175,
+        "oos_calmar": -56.75695275186114,
+        "oos_max_consec_loss": 2
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "bucket_window": 20,
+          "vpin_threshold": 0.7,
+          "trend_window": 3
+        },
+        "is_sharpe": 0.0,
+        "oos_n_trades": 6,
+        "oos_win_rate": 0.3333333333333333,
+        "oos_avg_win": 452.02869920342346,
+        "oos_avg_loss": -162.97931688522658,
+        "oos_payoff": 2.773534138210626,
+        "oos_total_pnl": 252.1401308659406,
+        "oos_max_dd": 313.1921386721224,
+        "oos_sharpe": 0.0,
+        "oos_dsr": 0.0,
+        "oos_calmar": 202.87646186654666,
+        "oos_max_consec_loss": 2
+      }
+    ],
+    "n_trades": 24,
+    "win_rate": 0.3333333333333333,
+    "avg_win": 363.8371189487534,
+    "avg_loss": -277.84024617451996,
+    "payoff": 1.3095191353963032,
+    "total_pnl": -1534.746987202292,
+    "max_dd": 2209.6122469370166,
+    "sharpe": -1.5260623999272214,
+    "dsr": -0.9680933857415771,
+    "calmar": -1.9025384151287883,
+    "max_consec_loss": 4,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "NQ",
+    "strategy": "stacked_imbalance",
+    "bar_minutes": 3,
+    "description": "N consecutive same-direction delta bars (footprint concept)",
+    "n_folds": 9,
+    "n_oos_trades": 1935,
+    "param_stability": {
+      "stack_n": 0.7777777777777778,
+      "min_delta": 1.0
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 0.79665127907652,
+        "oos_n_trades": 457,
+        "oos_win_rate": 0.3938730853391685,
+        "oos_avg_win": 446.12012398822117,
+        "oos_avg_loss": -278.7979893031716,
+        "oos_payoff": 1.6001554570147902,
+        "oos_total_pnl": 3074.5792809012783,
+        "oos_max_dd": 10866.656059189452,
+        "oos_sharpe": 1.2192909978785218,
+        "oos_dsr": 0.9108933116252677,
+        "oos_calmar": 3.7526383682674322,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "stack_n": 3,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.0890706649273103,
+        "oos_n_trades": 476,
+        "oos_win_rate": 0.36554621848739494,
+        "oos_avg_win": 545.784351419377,
+        "oos_avg_loss": -321.4052452999514,
+        "oos_payoff": 1.698118992768845,
+        "oos_total_pnl": -2097.906933613718,
+        "oos_max_dd": 9362.507955261317,
+        "oos_sharpe": -0.8112014052990968,
+        "oos_dsr": -0.6060226277021884,
+        "oos_calmar": -3.1370544314557316,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.2693100215544808,
+        "oos_n_trades": 137,
+        "oos_win_rate": 0.3722627737226277,
+        "oos_avg_win": 1003.6529390578836,
+        "oos_avg_loss": -475.9294094844079,
+        "oos_payoff": 2.1088273156835973,
+        "oos_total_pnl": 10256.37067629298,
+        "oos_max_dd": 4258.108169532774,
+        "oos_sharpe": 6.264135891689979,
+        "oos_dsr": 4.679735597802445,
+        "oos_calmar": 37.93652761276362,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 2.203705165100599,
+        "oos_n_trades": 136,
+        "oos_win_rate": 0.34558823529411764,
+        "oos_avg_win": 1252.0456689164273,
+        "oos_avg_loss": -612.6581411436476,
+        "oos_payoff": 2.04362855046574,
+        "oos_total_pnl": 4319.571877287439,
+        "oos_max_dd": 12325.245173183954,
+        "oos_sharpe": 1.220669146352162,
+        "oos_dsr": 0.9119228822767771,
+        "oos_calmar": 5.519829919107586,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.8711809663675352,
+        "oos_n_trades": 154,
+        "oos_win_rate": 0.35714285714285715,
+        "oos_avg_win": 987.2996323486203,
+        "oos_avg_loss": -602.262024044246,
+        "oos_payoff": 1.6393190885900635,
+        "oos_total_pnl": -5322.460601206243,
+        "oos_max_dd": 10228.629034446145,
+        "oos_sharpe": -2.169135400253899,
+        "oos_dsr": -1.6204916886442304,
+        "oos_calmar": -8.74186929637796,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.189515442898123,
+        "oos_n_trades": 153,
+        "oos_win_rate": 0.35947712418300654,
+        "oos_avg_win": 1062.1646446594293,
+        "oos_avg_loss": -575.9087445968363,
+        "oos_payoff": 1.8443280374271716,
+        "oos_total_pnl": 1979.9984857786621,
+        "oos_max_dd": 6142.437034623683,
+        "oos_sharpe": 1.0101438465004966,
+        "oos_dsr": 0.7546461633504132,
+        "oos_calmar": 5.415435986332327,
+        "oos_max_consec_loss": 6
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.1708225648198087,
+        "oos_n_trades": 127,
+        "oos_win_rate": 0.3937007874015748,
+        "oos_avg_win": 1144.5470269296916,
+        "oos_avg_loss": -651.6670652593936,
+        "oos_payoff": 1.7563370744754594,
+        "oos_total_pnl": 7048.987321511275,
+        "oos_max_dd": 8784.984216989018,
+        "oos_sharpe": 2.1245658129851064,
+        "oos_dsr": 1.587195175329788,
+        "oos_calmar": 11.233466112587008,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.3484558474825632,
+        "oos_n_trades": 152,
+        "oos_win_rate": 0.3618421052631579,
+        "oos_avg_win": 740.6341309628095,
+        "oos_avg_loss": -421.4905533673798,
+        "oos_payoff": 1.7571784825204793,
+        "oos_total_pnl": -149.70647368131904,
+        "oos_max_dd": 8233.992735672204,
+        "oos_sharpe": -0.07254060056838621,
+        "oos_dsr": -0.05419276283839695,
+        "oos_calmar": -0.2863588827648247,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "stack_n": 5,
+          "min_delta": 0.0
+        },
+        "is_sharpe": 1.2299678302473511,
+        "oos_n_trades": 143,
+        "oos_win_rate": 0.32167832167832167,
+        "oos_avg_win": 886.5442676566261,
+        "oos_avg_loss": -505.05865383737483,
+        "oos_payoff": 1.755329328427044,
+        "oos_total_pnl": -8209.653110020561,
+        "oos_max_dd": 14175.087942968312,
+        "oos_sharpe": -3.07380454841643,
+        "oos_dsr": -2.296341077944059,
+        "oos_calmar": -9.729898876342636,
+        "oos_max_consec_loss": 8
+      }
+    ],
+    "n_trades": 1935,
+    "win_rate": 0.36847545219638245,
+    "avg_win": 752.8251695553466,
+    "avg_loss": -430.33106822398724,
+    "payoff": 1.7494092923904376,
+    "total_pnl": 10899.780523249792,
+    "max_dd": 16764.809923555164,
+    "sharpe": 0.4943230955548549,
+    "dsr": 0.3692929762511676,
+    "calmar": 1.1538020750656957,
+    "max_consec_loss": 11,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "NQ",
+    "strategy": "vwap_cvd_divergence",
+    "bar_minutes": 3,
+    "description": "Price deviates from VWAP while CVD contradicts it",
+    "n_folds": 9,
+    "n_oos_trades": 994,
+    "param_stability": {
+      "vwap_window": 0.6666666666666666,
+      "dev_threshold": 0.6666666666666666,
+      "cvd_window": 1.0,
+      "cvd_z_thresh": 0.4444444444444444
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.5
+        },
+        "is_sharpe": 10.946509119431587,
+        "oos_n_trades": 51,
+        "oos_win_rate": 0.35294117647058826,
+        "oos_avg_win": 960.1278924796837,
+        "oos_avg_loss": -539.8081662013229,
+        "oos_payoff": 1.7786464759067788,
+        "oos_total_pnl": -531.3674200093519,
+        "oos_max_dd": 4987.008958292645,
+        "oos_sharpe": -0.2936415117137955,
+        "oos_dsr": -0.18627836272149836,
+        "oos_calmar": -1.4917045351925329,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 4.500570907575496,
+        "oos_n_trades": 128,
+        "oos_win_rate": 0.28125,
+        "oos_avg_win": 1057.640528488696,
+        "oos_avg_loss": -540.7489276212416,
+        "oos_payoff": 1.9558809541079707,
+        "oos_total_pnl": -11673.842315561167,
+        "oos_max_dd": 16624.1292263402,
+        "oos_sharpe": -5.315906996172619,
+        "oos_dsr": -3.3722699690769637,
+        "oos_calmar": -9.831118983297044,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.5
+        },
+        "is_sharpe": 3.2948006741561575,
+        "oos_n_trades": 99,
+        "oos_win_rate": 0.3434343434343434,
+        "oos_avg_win": 1149.659265979022,
+        "oos_avg_loss": -657.5190029043622,
+        "oos_payoff": 1.7484806688488101,
+        "oos_total_pnl": -3650.320145496793,
+        "oos_max_dd": 10407.944991580516,
+        "oos_sharpe": -1.7008658910126675,
+        "oos_dsr": -1.0789840698528084,
+        "oos_calmar": -5.523909123086541,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 1.9158168725228333,
+        "oos_n_trades": 177,
+        "oos_win_rate": 0.384180790960452,
+        "oos_avg_win": 1393.5630582719027,
+        "oos_avg_loss": -747.6091534581944,
+        "oos_payoff": 1.8640262118591482,
+        "oos_total_pnl": 13272.89023554619,
+        "oos_max_dd": 13204.131624843198,
+        "oos_sharpe": 2.9396875085641683,
+        "oos_dsr": 1.8648595452740524,
+        "oos_calmar": 15.8320158530179,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": 2.29330832530914,
+        "oos_n_trades": 142,
+        "oos_win_rate": 0.2323943661971831,
+        "oos_avg_win": 1440.033000775686,
+        "oos_avg_loss": -733.5326696987712,
+        "oos_payoff": 1.9631477373285129,
+        "oos_total_pnl": -32433.97197156842,
+        "oos_max_dd": 35111.68538117444,
+        "oos_sharpe": -13.142282114103985,
+        "oos_dsr": -8.337114123787247,
+        "oos_calmar": -14.548861810720517,
+        "oos_max_consec_loss": 17
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.5
+        },
+        "is_sharpe": 0.553632753260862,
+        "oos_n_trades": 97,
+        "oos_win_rate": 0.24742268041237114,
+        "oos_avg_win": 1340.805729390847,
+        "oos_avg_loss": -694.181638265617,
+        "oos_payoff": 1.931491205588198,
+        "oos_total_pnl": -18495.922088009713,
+        "oos_max_dd": 25588.000188859936,
+        "oos_sharpe": -7.769470629101285,
+        "oos_dsr": -4.928745460936009,
+        "oos_calmar": -12.143641112440045,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "vwap_window": 100,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 0.8
+        },
+        "is_sharpe": -0.8705222728800239,
+        "oos_n_trades": 166,
+        "oos_win_rate": 0.3373493975903614,
+        "oos_avg_win": 1456.6942625180513,
+        "oos_avg_loss": -762.0546871595725,
+        "oos_payoff": 1.9115350736147667,
+        "oos_total_pnl": -2251.1368865420955,
+        "oos_max_dd": 28129.922977824812,
+        "oos_sharpe": -0.4223646034718904,
+        "oos_dsr": -0.26793686746492223,
+        "oos_calmar": -1.1203698082086377,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.002,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.0
+        },
+        "is_sharpe": 0.043999124830943495,
+        "oos_n_trades": 63,
+        "oos_win_rate": 0.3333333333333333,
+        "oos_avg_win": 1328.0643161624619,
+        "oos_avg_loss": -885.4846139346052,
+        "oos_payoff": 1.4998163663863977,
+        "oos_total_pnl": -9301.003145841722,
+        "oos_max_dd": 14190.394320107458,
+        "oos_sharpe": -3.2627778208502436,
+        "oos_dsr": -2.069819443595541,
+        "oos_calmar": -11.01145248858438,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "vwap_window": 50,
+          "dev_threshold": 0.001,
+          "cvd_window": 20,
+          "cvd_z_thresh": 1.5
+        },
+        "is_sharpe": 0.05469048268139072,
+        "oos_n_trades": 71,
+        "oos_win_rate": 0.29577464788732394,
+        "oos_avg_win": 1320.142540941804,
+        "oos_avg_loss": -621.4434201033407,
+        "oos_payoff": 2.124316547952629,
+        "oos_total_pnl": -3349.1776453891507,
+        "oos_max_dd": 7500.978223739774,
+        "oos_sharpe": -1.7061674009318677,
+        "oos_dsr": -1.0823472066992872,
+        "oos_calmar": -7.032355826328436,
+        "oos_max_consec_loss": 8
+      }
+    ],
+    "n_trades": 994,
+    "win_rate": 0.31287726358148893,
+    "avg_win": 1305.7739978365978,
+    "avg_loss": -694.743140131851,
+    "payoff": 1.879506140339555,
+    "total_pnl": -68413.85138287222,
+    "max_dd": 75524.07596579,
+    "sharpe": -2.528048579152108,
+    "dsr": -1.6037267600769567,
+    "calmar": -1.6075734163937805,
+    "max_consec_loss": 17,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "NQ",
+    "strategy": "buying_climax",
+    "bar_minutes": 3,
+    "description": "Wyckoff buying/selling climax \u2014 huge volume + price reversal",
+    "n_folds": 9,
+    "n_oos_trades": 251,
+    "param_stability": {
+      "vol_z_spike": 0.4444444444444444,
+      "price_up_pct": 0.4444444444444444,
+      "reversal_window": 0.6666666666666666
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.001,
+          "reversal_window": 3
+        },
+        "is_sharpe": 5.442315924278833,
+        "oos_n_trades": 13,
+        "oos_win_rate": 0.3076923076923077,
+        "oos_avg_win": 1076.5037774728844,
+        "oos_avg_loss": -694.142763236093,
+        "oos_payoff": 1.550839156565178,
+        "oos_total_pnl": -1941.2697592332988,
+        "oos_max_dd": 3949.6602613404684,
+        "oos_sharpe": -4.198390702909619,
+        "oos_dsr": -2.6633473640655634,
+        "oos_calmar": -8.25724993978364,
+        "oos_max_consec_loss": 4
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.001,
+          "reversal_window": 3
+        },
+        "is_sharpe": 2.6060490565218064,
+        "oos_n_trades": 24,
+        "oos_win_rate": 0.20833333333333334,
+        "oos_avg_win": 1243.3886611419148,
+        "oos_avg_loss": -670.0596163853938,
+        "oos_payoff": 1.8556388577024212,
+        "oos_total_pnl": -6514.1894056129095,
+        "oos_max_dd": 9943.586053057763,
+        "oos_sharpe": -4.4037999622476445,
+        "oos_dsr": -2.7936535332921313,
+        "oos_calmar": -9.171605816247363,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "vol_z_spike": 2.5,
+          "price_up_pct": 0.002,
+          "reversal_window": 3
+        },
+        "is_sharpe": 0.8669775534403282,
+        "oos_n_trades": NaN,
+        "oos_win_rate": NaN,
+        "oos_avg_win": NaN,
+        "oos_avg_loss": NaN,
+        "oos_payoff": NaN,
+        "oos_total_pnl": NaN,
+        "oos_max_dd": NaN,
+        "oos_sharpe": NaN,
+        "oos_dsr": NaN,
+        "oos_calmar": NaN,
+        "oos_max_consec_loss": NaN
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 3
+        },
+        "is_sharpe": 1.0372810932478984,
+        "oos_n_trades": 89,
+        "oos_win_rate": 0.30337078651685395,
+        "oos_avg_win": 1251.3151929879614,
+        "oos_avg_loss": -667.0729649921362,
+        "oos_payoff": 1.87582956986229,
+        "oos_total_pnl": -7573.013618837489,
+        "oos_max_dd": 13811.214440701631,
+        "oos_sharpe": -2.7077994222191597,
+        "oos_dsr": -1.7177559126614013,
+        "oos_calmar": -8.636095327373043,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.002,
+          "reversal_window": 5
+        },
+        "is_sharpe": 1.5744826026594492,
+        "oos_n_trades": 5,
+        "oos_win_rate": 0.2,
+        "oos_avg_win": 789.0,
+        "oos_avg_loss": -1290.6936683990498,
+        "oos_payoff": 0.6112991946250573,
+        "oos_total_pnl": -4373.774673596199,
+        "oos_max_dd": 3791.870844797362,
+        "oos_sharpe": -6.7635266546059105,
+        "oos_dsr": -4.290601366577869,
+        "oos_calmar": -20.762295802545673,
+        "oos_max_consec_loss": 3
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "vol_z_spike": 2.5,
+          "price_up_pct": 0.002,
+          "reversal_window": 3
+        },
+        "is_sharpe": 0.23589370351301456,
+        "oos_n_trades": 19,
+        "oos_win_rate": 0.47368421052631576,
+        "oos_avg_win": 1825.812339711792,
+        "oos_avg_loss": -883.1293920665266,
+        "oos_payoff": 2.0674346886353576,
+        "oos_total_pnl": 7601.017136740862,
+        "oos_max_dd": 5460.917585989635,
+        "oos_sharpe": 4.110541109448283,
+        "oos_dsr": 2.607617919205339,
+        "oos_calmar": 25.054087762165178,
+        "oos_max_consec_loss": 4
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "vol_z_spike": 2.5,
+          "price_up_pct": 0.002,
+          "reversal_window": 3
+        },
+        "is_sharpe": 1.1429780737323774,
+        "oos_n_trades": 14,
+        "oos_win_rate": 0.14285714285714285,
+        "oos_avg_win": 1535.1120305279474,
+        "oos_avg_loss": -928.4601919955421,
+        "oos_payoff": 1.6533956369508171,
+        "oos_total_pnl": -8071.298242890611,
+        "oos_max_dd": 9171.34187111666,
+        "oos_sharpe": -10.799919000703769,
+        "oos_dsr": -6.851181283035818,
+        "oos_calmar": -18.48118470368019,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "vol_z_spike": 3.0,
+          "price_up_pct": 0.001,
+          "reversal_window": 2
+        },
+        "is_sharpe": 0.6176507533216771,
+        "oos_n_trades": 18,
+        "oos_win_rate": 0.2222222222222222,
+        "oos_avg_win": 1031.8013940829987,
+        "oos_avg_loss": -714.49966504095,
+        "oos_payoff": 1.444089402090711,
+        "oos_total_pnl": -5875.789734241305,
+        "oos_max_dd": 9453.9953105733,
+        "oos_sharpe": -7.483096651345868,
+        "oos_dsr": -4.747077428405525,
+        "oos_calmar": -13.05179242907672,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "vol_z_spike": 2.0,
+          "price_up_pct": 0.0005,
+          "reversal_window": 5
+        },
+        "is_sharpe": 0.3637156837570629,
+        "oos_n_trades": 66,
+        "oos_win_rate": 0.2727272727272727,
+        "oos_avg_win": 1130.3137699135323,
+        "oos_avg_loss": -604.4870386622151,
+        "oos_payoff": 1.8698726318682029,
+        "oos_total_pnl": -8669.729997342743,
+        "oos_max_dd": 12896.194699707412,
+        "oos_sharpe": -5.5900420818750725,
+        "oos_dsr": -3.5461739741038234,
+        "oos_calmar": -11.29414275659646,
+        "oos_max_consec_loss": 13
+      }
+    ],
+    "n_trades": 251,
+    "win_rate": 0.28286852589641437,
+    "avg_win": 1288.7342707204668,
+    "avg_loss": -701.4341029208275,
+    "payoff": 1.8372848787278444,
+    "total_pnl": -34758.005304595805,
+    "max_dd": 36246.13219280736,
+    "sharpe": -2.6893093791198273,
+    "dsr": -1.706026321245353,
+    "calmar": -1.713857081389368,
+    "max_consec_loss": 13,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "NQ",
+    "strategy": "level_delta_flip",
+    "bar_minutes": 3,
+    "description": "Price at key level + CVD flips direction (absorption confirmed)",
+    "n_folds": 9,
+    "n_oos_trades": 4440,
+    "param_stability": {
+      "price_tolerance": 0.4444444444444444,
+      "lookback": 0.5555555555555556,
+      "flip_confirm": 0.5555555555555556
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 20,
+          "flip_confirm": 1
+        },
+        "is_sharpe": 3.310768861838214,
+        "oos_n_trades": 1310,
+        "oos_win_rate": 0.40458015267175573,
+        "oos_avg_win": 195.9908048951473,
+        "oos_avg_loss": -143.5973665767436,
+        "oos_payoff": 1.3648635038888597,
+        "oos_total_pnl": -8130.819335431952,
+        "oos_max_dd": 13173.180569618824,
+        "oos_sharpe": -2.586277724805669,
+        "oos_dsr": -1.6406657808976544,
+        "oos_calmar": -8.186355610134456,
+        "oos_max_consec_loss": 15
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 30,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 1.0346084925568504,
+        "oos_n_trades": 643,
+        "oos_win_rate": 0.38724727838258166,
+        "oos_avg_win": 301.15709195368186,
+        "oos_avg_loss": -239.66435955708116,
+        "oos_payoff": 1.256578543886309,
+        "oos_total_pnl": -19439.64176902319,
+        "oos_max_dd": 21473.879973021787,
+        "oos_sharpe": -10.176956159621806,
+        "oos_dsr": -6.455990230531681,
+        "oos_calmar": -12.673768555484166,
+        "oos_max_consec_loss": 15
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "price_tolerance": 0.0005,
+          "lookback": 20,
+          "flip_confirm": 2
+        },
+        "is_sharpe": -1.0337594475915217,
+        "oos_n_trades": 354,
+        "oos_win_rate": 0.4067796610169492,
+        "oos_avg_win": 607.3451735178718,
+        "oos_avg_loss": -460.098619877332,
+        "oos_payoff": 1.3200325914470197,
+        "oos_total_pnl": -9163.00518766619,
+        "oos_max_dd": 21789.245068242104,
+        "oos_sharpe": -3.4334800902027114,
+        "oos_dsr": -2.178108421752058,
+        "oos_calmar": -6.623328676773913,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "price_tolerance": 0.001,
+          "lookback": 30,
+          "flip_confirm": 3
+        },
+        "is_sharpe": -0.1275231413744321,
+        "oos_n_trades": 366,
+        "oos_win_rate": 0.3825136612021858,
+        "oos_avg_win": 767.7192959254888,
+        "oos_avg_loss": -481.45318216839235,
+        "oos_payoff": 1.5945876449871972,
+        "oos_total_pnl": -1327.7177404882386,
+        "oos_max_dd": 14829.624695405,
+        "oos_sharpe": -0.36606175330062557,
+        "oos_dsr": -0.23221983724925085,
+        "oos_calmar": -1.4101202722392066,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 0.9483686151487362,
+        "oos_n_trades": 343,
+        "oos_win_rate": 0.4518950437317784,
+        "oos_avg_win": 516.6859130575364,
+        "oos_avg_loss": -469.023308451867,
+        "oos_payoff": 1.1016209722348174,
+        "oos_total_pnl": -8090.065465032865,
+        "oos_max_dd": 15643.179014742025,
+        "oos_sharpe": -2.5641884957057446,
+        "oos_dsr": -1.6266529616388958,
+        "oos_calmar": -8.145309272123605,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 0.6045603120398019,
+        "oos_n_trades": 261,
+        "oos_win_rate": 0.41762452107279696,
+        "oos_avg_win": 766.26349755368,
+        "oos_avg_loss": -537.9332117424011,
+        "oos_payoff": 1.4244584287177624,
+        "oos_total_pnl": 1756.8730485061533,
+        "oos_max_dd": 16886.835189875826,
+        "oos_sharpe": 0.42632290391937966,
+        "oos_dsr": 0.2704479079585318,
+        "oos_calmar": 1.7478388865072125,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "price_tolerance": 0.0005,
+          "lookback": 10,
+          "flip_confirm": 3
+        },
+        "is_sharpe": 0.6011029287151379,
+        "oos_n_trades": 351,
+        "oos_win_rate": 0.4586894586894587,
+        "oos_avg_win": 613.5619898258327,
+        "oos_avg_loss": -503.6021021481188,
+        "oos_payoff": 1.2183467606840384,
+        "oos_total_pnl": 3099.080953816505,
+        "oos_max_dd": 11679.296342591711,
+        "oos_sharpe": 0.9917433184771562,
+        "oos_dsr": 0.6291355759875382,
+        "oos_calmar": 3.7148756295538248,
+        "oos_max_consec_loss": 8
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 0.9446638486399036,
+        "oos_n_trades": 427,
+        "oos_win_rate": 0.4894613583138173,
+        "oos_avg_win": 386.96996419556245,
+        "oos_avg_loss": -359.37659322175875,
+        "oos_payoff": 1.0767812136189314,
+        "oos_total_pnl": 2532.625194529144,
+        "oos_max_dd": 8790.157309895003,
+        "oos_sharpe": 1.0249965987699572,
+        "oos_dsr": 0.650230572304338,
+        "oos_calmar": 4.537899085029059,
+        "oos_max_consec_loss": 7
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "price_tolerance": 0.0003,
+          "lookback": 10,
+          "flip_confirm": 2
+        },
+        "is_sharpe": 0.9233077362588081,
+        "oos_n_trades": 385,
+        "oos_win_rate": 0.45454545454545453,
+        "oos_avg_win": 439.868299193361,
+        "oos_avg_loss": -368.74420829654264,
+        "oos_payoff": 1.1928819200317329,
+        "oos_total_pnl": -459.3313834357832,
+        "oos_max_dd": 6028.842109245743,
+        "oos_sharpe": -0.19557971082035883,
+        "oos_dsr": -0.12407056516133902,
+        "oos_calmar": -1.1999765722872242,
+        "oos_max_consec_loss": 12
+      }
+    ],
+    "n_trades": 4440,
+    "win_rate": 0.42162162162162165,
+    "avg_win": 424.1708557168675,
+    "avg_loss": -324.4820263186146,
+    "payoff": 1.3072245034008962,
+    "total_pnl": -39222.001684226416,
+    "max_dd": 64334.591074957745,
+    "sharpe": -1.4777548381392593,
+    "dsr": -0.9374483537622432,
+    "calmar": -1.074359707951906,
+    "max_consec_loss": 15,
+    "grade": "FAIL"
+  },
+  {
+    "symbol": "NQ",
+    "strategy": "composite_order_flow_score",
+    "bar_minutes": 3,
+    "description": "Normalised composite: CVD + flow + large prints combined score",
+    "n_folds": 9,
+    "n_oos_trades": 4622,
+    "param_stability": {
+      "cvd_weight": 0.6666666666666666,
+      "flow_weight": 0.7777777777777778,
+      "large_weight": 0.6666666666666666,
+      "threshold": 0.8888888888888888
+    },
+    "fold_results": [
+      {
+        "fold": 1,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 2.0,
+          "large_weight": 1.0,
+          "threshold": 1.0
+        },
+        "is_sharpe": 5.30424480174373,
+        "oos_n_trades": 486,
+        "oos_win_rate": 0.36419753086419754,
+        "oos_avg_win": 456.0237257915273,
+        "oos_avg_loss": -280.97200838093727,
+        "oos_payoff": 1.6230219103294365,
+        "oos_total_pnl": -6104.151124609285,
+        "oos_max_dd": 15637.703390166032,
+        "oos_sharpe": -2.5153824663738074,
+        "oos_dsr": -1.5956917151113545,
+        "oos_calmar": -5.177251298291112,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 2,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 2.0,
+          "large_weight": 1.0,
+          "threshold": 1.0
+        },
+        "is_sharpe": 2.0989994175655244,
+        "oos_n_trades": 477,
+        "oos_win_rate": 0.37735849056603776,
+        "oos_avg_win": 554.6623327693301,
+        "oos_avg_loss": -335.086904143016,
+        "oos_payoff": 1.6552790512296436,
+        "oos_total_pnl": 318.4093680036749,
+        "oos_max_dd": 11510.247432582226,
+        "oos_sharpe": 0.08557501635499123,
+        "oos_dsr": 0.05428651365890752,
+        "oos_calmar": 0.3872836946522004,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 3,
+        "best_params": {
+          "cvd_weight": 1.0,
+          "flow_weight": 1.0,
+          "large_weight": 1.0,
+          "threshold": 1.5
+        },
+        "is_sharpe": 2.5085171759397156,
+        "oos_n_trades": 232,
+        "oos_win_rate": 0.375,
+        "oos_avg_win": 894.266755400008,
+        "oos_avg_loss": -492.892172643118,
+        "oos_payoff": 1.814325333276307,
+        "oos_total_pnl": 6331.842686548596,
+        "oos_max_dd": 11968.498449817722,
+        "oos_sharpe": 2.2875190931284655,
+        "oos_dsr": 1.451141253411951,
+        "oos_calmar": 8.33241719763595,
+        "oos_max_consec_loss": 12
+      },
+      {
+        "fold": 4,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 2.6887686412011096,
+        "oos_n_trades": 605,
+        "oos_win_rate": 0.3950413223140496,
+        "oos_avg_win": 776.306767070266,
+        "oos_avg_loss": -472.6953209500845,
+        "oos_payoff": 1.642298395317186,
+        "oos_total_pnl": 12530.829862062674,
+        "oos_max_dd": 14814.889568811763,
+        "oos_sharpe": 2.532478281413128,
+        "oos_dsr": 1.6065368453394613,
+        "oos_calmar": 13.321771276849047,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 5,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 2.5827703835244193,
+        "oos_n_trades": 566,
+        "oos_win_rate": 0.39399293286219084,
+        "oos_avg_win": 693.5952549636679,
+        "oos_avg_loss": -451.51258309235635,
+        "oos_payoff": 1.5361593030548915,
+        "oos_total_pnl": -197.07414378027897,
+        "oos_max_dd": 20912.353794395487,
+        "oos_sharpe": -0.042350576119800594,
+        "oos_dsr": -0.026866078756595677,
+        "oos_calmar": -0.14842507902535793,
+        "oos_max_consec_loss": 18
+      },
+      {
+        "fold": 6,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 2.0498189348534077,
+        "oos_n_trades": 547,
+        "oos_win_rate": 0.40219378427787933,
+        "oos_avg_win": 703.6739273159476,
+        "oos_avg_loss": -539.4105717628713,
+        "oos_payoff": 1.304523797181505,
+        "oos_total_pnl": -21578.992956950417,
+        "oos_max_dd": 28514.958783193404,
+        "oos_sharpe": -3.8517221304005194,
+        "oos_dsr": -2.4434300447563797,
+        "oos_calmar": -12.713575510775032,
+        "oos_max_consec_loss": 10
+      },
+      {
+        "fold": 7,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 0.9297866646089906,
+        "oos_n_trades": 577,
+        "oos_win_rate": 0.4124783362218371,
+        "oos_avg_win": 806.8492022481546,
+        "oos_avg_loss": -490.8789851714934,
+        "oos_payoff": 1.6436825095828331,
+        "oos_total_pnl": 25622.13416192452,
+        "oos_max_dd": 21216.704965229757,
+        "oos_sharpe": 5.411624470998436,
+        "oos_dsr": 3.4329905885504384,
+        "oos_calmar": 16.906955102349883,
+        "oos_max_consec_loss": 9
+      },
+      {
+        "fold": 8,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 1.5478463476905122,
+        "oos_n_trades": 571,
+        "oos_win_rate": 0.37302977232924694,
+        "oos_avg_win": 588.8597362952419,
+        "oos_avg_loss": -381.9249202743868,
+        "oos_payoff": 1.541820669549886,
+        "oos_total_pnl": -11301.997627343968,
+        "oos_max_dd": 32357.221124484742,
+        "oos_sharpe": -2.568583036677569,
+        "oos_dsr": -1.629440741514998,
+        "oos_calmar": -5.501290174018369,
+        "oos_max_consec_loss": 11
+      },
+      {
+        "fold": 9,
+        "best_params": {
+          "cvd_weight": 2.0,
+          "flow_weight": 1.0,
+          "large_weight": 0.5,
+          "threshold": 1.0
+        },
+        "is_sharpe": 1.0767475935295328,
+        "oos_n_trades": 561,
+        "oos_win_rate": 0.3939393939393939,
+        "oos_avg_win": 585.4332624453418,
+        "oos_avg_loss": -381.4010652436608,
+        "oos_payoff": 1.5349544503011117,
+        "oos_total_pnl": -295.6111824241234,
+        "oos_max_dd": 17217.432146506195,
+        "oos_sharpe": -0.08441608968981729,
+        "oos_dsr": -0.05355132141567556,
+        "oos_calmar": -0.27041640609135353,
+        "oos_max_consec_loss": 12
+      }
+    ],
+    "n_trades": 4622,
+    "win_rate": 0.38900908697533537,
+    "avg_win": 667.5261041412393,
+    "avg_loss": -423.1184653691632,
+    "payoff": 1.5776340641593956,
+    "total_pnl": 5325.389043431394,
+    "max_dd": 45602.69807184348,
+    "sharpe": 0.14453803563024656,
+    "dsr": 0.09169108438055694,
+    "calmar": 0.2057904919607461,
+    "max_consec_loss": 18,
+    "grade": "FAIL"
+  }
+]

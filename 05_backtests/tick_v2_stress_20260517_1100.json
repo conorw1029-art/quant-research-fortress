@@ -1,0 +1,111 @@
+[
+  {
+    "label": "NQ/prev_session_sweep/1m",
+    "symbol": "NQ",
+    "strat": "prev_session_sweep",
+    "bar_min": 1,
+    "params": {
+      "level_window": 20,
+      "cvd_flip_window": 3,
+      "sweep_buffer": 0.0001
+    },
+    "sharpe_0t": 2.99,
+    "sharpe_05t": 2.55,
+    "sharpe_1t": 2.15,
+    "sharpe_2t": 1.34,
+    "total_pnl": 48702.0,
+    "trades": 1451,
+    "worst_day": -5069.51579728091,
+    "ts_compliance": 0.9924812030075187,
+    "regime_profitable": 2,
+    "regime_total": 2,
+    "verdict": "PASS"
+  },
+  {
+    "label": "NQ/delta_acceleration_reversal/15m",
+    "symbol": "NQ",
+    "strat": "delta_acceleration_reversal",
+    "bar_min": 15,
+    "params": {
+      "fast_window": 5,
+      "slow_window": 20,
+      "cross_z": 0.8
+    },
+    "sharpe_0t": 1.24,
+    "sharpe_05t": 1.19,
+    "sharpe_1t": 1.14,
+    "sharpe_2t": 0.95,
+    "total_pnl": 30680.0,
+    "trades": 382,
+    "worst_day": -8497.000949845678,
+    "ts_compliance": 0.9590163934426229,
+    "regime_profitable": 1,
+    "regime_total": 2,
+    "verdict": "FAIL"
+  },
+  {
+    "label": "ES/prev_session_sweep/3m",
+    "symbol": "ES",
+    "strat": "prev_session_sweep",
+    "bar_min": 3,
+    "params": {
+      "level_window": 20,
+      "cvd_flip_window": 3,
+      "sweep_buffer": 0.0001
+    },
+    "sharpe_0t": 2.99,
+    "sharpe_05t": 2.2,
+    "sharpe_1t": 1.45,
+    "sharpe_2t": 0.26,
+    "total_pnl": 27515.0,
+    "trades": 755,
+    "worst_day": -2812.554653278781,
+    "ts_compliance": 1.0,
+    "regime_profitable": 2,
+    "regime_total": 2,
+    "verdict": "PASS"
+  },
+  {
+    "label": "ES/volume_tod_surge/5m",
+    "symbol": "ES",
+    "strat": "volume_tod_surge",
+    "bar_min": 5,
+    "params": {
+      "lookback_days": 10,
+      "surge_z": 1.5
+    },
+    "sharpe_0t": 1.8,
+    "sharpe_05t": 0.75,
+    "sharpe_1t": -0.4,
+    "sharpe_2t": -2.39,
+    "total_pnl": 13634.0,
+    "trades": 1475,
+    "worst_day": -6328.362025724717,
+    "ts_compliance": 0.9912280701754386,
+    "regime_profitable": 1,
+    "regime_total": 2,
+    "verdict": "FAIL"
+  },
+  {
+    "label": "GC/book_depth_trend/3m",
+    "symbol": "GC",
+    "strat": "book_depth_trend",
+    "bar_min": 3,
+    "params": {
+      "obi_window": 10,
+      "obi_threshold": 0.3,
+      "cvd_window": 5
+    },
+    "sharpe_0t": 1.4,
+    "sharpe_05t": 1.3,
+    "sharpe_1t": 1.21,
+    "sharpe_2t": 1.04,
+    "total_pnl": 188238.0,
+    "trades": 1685,
+    "worst_day": -11189.40825175491,
+    "ts_compliance": 0.9931318681318682,
+    "regime_profitable": 7,
+    "regime_total": 7,
+    "verdict": "PASS"
+  }
+]

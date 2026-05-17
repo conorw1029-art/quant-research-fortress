@@ -1,0 +1,251 @@
+Overview
+The Bookmap Liquidity Heatmap indicator is an advanced market structure and liquidity visualization tool. Rather than relying on traditional, opaque boxes that clutter the chart, this script translates structural supply and demand zones into a Bookmap-style dual-level liquidity heatmap. By tracking price interaction with these zones dynamically, traders can monitor liquidity consumption in real-time. This script is fully MTF (Multi-Timeframe) compatible, allowing users to project higher timeframe liquidity onto lower execution timeframes.
+
+Core Calculations & Logic
+The script's engine is built on robust market structure principles, utilizing pivots, trend analysis, Fibonacci retracements, and Average True Range (ATR) filtering to identify valid zones:
+
+Structural Pivots & Trend Identification: The script begins by identifying pivot highs and lows over a defined lookback/lookforward period. It tracks the progression of these pivots (higher highs, lower lows) to determine structural trends. An order block is only considered if the preceding trend has persisted for a minimum number of bars (default 20), ensuring that zones are established off legitimate structural swings.
+Fibonacci Zone Construction: Once a structural break is confirmed (price crossing over previous pivot highs or under pivot lows), the script calculates the boundaries of the supply/demand zone using Fibonacci retracements of the pivot swings. Key levels calculated include the 14.6%, 21.4%, 38.2%, 50%, 61.8%, 78.6%, and 85.4% retracements. Depending on whether the break implies a bullish or bearish structure, these specific levels define the top, bottom, and internal boundaries of the order blocks.
+ATR Volatility Filtering: To prevent the indicator from drawing zones during low-volatility chop, it applies an ATR filter. A zone is only marked as valid if its height is greater than the ATR multiplied by a specific threshold. This ensures the zone represents a significant structural imbalance.
+Strong vs. Weak Blocks: The indicator categorizes order blocks as "Strong" or "Weak" depending on the momentum of the structural break. A block is deemed strong if price cleanly crosses a predefined break threshold prior to the structural break. Strong blocks are drawn using broader Fibonacci anchors (e.g., 50% to 61.8%), whereas weak blocks are drawn using deeper retracement anchors (e.g., 61.8% to 78.6%).
+
+
+The Bookmap-Style Visualization Engine
+The defining feature of this script is its array-based state machine, which replaces static rectangles with dynamic, dual-level liquidity lines. This system simulates order book resting liquidity:
+
+State 0 (Active - Close Level): When a new zone forms, the script plots a thin, brightly colored band at the zone's near edge (e.g., the top edge of a demand zone, where price will hit first). This is the "Close Level." A secondary "Far Level" is calculated at the back edge but remains hidden.
+State 1 (Partially Consumed - Far Level Activated): As price trades into the "Close Level," the array state updates. The script visually fades the Close Level to indicate that the first layer of liquidity has been absorbed, and it simultaneously highlights the "Far Level," showing the final defense line.
+State 2 (Fully Consumed): If price pushes completely through the "Far Level," the zone is fully consumed. The state updates again, and the zone is neutralized.
+Overlap Prevention: The script actively monitors all arrays to prevent drawing duplicate or heavily overlapping boxes, aggressively filtering out redundant historical zones to maintain a pristine chart.
+
+
+Overview
+The Bookmap Traps (Lite) indicator is a highly advanced, machine-learning enhanced volume visualization tool designed to uncover hidden liquidity traps within candlestick wicks. Moving beyond traditional volume indicators, this script employs a synthetic lower-timeframe footprint engine to analyze the microstructure of price action, locating exactly where buyers or sellers have been caught offside. By plotting dynamic, volume-weighted bubbles directly on the chart, it allows traders to visualize trapped liquidity in real-time. This provides an x-ray view into order flow exhaustion and high-probability reversal zones, completely bypassing the need for expensive footprint data feeds.
+
+Core Calculations & Logic
+The indicator's engine relies on a granular breakdown of price delivery, utilizing multi-timeframe arrays, synthetic Volume Price Trend (VPT), and rigorous wick analysis to identify trapped volume:
+
+Synthetic Footprint Generation: Instead of relying on premium data, the script uses `request.security_lower_tf` to fetch 1-minute (or user-defined lower timeframe) OHLCV data. It calculates a Volume Price Trend (VPT) ratio to accurately model the volume distribution within the parent candle, allowing for high-fidelity order flow analysis on the main chart.
+Direct Wick Volume Measurement: The core logic isolates the parent candle's upper and lower wicks, identifying them as potential trap zones if they meet a minimum percentage of the total bar range. It then iterates through the lower timeframe data, mapping exactly how much relative volume was executed within those specific wick extremities.
+Strict "Deep Wick" Filtering: To ensure only the most significant rejections are highlighted, the script features a "Deep Wick Only" mode. This forces the engine to disregard volume that occurred near the body of the candle, specifically tracking volume trapped in the outermost half of the wick where participants are most vulnerable.
+Dynamic Outlier Auto-Scaling: The visualization engine constantly adapts to the current market environment. It calculates rolling volume percentiles to auto-scale the size or transparency of the trap bubbles, ensuring that massive volume anomalies stand out sharply while filtering out insignificant background noise.
+
+
+The Machine Learning (kNN) Enhancement Engine
+The standout feature of Bookmap Traps (Lite) is its built-in predictive k-Nearest Neighbors (kNN) algorithm, which actively scores the quality of detected traps based on historical success:
+
+Feature Extraction & Normalization: Every time a trap forms, the script extracts key structural features—such as body-to-ATR ratios, upper/lower wick proportions, body positioning, and trapped volume metrics—and normalizes them for the ML model.
+Pattern Recognition & Scoring: The kNN engine searches a rolling training window (e.g., the last 300 bars) to find the 'K' most structurally identical historical traps. It then analyzes the subsequent price action of those historical matches to determine a success rate.
+Intelligent Volume Weighting: If historical data proves that a specific trap pattern consistently fails, the ML score suppresses its visual presence. Conversely, if a pattern is highly reliable, the ML score acts as a multiplier, boosting the trap's volume and amplifying its visual footprint on the chart.
+
+
+How to Use in Practice
+
+Identifying Exhaustion & Reversals: Watch for large teal (trapped buyers) bubbles forming in the upper wicks at resistance, or large red (trapped sellers) bubbles in the lower wicks at support. A massive bubble indicates high participation on the wrong side of the market, signaling an impending, aggressive mean reversion.
+Interpreting Tooltips & ML Scores: By hovering over a bubble, traders can view the exact trapped volume and the ML confidence score. Prioritize trades where a high volume trap is backed by a high ML success percentage, filtering out statistically weak setups.
+Customizing Visuals for Clarity: Utilize the "Size Scaling" or "Transparency Scaling" modes to fit your aesthetic preference. For cleaner charts, increase the "Show Top % of Traps" filter to only display the absolute most extreme liquidations (e.g., the top 15%), keeping the interface pristine.
+Recommended Timeframes: Due to the granular nature of the synthetic lower-timeframe calculations, it is highly recommended to use this indicator on the 15-minute timeframe or higher. This allows the script to aggregate enough lower timeframe data (e.g., 1m candles) within the parent bar to somewhat effectively model the internal volume distribution.
+
+Supply and Demand trading has been becoming one of the most popular trading strategies over the past year. Supply and Demand trading is a trading technique based on finding key zones which price can bounce off of.
+
+While most indicators only look at 1 time frame, this indicator looks at many timeframes(you can turn them on/off in the settings). This allows for a much better overview of zones and allow you to make better decisions.
+
+This indicator processes Supply/Demand differently. While most indicators only have 1 type of Supply/Demand, this indicator filters price action, and decides which zones are the best given the momentum and price action, allowing for higher accuracy.
+
+This indicator is specifically designed for Stocks, but the usage in other markets is possible(I haven’t tested in other markets but feel free to try yourself). There are many other paid supply/demand indicators out there, but even so, many of them aren’t as accurate or usable as this one. I am giving this out for free, as I want to help everyone instead of asking you to pay me just for access.
+
+🎯 Optimization:
+
+I set the default settings so that they work the best on SPY. If you decide to trade another specific ticker, you may need to change the settings to fit it. The main settings that should be modified should be the 3 ATR settings.
+
+ATR Multiplier for valid OB: This is the multiplier for the minimum breakout. This indicator looks at 2 different breakouts(strong and weak breakouts). Depending on the type, it will draw S/D at different areas.
+ATR Multiplier Inside/Outside: The S/D key levels, and then adds/subtracts the ATR multiplied by this multiplier to get the zone. The inside multiplier is the multiplier for the inside of the zone, so the area where the price will enter. The outside is the side where it will exit. After price has a full candle outside of the zone, the zone will be deleted.
+
+
+🎯 Usage:
+
+There are many ways you can incorporate this into your trading from confirming your bias to helping you take profits at zones you didn’t see. For example, if you are looking to go long and we are in a huge supply zone, you should definitely pay more attention. If you are looking at price action, and it seems bearish, you can use this indicator to confirm your bearish thesis if we are near a huge supply zone. If your thinking of going long, but it's in supply, maybe pay more attention(unless you're looking for a breakouts)
+
+There are 2 modes in the indicator:
+
+Orderblock Mode: This will show all the valid zones that have not been hit at all. This is very useful if you want to play “set and forget” plays. Once a zone is hit, the zone will be deleted. I don’t use orderblocks too often so the orderblocks generated are the same as Supply/Demand zones. Don’t trade strictly off of this unless you know what you're doing, I did not do extensive testing with this mode.
+Supply/Demand Mode: This shows all zones that have not been broken. This is much more useful than the Orderblock mode(imo) but is a bit harder to read. When consolidating without much trending, Supply/Demand will be drawn on top of each other at the highs, causing “strong supply/demand”, which is often misleading. Zones will only be deleted with a full close outside of the zone, below for demand and above for supply. Don’t trade strictly off of this unless you know what you're doing, but I did do much more extensive testing with this setting.
+
+
+🎯 Example Strategy:
+
+Here’s an example of a very simple strategy you can use, using the Supply/Demand mode of this indicator:
+
+Look for an entry into a zone(preferable a current timeframe zone)
+After entering, wait for price to cross a EMA or MA
+Enter the trade:
+-> If going LONG: SL below previous low, TP at a fixed RR or another strong zone
+->If going SHORT: SL above previous high, TP at a fixed RR or another strong zone
+
+
+Here is an example trade you can take:
+snapshot
+
+1. Look for an entry into a key zone.
+snapshot
+
+2. Look for a crossover/crossunder of the MA(this is the 50MA). Set TP and SL at appropriate levels(1:2 RR and near key levels)
+snapshot
+
+3. Watch play playout
+
+I guarantee you that this strategy has a win rate of less than 100%, so do not ask me why it doesn’t work 100% of the time. If you're going to ask me this, trading isn’t for you or go do some more research. This is just a tool you can use.
+
+🎯 Current Limitations:
+Can not filter zones. When you double click the timeline zoom, the boxes are so high/low that it slows way too many zones too far apart. I haven’t been able to figure out a way to “delete” the zones if they are a certain % away from price, and then have it show again if it's close enough.
+Memory limitations. When backtesting(or for me at least), I will run into a “Memory Exceeded” Error after replaying 1 bar. The only way to reset this is by changing a setting and reverting it in the settings, or going a few bars in the future and re-replaying it back to the previous candles.
+
+
+If anyone would like to try to help out, feel free to DM me. Any help is appreciated :)
+Feb 18, 2024
+Release Notes
+
+Reduced timeframes to 4 for cleaner chart and backtesting compatibility
+Slightly updated settings for SPY. Default settings are still for SPY
+Apr 20, 2024
+Release Notes
+Added alerts on the formation of boxes. I would suggest setting personal alerts at the levels(if you like the zone).
+
+Alerts will be activated on the chart's current timeframe. If you need alerts for multiple timeframes, set an alert for each timeframe you want alerts for.
+Apr 13
+Release Notes
+Minor Update:
+- Added time based scaling(Enabled by default with multiplier of 2.5)
+- Time based scaling increases accuracy of zones by quite a lot. Longer/slower moves usually result larger/stronger zones than small and fast zones.
+
+
+
+A volume indicator based on historic volume.
+
+Checks for the average volume in the past few days at the same time of day. This helps you determine when there is truly volume in the markets.
+
+We will see often see sustained volume above the average during a clear trend. If you see spikes in volume without it being sustained above the average, it is very likely that the trend will die off quickly.
+
+This is very helpful in determining whether to trade based on a trend following system, or a range based system.
+
+Settings are below:
+Days to average: Number of days to look back(tradingview has limits depending on your plan)
+SMA Length: Number of "volume averages" to look at. Keep this at 1 if you want the average volume at the exact moment in the day. If you increase it, will also average in the past few [SMA Length] candles of "volume averages".
+SMA Multiplier: Multiplies the SMA by this amount(helps to get higher quality trends)
+Jul 7, 2025
+Release Notes
+Added proper license at the top.
+Sep 5, 2025
+Release Notes
+- More efficient calculation
+- HTF selection support
+- Removed volume SMA
+- Removed high volume highlighting
+
+
+
+Footprint Imbalance Bubbles (Bookmap Style)
+
+Overview
+
+This indicator brings Bookmap-style order flow visualization directly to your TradingView charts. Instead of standard candles, it detects and plots "Bubbles" at specific price levels where aggressive buying or selling has occurred.
+
+These bubbles represent Volume Imbalances—moments where aggressive market orders overwhelmed limit orders by a significant ratio (e.g., 300% more buying than selling). The size or transparency of the bubble indicates the magnitude of the volume, allowing you to spot "Whales", liquidity sweeps, and understand quality of a price move.
+
+⚠️ Important Requirement
+
+This script uses footprint charts.
+To use this indicator, you may need a TradingView plan that supports Footprint Charts (typically Essential, Plus, or Premium). If your plan does not support footprint data, the indicator MAY NOT LOAD.
+
+Footprint charts only have history accurate up to a certain extent(~5 days based on my testing). Replay mode will only be accurate during this timeframe, replaying further will result in unreliable footprint data, resulting in unreliable bubbles.
+
+Key Features
+
+1. Imbalance Detection
+
+The script scans inside every candle at the tick level (Footprint data). It flags price levels where:
+Aggressive Buyers > Sellers (by a user-defined ratio, e.g., 3x).
+Aggressive Sellers > Buyers.
+The total volume at that level exceeds a noise filter.
+
+
+2. Dynamic Auto-Scaling
+
+Auto-Scale Mode: The indicator automatically detects the largest volume bubble currently on your screen and scales all other bubbles relative to it. This ensures you always see the relative importance of trades, regardless of whether the asset is liquid (like BTC) or illiquid.
+
+
+3. Two Visual Modes
+
+Size Scaling (Classic): Bubbles grow larger as volume increases.
+Transparency Scaling (Heatmap): Bubbles stay a fixed size but become more solid/opaque as volume increases.
+
+
+4. POC (Point of Control)
+
+Optionally plots a stepped line showing the Point of Control (highest volume price) for each bar, helping you track where value is migrating.
+
+Settings Guide
+
+General
+
+Ticks per Row: Controls the granularity. 1 is the most detailed (tick-by-tick). Higher numbers (e.g., 5 or 10) group ticks together, useful for high-price assets like NQ or BTC.
+
+
+Bubble Filters
+
+Imbalance Ratio: The strength required to trigger a bubble. Default 3.0 means Buy Volume must be 3x Sell Volume.
+Min Volume Filter: The minimum total volume required to show a bubble at all. Use this to hide "noise" and focus on significant activity.
+
+
+Visual Modes
+
+Auto-Scale Max Volume: Highly recommended. It adjusts the bubble definition based on the current chart view.
+Manual Max Volume: If Auto-Scale is off, this defines what volume is required to create a "Huge" bubble.
+
+
+
+Overview
+This indicator utilizes the request.footprint() function to analyze sub-bar order flow and identify where large participants are "trapped" or "underwater." By aggregating tick-level volume and identifying imbalances at the edges of candles (wicks), it highlights high-probability reversal zones and exhaustion points.
+
+Note
+This is an upgrade version of my Bookmap Footprint Imbalance Bubbles indicator, check my profile to check it out. Footprint data on tradingview is also inaccurate after a certain cutoff, it is different for every ticker. Reduce the max lookback bars to ignore that data.
+
+How it Works
+The script calculates the delta and volume for every price level within a bar. It specifically looks for "Aggregated Traps"—clusters of buy or sell imbalances that occur at prices the market has since moved away from.
+
+Trapped Buyers: Occur when significant buy imbalances are found at the top of a candle, but the price closes lower.
+Trapped Sellers: Occur when significant sell imbalances are found at the bottom of a candle, but the price closes higher.
+
+
+Key Features
+Aggregated Cluster Logic: Instead of cluttering your chart with every single imbalance, this script sums up the trapped volume across the entire bar to provide a single, weighted "Bubble" at the average price of the trap.
+Top % Filter: A unique feature that allows you to filter for only the most significant events. Setting this to 10% will hide all but the top 10% largest volume traps currently on your chart.
+Dynamic Scaling: Choose between Size Scaling (larger bubbles for more volume) or Transparency Scaling (more opaque bubbles for higher conviction).
+Strict Wick Mode: When enabled, the script only considers traps occurring in the outer 30% of the candle (the wicks), ensuring you are only seeing true exhaustion.
+Auto-Scale Percentile Logic: The indicator automatically identifies "Outliers" based on chart history, ensuring the bubbles remain visually relevant regardless of the asset's typical volume.
+
+
+Settings Guide
+Ticks per Row: Consolidates price levels. Use 1 for precision (e.g., Forex/Indices) or higher numbers for high-priced stocks/crypto.
+Imbalance Ratio: The multiplier required to trigger a trap (e.g., 3.0 means buyers must be 3x stronger than sellers).
+Show Top % of Traps: The ultimate filter. Reduce this to 5% or 10% to see only the "Whale" activity.
+
+
+
+LiquidityMagic is built to identify:
+
+• Where liquidity is sitting
+• Where price is likely to react
+• High-probability areas for entries and exits
+• See EXACTLY when price turns bearish/bullish within the market
+
+Instead of guessing or drawing everything manually…
+the indicator does the work for you in real time.
+
+This allows you to:
+
+✅  Trade with structure instead of emotion
+
+✅  Identify clean setups instantly
+
+✅  Target logical areas in the market

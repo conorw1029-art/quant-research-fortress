@@ -1,0 +1,170 @@
+# live_strategy_allowlist.yaml
+# Controls which strategies may run in tick_live_executor.py.
+#
+# Statuses:
+#   DEMO_CANDIDATE     — Eligible for dry-run AND single-strategy demo auto-trade.
+#                        Only one strategy should hold this status at a time.
+#   ENABLED_DRY_RUN    — Eligible for dry-run only. Not cleared for demo auto-trade.
+#   REVIEW_REQUIRED    — Metrics incomplete or trade count too low.
+#                        Dry-run only, flagged in banner. Block demo.
+#   DISABLED_FOR_LIVE  — Worst-day risk exceeds remaining account runway.
+#                        Cannot run in any mode. Kept for audit trail.
+#   RESEARCH_ONLY      — Historical record only. Never runs in executor.
+#
+# Rules:
+#   - Dry-run allows: ENABLED_DRY_RUN, DEMO_CANDIDATE, REVIEW_REQUIRED
+#   - Demo auto-trade allows: DEMO_CANDIDATE only
+#   - Live auto-trade allows: DEMO_CANDIDATE only (Gate 12 also required)
+#   - Any strategy explicitly requested via --strategy that is DISABLED_FOR_LIVE exits with error.
+#   - Disabled strategies are still logged to the signal log with rejection_reason=allowlist.
+#
+# AUDIT: 2026-05-17 — Based on live_readiness_audit.md and next_action_report.md.
+# $1,000 remaining per account. Any strategy with worst day > $1,000 is disabled.
+# Micro contracts reduce full-contract risk by 10x.
+
+strategies:
+
+  1:
+    key: "GC/obi_threshold/1m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      Worst day $-9,647 on full GC contract ($-965 micro).
+      Single worst day is 9.6x remaining account runway.
+      Re-evaluate when account recovers to $5,000+.
+    worst_day_usd: -9647
+    trade_count: null
+    sharpe_1t: null
+    topstep_compliant: null
+    disabled_date: "2026-05-17"
+
+  2:
+    key: "ES/cvd_divergence_large_print/15m"
+    status: DEMO_CANDIDATE
+    reason: >
+      First and only single-strategy demo candidate.
+      100% Topstep compliance in backtest.
+      Worst day $-3,827 on full ES ($-383 on MES micro).
+      5.5 months tested. All hours except UTC 4,8,11,15,18,23.
+    worst_day_usd: -3827
+    trade_count: null
+    sharpe_1t: null
+    topstep_compliant: true
+    demo_approved_date: "2026-05-17"
+    note: "Run ONLY after Gate 6 (bracket orders) and Gate 7 (reconciliation) pass."
+
+  3:
+    key: "ES/cvd_divergence/15m"
+    status: ENABLED_DRY_RUN
+    reason: >
+      All-hours strategy. Dry-run eligible.
+      Metrics incomplete from audit — validate before elevating to DEMO_CANDIDATE.
+    worst_day_usd: null
+    trade_count: null
+    sharpe_1t: null
+    topstep_compliant: null
+
+  4:
+    key: "ES/tape_absorption/15m"
+    status: ENABLED_DRY_RUN
+    reason: >
+      Asian + US session only (London blocked in executor).
+      Worst day $-2,871 full contract ($-287 micro).
+      Dry-run eligible.
+    worst_day_usd: -2871
+    trade_count: null
+    sharpe_1t: null
+    topstep_compliant: null
+
+  5:
+    key: "NQ/cvd_divergence_large_print/30m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      Only 81 trades — not statistically robust (need > 200 for reliable Sharpe).
+      Worst day $-4,824 full NQ ($-482 micro). Both criteria fail independently.
+    worst_day_usd: -4824
+    trade_count: 81
+    sharpe_1t: null
+    topstep_compliant: null
+    disabled_date: "2026-05-17"
+
+  6:
+    key: "NQ/stop_hunt_reversal/3m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      Worst day $-4,582 full NQ ($-458 micro).
+      Single regime only — not robust across market conditions.
+    worst_day_usd: -4582
+    trade_count: null
+    sharpe_1t: null
+    topstep_compliant: null
+    disabled_date: "2026-05-17"
+
+  7:
+    key: "ES/prev_session_sweep/3m"
+    status: ENABLED_DRY_RUN
+    reason: >
+      100% Topstep compliance. 1t-Sharpe=1.45. All hours.
+      Worst day $-2,813 full ES ($-281 micro). Dry-run eligible.
+    worst_day_usd: -2813
+    trade_count: null
+    sharpe_1t: 1.45
+    topstep_compliant: true
+
+  8:
+    key: "NQ/range_contraction_break/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      Worst day $-3,439 full NQ ($-344 micro). 1t-Sharpe=5.63, 100% TS comply.
+      Trade count unknown — verify > 50 before elevating to ENABLED_DRY_RUN.
+      Runs in dry-run but flagged for manual review.
+    worst_day_usd: -3439
+    trade_count: null
+    sharpe_1t: 5.63
+    topstep_compliant: true
+
+  9:
+    key: "GC/session_momentum_follow/3m"
+    status: ENABLED_DRY_RUN
+    reason: >
+      100% Topstep compliance. 1t-Sharpe=3.22. All hours.
+      Worst day $-3,042 full GC ($-304 micro). Dry-run eligible.
+    worst_day_usd: -3042
+    trade_count: null
+    sharpe_1t: 3.22
+    topstep_compliant: true
+
+  10:
+    key: "GC/trade_absorption_signal/30m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      Worst day $-4,486 full GC ($-449 micro).
+      Exceeds practical account runway at $1,000 remaining.
+    worst_day_usd: -4486
+    trade_count: null
+    sharpe_1t: 4.65
+    topstep_compliant: true
+    disabled_date: "2026-05-17"
+
+  11:
+    key: "ES/avg_order_size_divergence/30m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      Lowest Sharpe in portfolio (1t-Sharpe=1.03) AND worst day $-3,851.
+      Weakest edge combined with large downside — not suitable at current equity.
+    worst_day_usd: -3851
+    trade_count: null
+    sharpe_1t: 1.03
+    topstep_compliant: true
+    disabled_date: "2026-05-17"
+
+  12:
+    key: "NQ/trade_absorption_signal/30m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      Only 21 trades — statistically meaningless.
+      Sharpe not reliable at n=21. Do not run until 100+ trades collected.
+    worst_day_usd: -3234
+    trade_count: 21
+    sharpe_1t: 6.45
+    topstep_compliant: true
+    disabled_date: "2026-05-17"

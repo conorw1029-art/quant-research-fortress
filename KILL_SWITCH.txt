@@ -1,0 +1,2 @@
+ARMED
+# To activate: change ARMED to STOP

@@ -1,0 +1,802 @@
+[
+  {
+    "label": "GC/break_retest_cvd/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/break_retest_cvd/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/break_retest_cvd/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/break_retest_cvd/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/break_retest_cvd/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/break_retest_cvd/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/break_retest_cvd/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/break_retest_cvd/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/break_retest_cvd/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/break_retest_cvd/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/break_retest_cvd/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/break_retest_cvd/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/break_retest_cvd/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/break_retest_cvd/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/break_retest_cvd/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/break_retest_cvd/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/break_retest_cvd/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/break_retest_cvd/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/break_retest_cvd/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/break_retest_cvd/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/opening_range_bias/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/opening_range_bias/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/opening_range_bias/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/opening_range_bias/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/opening_range_bias/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/opening_range_bias/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/opening_range_bias/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/opening_range_bias/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/opening_range_bias/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/opening_range_bias/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/opening_range_bias/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/opening_range_bias/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/opening_range_bias/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/opening_range_bias/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/opening_range_bias/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/opening_range_bias/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/opening_range_bias/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/opening_range_bias/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/opening_range_bias/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/opening_range_bias/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/delta_exhaustion_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/delta_exhaustion_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/delta_exhaustion_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/delta_exhaustion_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/delta_exhaustion_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/delta_exhaustion_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/delta_exhaustion_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/delta_exhaustion_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/delta_exhaustion_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/delta_exhaustion_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/delta_exhaustion_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/delta_exhaustion_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/delta_exhaustion_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/delta_exhaustion_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/delta_exhaustion_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/delta_exhaustion_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/delta_exhaustion_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/delta_exhaustion_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/delta_exhaustion_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/delta_exhaustion_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/wick_delta_trap/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/wick_delta_trap/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/wick_delta_trap/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/wick_delta_trap/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/wick_delta_trap/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/wick_delta_trap/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/wick_delta_trap/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/wick_delta_trap/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/wick_delta_trap/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/wick_delta_trap/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/wick_delta_trap/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/wick_delta_trap/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/wick_delta_trap/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/wick_delta_trap/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/wick_delta_trap/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/wick_delta_trap/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/wick_delta_trap/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/wick_delta_trap/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/wick_delta_trap/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/wick_delta_trap/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/vwap_stretch_reversal/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/vwap_stretch_reversal/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/vwap_stretch_reversal/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/vwap_stretch_reversal/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/vwap_stretch_reversal/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/vwap_stretch_reversal/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/vwap_stretch_reversal/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/vwap_stretch_reversal/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/vwap_stretch_reversal/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/vwap_stretch_reversal/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/vwap_stretch_reversal/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/vwap_stretch_reversal/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/vwap_stretch_reversal/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/vwap_stretch_reversal/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/vwap_stretch_reversal/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/vwap_stretch_reversal/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/vwap_stretch_reversal/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/vwap_stretch_reversal/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/vwap_stretch_reversal/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/vwap_stretch_reversal/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/session_momentum_follow/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/session_momentum_follow/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/session_momentum_follow/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/session_momentum_follow/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/session_momentum_follow/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/session_momentum_follow/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/session_momentum_follow/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/session_momentum_follow/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/session_momentum_follow/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/session_momentum_follow/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/session_momentum_follow/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/session_momentum_follow/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/session_momentum_follow/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/session_momentum_follow/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/session_momentum_follow/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/session_momentum_follow/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/session_momentum_follow/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/session_momentum_follow/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/session_momentum_follow/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/session_momentum_follow/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/large_print_at_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/large_print_at_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/large_print_at_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/large_print_at_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/large_print_at_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/large_print_at_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/large_print_at_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/large_print_at_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/large_print_at_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/large_print_at_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/large_print_at_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/large_print_at_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/large_print_at_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/large_print_at_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/large_print_at_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/large_print_at_level/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/large_print_at_level/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/large_print_at_level/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/large_print_at_level/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/large_print_at_level/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/consecutive_delta_flip/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/consecutive_delta_flip/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/consecutive_delta_flip/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/consecutive_delta_flip/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/consecutive_delta_flip/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/consecutive_delta_flip/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/consecutive_delta_flip/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/consecutive_delta_flip/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/consecutive_delta_flip/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/consecutive_delta_flip/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/consecutive_delta_flip/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/consecutive_delta_flip/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/consecutive_delta_flip/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/consecutive_delta_flip/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/consecutive_delta_flip/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/consecutive_delta_flip/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/consecutive_delta_flip/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/consecutive_delta_flip/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/consecutive_delta_flip/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/consecutive_delta_flip/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/range_contraction_break/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/range_contraction_break/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/range_contraction_break/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/range_contraction_break/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/range_contraction_break/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/range_contraction_break/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/range_contraction_break/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/range_contraction_break/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/range_contraction_break/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/range_contraction_break/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/range_contraction_break/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/range_contraction_break/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/range_contraction_break/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/range_contraction_break/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/range_contraction_break/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/range_contraction_break/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/range_contraction_break/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/range_contraction_break/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/range_contraction_break/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/range_contraction_break/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/cvd_roc_divergence/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/cvd_roc_divergence/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/cvd_roc_divergence/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/cvd_roc_divergence/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "GC/cvd_roc_divergence/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/cvd_roc_divergence/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/cvd_roc_divergence/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/cvd_roc_divergence/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/cvd_roc_divergence/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "SI/cvd_roc_divergence/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/cvd_roc_divergence/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/cvd_roc_divergence/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/cvd_roc_divergence/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/cvd_roc_divergence/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "ES/cvd_roc_divergence/30m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/cvd_roc_divergence/1m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/cvd_roc_divergence/3m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/cvd_roc_divergence/5m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/cvd_roc_divergence/15m",
+    "skip": "SKIP (insufficient data)"
+  },
+  {
+    "label": "NQ/cvd_roc_divergence/30m",
+    "skip": "SKIP (insufficient data)"
+  }
+]

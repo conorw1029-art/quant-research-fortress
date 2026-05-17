@@ -1,5 +1,24 @@
-﻿01_data/raw/*.csv
+# ── Large data files (never commit — regenerate from tick_data_downloader.py) ─
+01_data/raw/
+01_data/tick/
+01_data/tick_bars/*.parquet
+
+# ── Python environments ────────────────────────────────────────────────────────
 venv/
 venv_new/
 __pycache__/
 *.pyc
+*.pyo
+.env
+
+# ── Claude Code internal memory (personal, not project code) ──────────────────
+.claude/
+
+# ── Large backtest CSV outputs (JSON results are kept; CSVs are duplicates) ───
+05_backtests/*.csv
+05_backtests/archived/
+05_backtests/logs/
+
+# ── Live trading logs (runtime output, not source) ────────────────────────────
+06_live_trading/logs/
+06_live_trading/performance/
