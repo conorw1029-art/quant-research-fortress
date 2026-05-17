@@ -795,12 +795,26 @@ def _sync_broker_state(tv_client, tracker: PositionTracker, rm: RiskManager,
     return closed_ids
 
 
+# ── News bias helper ─────────────────────────────────────────────────────────
+
+def _get_bias_for_symbol(symbol: str, news_bias: dict | None) -> int:
+    """Return +1/0/-1 directional bias for `symbol` from the bias dict."""
+    if not news_bias:
+        return 0
+    if symbol in ("ES", "NQ"):
+        return int(news_bias.get("es_nq_bias", 0))
+    if symbol == "GC":
+        return int(news_bias.get("gc_bias", 0))
+    return 0
+
+
 # ── Main check loop ───────────────────────────────────────────────────────────
 
 def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                           disable_v2: bool, verbose: bool = True,
                           tv_client=None, mode: str = MODE_DRY_RUN,
-                          block_new_entries: bool = False) -> list[dict]:
+                          block_new_entries: bool = False,
+                          news_bias: dict | None = None) -> list[dict]:
     """
     Run one check pass across all portfolio strategies.
     Returns list of alert dicts for any new signal entries.
@@ -893,12 +907,22 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
         gate_reason = ""
         if last_sig != 0 and tracker.current(strat_id) == 0:
             if block_new_entries:
-                ok         = False
+                ok          = False
                 gate_reason = "NEWS_WINDOW: new entries blocked"
             else:
-                stop_dist  = STOP_MULT * atr
-                trade_risk = stop_dist * spec["point_value"]
-                ok, gate_reason = rm.can_enter(strat_id, trade_risk)
+                sym_bias = _get_bias_for_symbol(symbol, news_bias)
+                if sym_bias != 0 and sym_bias != last_sig:
+                    ok          = False
+                    dir_str     = "LONG" if last_sig == 1 else "SHORT"
+                    bias_label  = "BULL" if sym_bias == 1 else "BEAR"
+                    gate_reason = (
+                        f"NEWS_BIAS: {dir_str} blocked — {bias_label} "
+                        f"bias (score={news_bias.get('score', 0)})"
+                    )
+                else:
+                    stop_dist  = STOP_MULT * atr
+                    trade_risk = stop_dist * spec["point_value"]
+                    ok, gate_reason = rm.can_enter(strat_id, trade_risk)
             if not ok:
                 if verbose:
                     print(f"  [{strat_id}] {symbol}/{strat_name}/{bar_min}m  "
@@ -940,6 +964,16 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                     alert = _kl_annotate(alert, kl)
                 except Exception:
                     pass
+
+            # Flag news-confirmed entries (signal direction matches daily bias)
+            if news_bias:
+                sym_bias = _get_bias_for_symbol(symbol, news_bias)
+                if sym_bias != 0 and sym_bias == direction:
+                    alert["news_confirmed"] = True
+                    if verbose:
+                        lbl = "BULL" if sym_bias == 1 else "BEAR"
+                        print(f"  [NEWS] Signal aligns with {lbl} daily bias "
+                              f"— news-confirmed entry (score={news_bias.get('score', 0)})")
 
             fired.append(alert)
             _log_signal({
@@ -1324,6 +1358,7 @@ Examples:
 
         # ── News status ───────────────────────────────────────────────────
         news_blocked = False
+        current_bias = None
         if news_monitor:
             try:
                 news_monitor.refresh()
@@ -1333,6 +1368,8 @@ Examples:
                     print(f"\n  *** NEWS WINDOW — NEW ENTRIES BLOCKED: {evt} ***")
                     news_blocked = True
                 bias = news_monitor.get_daily_bias()
+                if bias.get("score", 0) != 0:
+                    current_bias = bias
                 if bias["es_nq_bias"] != 0:
                     d  = "BULL" if bias["es_nq_bias"] > 0 else "BEAR"
                     gc = "BULL" if bias["gc_bias"] > 0 else "BEAR" if bias["gc_bias"] < 0 else "NEUTRAL"
@@ -1343,7 +1380,8 @@ Examples:
         alerts = check_all_strategies(tracker, rm, args.disable_v2,
                                       verbose=verbose, tv_client=tv_client,
                                       mode=mode,
-                                      block_new_entries=news_blocked)
+                                      block_new_entries=news_blocked,
+                                      news_bias=current_bias)
 
         if alerts:
             print(f"\n  >>> {len(alerts)} alert(s) fired <<<")
