@@ -222,3 +222,379 @@ strategies:
     added_date: "2026-05-17"
     disabled_date: "2026-05-18"
     note: "Demoted 2026-05-18: worst-day micro $1,623 > $1,000 runway limit. Do not re-enable until micro worst-day < $1,000 AND 1t-Sharpe >= 1.0."
+
+  # ── V6/V7/V8 — Pure OHLCV strategies (stress-tested 2026-05-18) ─────────────
+  # 23 PASS survivors from full WFO + Phase 1 + Phase 2 stress suite.
+  # Pure OHLCV — near-zero correlation to V1-V5 CVD/delta strategies.
+  # Long-history (GC/SI): 2020-2026, regime check included.
+  # Short-history (ES/NQ): Dec 2025+ only, regime check skipped.
+  #
+  # Status rules:
+  #   worst_micro <= $1,000: REVIEW_REQUIRED (dry-run eligible, flagged)
+  #   worst_micro >  $1,000: DISABLED_FOR_LIVE (re-enable when account > $5k)
+  #   Short-history (ES/NQ): always REVIEW_REQUIRED until 2+ years data
+  #
+  # Elevation to ENABLED_DRY_RUN requires: 2+ live dry-run sessions confirmed.
+
+  # ── REVIEW_REQUIRED — long history (GC/SI), worst_micro <= $1,000 ────────────
+
+  16:
+    key: "GC/vwap_mean_reversion/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. WFO DSR passed. Phase 2 stress PASS: 1t-Sharpe=2.71, 7/7 yrs positive,
+      Topstep 99.5% compliance. Worst-day micro $513 on 1 micro GC contract.
+      Pure OHLCV — no CVD required. Elevation to ENABLED_DRY_RUN after 2+ live sessions.
+    worst_day_usd: -5135
+    worst_micro: -513
+    trade_count: null
+    sharpe_1t: 2.71
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions with valid signals."
+
+  17:
+    key: "GC/pivot_reversal/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V8 strategy. Phase 2 stress PASS: 1t-Sharpe=2.02, 6/7 yrs positive,
+      Topstep 100% compliance. Worst-day micro $364 on 1 micro GC contract.
+      Pure OHLCV — no CVD required. Elevation to ENABLED_DRY_RUN after 2+ live sessions.
+    worst_day_usd: -3644
+    worst_micro: -364
+    trade_count: null
+    sharpe_1t: 2.02
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions."
+
+  18:
+    key: "SI/opening_range_fakeout/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS: 1t-Sharpe=2.52, 6/7 yrs positive,
+      Topstep 97.9% compliance. Worst-day micro $458 on 1 micro SI contract.
+      Pure OHLCV — no CVD required. Adds SI instrument diversification.
+    worst_day_usd: -4576
+    worst_micro: -458
+    trade_count: null
+    sharpe_1t: 2.52
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions."
+
+  19:
+    key: "SI/consecutive_close_momentum/3m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V8 strategy. Phase 2 stress PASS: 1t-Sharpe=2.28, 5/7 yrs positive,
+      Topstep 98.4% compliance. Worst-day micro $883 on 1 micro SI contract.
+      Pure OHLCV — no CVD required. High frequency signal (3m bars).
+    worst_day_usd: -8828
+    worst_micro: -883
+    trade_count: null
+    sharpe_1t: 2.28
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions."
+
+  20:
+    key: "GC/pivot_reversal/15m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V8 strategy. Phase 2 stress PASS: 1t-Sharpe=1.85, 5/6 yrs positive,
+      Topstep 98.4% compliance. Worst-day micro $671 on 1 micro GC contract.
+      Pure OHLCV — no CVD required.
+    worst_day_usd: -6706
+    worst_micro: -671
+    trade_count: null
+    sharpe_1t: 1.85
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions."
+
+  21:
+    key: "SI/ema_crossover/1m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V7 strategy. Phase 2 stress PASS: 1t-Sharpe=1.80, 7/7 yrs positive,
+      Topstep 98.4% compliance. Worst-day micro $952 on 1 micro SI contract.
+      Pure OHLCV — no CVD required. High frequency (1m bars) — monitor signal rate carefully.
+    worst_day_usd: -9521
+    worst_micro: -952
+    trade_count: null
+    sharpe_1t: 1.80
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions. Monitor for excess churn on 1m bars."
+
+  22:
+    key: "SI/vwap_mean_reversion/15m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS: 1t-Sharpe=1.80, 5/7 yrs positive,
+      Topstep 97.9% compliance. Worst-day micro $603 on 1 micro SI contract.
+      Pure OHLCV VWAP strategy. Adds SI instrument diversification.
+    worst_day_usd: -6026
+    worst_micro: -603
+    trade_count: null
+    sharpe_1t: 1.80
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions."
+
+  23:
+    key: "SI/opening_range_fakeout/3m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS: 1t-Sharpe=1.50, 5/7 yrs positive,
+      Topstep 100% compliance. Worst-day micro $395 on 1 micro SI contract.
+      Pure OHLCV — no CVD required. High frequency (3m bars).
+    worst_day_usd: -3951
+    worst_micro: -395
+    trade_count: null
+    sharpe_1t: 1.50
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions."
+
+  # ── DISABLED_FOR_LIVE — long history, worst_micro > $1,000 ───────────────────
+  # Re-evaluate when account equity exceeds $5,000 (worst_micro < 20% equity).
+
+  24:
+    key: "GC/donchian_breakout/15m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V7 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.93, 6/7 yrs positive,
+      Topstep 99.6% compliance. BUT worst-day micro $1,796 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000 or position sizing reduced.
+    worst_day_usd: -17958
+    worst_micro: -1796
+    trade_count: null
+    sharpe_1t: 1.93
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Excellent strategy — worst_micro $1,796 is the only blocker. Re-enable at $5k+ equity."
+
+  25:
+    key: "SI/consecutive_close_momentum/5m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V8 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=2.40, 7/7 yrs positive,
+      Topstep 96.6% compliance. BUT worst-day micro $2,122 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -21222
+    worst_micro: -2122
+    trade_count: null
+    sharpe_1t: 2.40
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Strong strategy — worst_micro $2,122 is the only blocker. Re-enable at $5k+ equity."
+
+  26:
+    key: "SI/ema_crossover/30m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V7 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.95, 6/7 yrs positive,
+      Topstep 95.9% compliance. BUT worst-day micro $1,366 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -13662
+    worst_micro: -1366
+    trade_count: null
+    sharpe_1t: 1.95
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $5k+ equity."
+
+  27:
+    key: "GC/consecutive_close_momentum/15m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V8 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.87, 6/7 yrs positive,
+      Topstep 99.6% compliance. BUT worst-day micro $1,414 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -14144
+    worst_micro: -1414
+    trade_count: null
+    sharpe_1t: 1.87
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $5k+ equity."
+
+  28:
+    key: "SI/ma_slope_regime/30m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V8 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.79, 5/7 yrs positive,
+      Topstep 96.7% compliance. BUT worst-day micro $1,743 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -17433
+    worst_micro: -1743
+    trade_count: null
+    sharpe_1t: 1.79
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $5k+ equity."
+
+  29:
+    key: "SI/ema_crossover/5m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V7 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.72, 6/7 yrs positive,
+      Topstep 96.9% compliance. BUT worst-day micro $1,202 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -12015
+    worst_micro: -1202
+    trade_count: null
+    sharpe_1t: 1.72
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $5k+ equity."
+
+  30:
+    key: "SI/consecutive_close_momentum/15m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V8 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.69, 6/7 yrs positive,
+      Topstep 96.1% compliance. BUT worst-day micro $1,680 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -16805
+    worst_micro: -1680
+    trade_count: null
+    sharpe_1t: 1.69
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $5k+ equity."
+
+  31:
+    key: "SI/consecutive_close_momentum/1m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V8 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.68, 6/7 yrs positive,
+      Topstep 97.9% compliance. BUT worst-day micro $3,486 is 3.5x the $1,000 runway limit.
+      High-frequency (1m bars) with large worst-day — not suitable at current equity.
+    worst_day_usd: -34857
+    worst_micro: -3486
+    trade_count: null
+    sharpe_1t: 1.68
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $10k+ equity. Worst-micro $3,486 requires very large account buffer."
+
+  32:
+    key: "GC/close_position_momentum/15m"
+    status: DISABLED_FOR_LIVE
+    reason: >
+      V8 strategy. Phase 2 stress PASS on metrics: 1t-Sharpe=1.68, 7/7 yrs positive,
+      Topstep 99.6% compliance. BUT worst-day micro $1,088 exceeds $1,000 runway limit.
+      Re-enable when account equity > $5,000.
+    worst_day_usd: -10879
+    worst_micro: -1088
+    trade_count: null
+    sharpe_1t: 1.68
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    disabled_date: "2026-05-18"
+    note: "Re-enable at $5k+ equity. Closest to threshold — first candidate for re-activation."
+
+  # ── REVIEW_REQUIRED — short history (ES/NQ, Dec 2025+) ───────────────────────
+  # Annual regime check skipped — insufficient data. Re-evaluate when 2+ years available.
+
+  33:
+    key: "ES/overnight_gap_fill/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS*: 1t-Sharpe=4.05, Topstep 100% compliance.
+      ES/NQ data Dec 2025+ only — annual regime check skipped (N/A short history).
+      Worst-day micro $222 on 1 micro ES contract. Very high Sharpe on available data.
+      Re-evaluate when ES data reaches 2023+ for proper regime analysis.
+    worst_day_usd: -2225
+    worst_micro: -222
+    trade_count: null
+    sharpe_1t: 4.05
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN when ES history reaches 2023+. Highest sr1t in V678 cohort."
+
+  34:
+    key: "ES/overnight_gap_fill/15m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS*: 1t-Sharpe=3.16, Topstep 100% compliance.
+      ES data Dec 2025+ only — regime check skipped. Worst-day micro $180 (lowest in cohort).
+      Re-evaluate when ES data reaches 2023+.
+    worst_day_usd: -1798
+    worst_micro: -180
+    trade_count: null
+    sharpe_1t: 3.16
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN when ES history reaches 2023+. Lowest worst_micro in entire V678 cohort."
+
+  35:
+    key: "NQ/ma_slope_regime/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V8 strategy. Phase 2 stress PASS*: 1t-Sharpe=2.89, Topstep 100% compliance.
+      NQ data Dec 2025+ only — regime check skipped. Worst-day micro $311.
+      Re-evaluate when NQ data reaches 2023+.
+    worst_day_usd: -3107
+    worst_micro: -311
+    trade_count: null
+    sharpe_1t: 2.89
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN when NQ history reaches 2023+."
+
+  36:
+    key: "NQ/inside_bar_breakout/15m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V8 strategy. Phase 2 stress PASS*: 1t-Sharpe=2.77, Topstep 100% compliance.
+      NQ data Dec 2025+ only — regime check skipped. Worst-day micro $413.
+      Re-evaluate when NQ data reaches 2023+.
+    worst_day_usd: -4134
+    worst_micro: -413
+    trade_count: null
+    sharpe_1t: 2.77
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN when NQ history reaches 2023+."
+
+  37:
+    key: "NQ/vwap_mean_reversion/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS*: 1t-Sharpe=2.35, Topstep 98.5% compliance.
+      NQ data Dec 2025+ only — regime check skipped. Worst-day micro $475.
+      Re-evaluate when NQ data reaches 2023+.
+    worst_day_usd: -4751
+    worst_micro: -475
+    trade_count: null
+    sharpe_1t: 2.35
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN when NQ history reaches 2023+."
+
+  38:
+    key: "ES/vwap_mean_reversion/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. Phase 2 stress PASS*: 1t-Sharpe=1.93, Topstep 100% compliance.
+      ES data Dec 2025+ only — regime check skipped. Worst-day micro $202.
+      Re-evaluate when ES data reaches 2023+.
+    worst_day_usd: -2017
+    worst_micro: -202
+    trade_count: null
+    sharpe_1t: 1.93
+    topstep_compliant: true
+    added_date: "2026-05-18"
+    note: "Elevate to ENABLED_DRY_RUN when ES history reaches 2023+."

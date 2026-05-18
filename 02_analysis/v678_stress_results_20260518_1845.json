@@ -1,0 +1,528 @@
+{
+  "passed": [
+    {
+      "label": "ES/overnight_gap_fill/30m",
+      "symbol": "ES",
+      "bar_min": 30,
+      "strategy": "overnight_gap_fill",
+      "strategy_family": "price_action",
+      "params": {
+        "gap_atr_mult": 0.3,
+        "atr_window": 14
+      },
+      "sr1t": 4.047,
+      "regimes": "N/A (short)",
+      "ts_pct": 1.0,
+      "worst_day": -2225.0,
+      "worst_micro": -222.0,
+      "long_history": false
+    },
+    {
+      "label": "ES/overnight_gap_fill/15m",
+      "symbol": "ES",
+      "bar_min": 15,
+      "strategy": "overnight_gap_fill",
+      "strategy_family": "price_action",
+      "params": {
+        "gap_atr_mult": 0.3,
+        "atr_window": 14
+      },
+      "sr1t": 3.155,
+      "regimes": "N/A (short)",
+      "ts_pct": 1.0,
+      "worst_day": -1798.0,
+      "worst_micro": -180.0,
+      "long_history": false
+    },
+    {
+      "label": "NQ/ma_slope_regime/30m",
+      "symbol": "NQ",
+      "bar_min": 30,
+      "strategy": "ma_slope_regime",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "ma_win": 15,
+        "slope_bars": 3,
+        "entry_rsi_win": 14,
+        "rsi_ob": 60,
+        "rsi_os": 40
+      },
+      "sr1t": 2.892,
+      "regimes": "N/A (short)",
+      "ts_pct": 1.0,
+      "worst_day": -3107.0,
+      "worst_micro": -311.0,
+      "long_history": false
+    },
+    {
+      "label": "GC/vwap_mean_reversion/30m",
+      "symbol": "GC",
+      "bar_min": 30,
+      "strategy": "vwap_mean_reversion",
+      "strategy_family": "vwap_session",
+      "params": {
+        "z_thresh": 2.5,
+        "vwap_window": 10
+      },
+      "sr1t": 2.713,
+      "regimes": "7/7 yrs",
+      "ts_pct": 0.9953,
+      "worst_day": -5135.0,
+      "worst_micro": -513.0,
+      "long_history": true
+    },
+    {
+      "label": "NQ/inside_bar_breakout/15m",
+      "symbol": "NQ",
+      "bar_min": 15,
+      "strategy": "inside_bar_breakout",
+      "strategy_family": "price_action",
+      "params": {
+        "n_inside": 2,
+        "breakout_confirm": 0
+      },
+      "sr1t": 2.766,
+      "regimes": "N/A (short)",
+      "ts_pct": 1.0,
+      "worst_day": -4134.0,
+      "worst_micro": -413.0,
+      "long_history": false
+    },
+    {
+      "label": "SI/opening_range_fakeout/30m",
+      "symbol": "SI",
+      "bar_min": 30,
+      "strategy": "opening_range_fakeout",
+      "strategy_family": "price_action",
+      "params": {
+        "orb_bars": 12,
+        "reentry_atr_pct": 0.2,
+        "atr_window": 14
+      },
+      "sr1t": 2.524,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9787,
+      "worst_day": -4576.0,
+      "worst_micro": -458.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/consecutive_close_momentum/5m",
+      "symbol": "SI",
+      "bar_min": 5,
+      "strategy": "consecutive_close_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "n": 5
+      },
+      "sr1t": 2.399,
+      "regimes": "7/7 yrs",
+      "ts_pct": 0.9657,
+      "worst_day": -21222.0,
+      "worst_micro": -2122.0,
+      "long_history": true
+    },
+    {
+      "label": "NQ/vwap_mean_reversion/30m",
+      "symbol": "NQ",
+      "bar_min": 30,
+      "strategy": "vwap_mean_reversion",
+      "strategy_family": "vwap_session",
+      "params": {
+        "z_thresh": 2.5,
+        "vwap_window": 40
+      },
+      "sr1t": 2.35,
+      "regimes": "N/A (short)",
+      "ts_pct": 0.9848,
+      "worst_day": -4751.0,
+      "worst_micro": -475.0,
+      "long_history": false
+    },
+    {
+      "label": "SI/consecutive_close_momentum/3m",
+      "symbol": "SI",
+      "bar_min": 3,
+      "strategy": "consecutive_close_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "n": 5
+      },
+      "sr1t": 2.275,
+      "regimes": "5/7 yrs",
+      "ts_pct": 0.9835,
+      "worst_day": -8828.0,
+      "worst_micro": -883.0,
+      "long_history": true
+    },
+    {
+      "label": "GC/pivot_reversal/30m",
+      "symbol": "GC",
+      "bar_min": 30,
+      "strategy": "pivot_reversal",
+      "strategy_family": "price_action",
+      "params": {
+        "pivot_bars": 10,
+        "bounce_atr_mult": 0.2,
+        "atr_win": 10
+      },
+      "sr1t": 2.018,
+      "regimes": "6/7 yrs",
+      "ts_pct": 1.0,
+      "worst_day": -3644.0,
+      "worst_micro": -364.0,
+      "long_history": true
+    },
+    {
+      "label": "GC/pivot_reversal/15m",
+      "symbol": "GC",
+      "bar_min": 15,
+      "strategy": "pivot_reversal",
+      "strategy_family": "price_action",
+      "params": {
+        "pivot_bars": 20,
+        "bounce_atr_mult": 0.2,
+        "atr_win": 14
+      },
+      "sr1t": 1.847,
+      "regimes": "5/6 yrs",
+      "ts_pct": 0.9841,
+      "worst_day": -6706.0,
+      "worst_micro": -671.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/ema_crossover/30m",
+      "symbol": "SI",
+      "bar_min": 30,
+      "strategy": "ema_crossover",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "fast": 13,
+        "slow": 34,
+        "slope_bars": 3
+      },
+      "sr1t": 1.951,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9585,
+      "worst_day": -13662.0,
+      "worst_micro": -1366.0,
+      "long_history": true
+    },
+    {
+      "label": "ES/vwap_mean_reversion/30m",
+      "symbol": "ES",
+      "bar_min": 30,
+      "strategy": "vwap_mean_reversion",
+      "strategy_family": "vwap_session",
+      "params": {
+        "z_thresh": 2.5,
+        "vwap_window": 10
+      },
+      "sr1t": 1.926,
+      "regimes": "N/A (short)",
+      "ts_pct": 1.0,
+      "worst_day": -2017.0,
+      "worst_micro": -202.0,
+      "long_history": false
+    },
+    {
+      "label": "GC/donchian_breakout/15m",
+      "symbol": "GC",
+      "bar_min": 15,
+      "strategy": "donchian_breakout",
+      "strategy_family": "price_action",
+      "params": {
+        "n": 40,
+        "confirm": 1
+      },
+      "sr1t": 1.926,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9964,
+      "worst_day": -17958.0,
+      "worst_micro": -1796.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/consecutive_close_momentum/1m",
+      "symbol": "SI",
+      "bar_min": 1,
+      "strategy": "consecutive_close_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "n": 5
+      },
+      "sr1t": 1.682,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9788,
+      "worst_day": -34857.0,
+      "worst_micro": -3486.0,
+      "long_history": true
+    },
+    {
+      "label": "GC/consecutive_close_momentum/15m",
+      "symbol": "GC",
+      "bar_min": 15,
+      "strategy": "consecutive_close_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "n": 5
+      },
+      "sr1t": 1.867,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9961,
+      "worst_day": -14144.0,
+      "worst_micro": -1414.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/ema_crossover/1m",
+      "symbol": "SI",
+      "bar_min": 1,
+      "strategy": "ema_crossover",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "fast": 5,
+        "slow": 34,
+        "slope_bars": 5
+      },
+      "sr1t": 1.804,
+      "regimes": "7/7 yrs",
+      "ts_pct": 0.9841,
+      "worst_day": -9521.0,
+      "worst_micro": -952.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/vwap_mean_reversion/15m",
+      "symbol": "SI",
+      "bar_min": 15,
+      "strategy": "vwap_mean_reversion",
+      "strategy_family": "vwap_session",
+      "params": {
+        "z_thresh": 2.5,
+        "vwap_window": 10
+      },
+      "sr1t": 1.796,
+      "regimes": "5/7 yrs",
+      "ts_pct": 0.9792,
+      "worst_day": -6026.0,
+      "worst_micro": -603.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/ma_slope_regime/30m",
+      "symbol": "SI",
+      "bar_min": 30,
+      "strategy": "ma_slope_regime",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "ma_win": 20,
+        "slope_bars": 3,
+        "entry_rsi_win": 14,
+        "rsi_ob": 60,
+        "rsi_os": 40
+      },
+      "sr1t": 1.79,
+      "regimes": "5/7 yrs",
+      "ts_pct": 0.9667,
+      "worst_day": -17433.0,
+      "worst_micro": -1743.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/ema_crossover/5m",
+      "symbol": "SI",
+      "bar_min": 5,
+      "strategy": "ema_crossover",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "fast": 5,
+        "slow": 34,
+        "slope_bars": 5
+      },
+      "sr1t": 1.716,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9693,
+      "worst_day": -12015.0,
+      "worst_micro": -1202.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/opening_range_fakeout/3m",
+      "symbol": "SI",
+      "bar_min": 3,
+      "strategy": "opening_range_fakeout",
+      "strategy_family": "price_action",
+      "params": {
+        "orb_bars": 3,
+        "reentry_atr_pct": 0.05,
+        "atr_window": 14
+      },
+      "sr1t": 1.501,
+      "regimes": "5/7 yrs",
+      "ts_pct": 1.0,
+      "worst_day": -3951.0,
+      "worst_micro": -395.0,
+      "long_history": true
+    },
+    {
+      "label": "GC/close_position_momentum/15m",
+      "symbol": "GC",
+      "bar_min": 15,
+      "strategy": "close_position_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "cp_window": 5,
+        "cp_thresh": 0.75
+      },
+      "sr1t": 1.676,
+      "regimes": "7/7 yrs",
+      "ts_pct": 0.9957,
+      "worst_day": -10879.0,
+      "worst_micro": -1088.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/consecutive_close_momentum/15m",
+      "symbol": "SI",
+      "bar_min": 15,
+      "strategy": "consecutive_close_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "n": 5
+      },
+      "sr1t": 1.689,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9612,
+      "worst_day": -16805.0,
+      "worst_micro": -1680.0,
+      "long_history": true
+    }
+  ],
+  "failed": [
+    {
+      "label": "NQ/vwap_band_fade/30m",
+      "symbol": "NQ",
+      "bar_min": 30,
+      "strategy": "vwap_band_fade",
+      "strategy_family": "vwap_session",
+      "params": {
+        "band_mult": 2.5,
+        "std_window": 10
+      },
+      "sr1t": 2.163,
+      "regimes": "N/A (short)",
+      "ts_pct": 0.8785,
+      "worst_day": -15012.0,
+      "worst_micro": -1501.0,
+      "long_history": false
+    },
+    {
+      "label": "GC/prior_day_hl_sweep/1m",
+      "symbol": "GC",
+      "bar_min": 1,
+      "strategy": "prior_day_hl_sweep",
+      "strategy_family": "price_action",
+      "params": {
+        "wick_atr_pct": 0.3,
+        "atr_window": 10
+      },
+      "sr1t": 1.907,
+      "regimes": "4/6 yrs",
+      "ts_pct": 1.0,
+      "worst_day": -933.0,
+      "worst_micro": -93.0,
+      "long_history": true
+    },
+    {
+      "label": "GC/prior_day_hl_sweep/15m",
+      "symbol": "GC",
+      "bar_min": 15,
+      "strategy": "prior_day_hl_sweep",
+      "strategy_family": "price_action",
+      "params": {
+        "wick_atr_pct": 0.3,
+        "atr_window": 10
+      },
+      "sr1t": 1.986,
+      "regimes": "4/7 yrs",
+      "ts_pct": 1.0,
+      "worst_day": -3100.0,
+      "worst_micro": -310.0,
+      "long_history": true
+    },
+    {
+      "label": "NQ/pivot_reversal/30m",
+      "symbol": "NQ",
+      "bar_min": 30,
+      "strategy": "pivot_reversal",
+      "strategy_family": "price_action",
+      "params": {
+        "pivot_bars": 10,
+        "bounce_atr_mult": 0.2,
+        "atr_win": 10
+      },
+      "sr1t": 1.919,
+      "regimes": "N/A (short)",
+      "ts_pct": 0.9279,
+      "worst_day": -11397.0,
+      "worst_micro": -1140.0,
+      "long_history": false
+    },
+    {
+      "label": "SI/close_position_momentum/30m",
+      "symbol": "SI",
+      "bar_min": 30,
+      "strategy": "close_position_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "cp_window": 3,
+        "cp_thresh": 0.8
+      },
+      "sr1t": 1.814,
+      "regimes": "6/7 yrs",
+      "ts_pct": 0.9451,
+      "worst_day": -21966.0,
+      "worst_micro": -2197.0,
+      "long_history": true
+    },
+    {
+      "label": "SI/close_position_momentum/15m",
+      "symbol": "SI",
+      "bar_min": 15,
+      "strategy": "close_position_momentum",
+      "strategy_family": "trend_momentum",
+      "params": {
+        "cp_window": 3,
+        "cp_thresh": 0.75
+      },
+      "sr1t": 1.748,
+      "regimes": "4/7 yrs",
+      "ts_pct": 0.9545,
+      "worst_day": -11698.0,
+      "worst_micro": -1170.0,
+      "long_history": true
+    },
+    {
+      "label": "NQ/bollinger_rsi_reversal/30m",
+      "symbol": "NQ",
+      "bar_min": 30,
+      "strategy": "bollinger_rsi_reversal",
+      "strategy_family": "price_action",
+      "params": {
+        "window": 15,
+        "std_mult": 1.8,
+        "rsi_win": 14,
+        "rsi_ob": 70,
+        "rsi_os": 30
+      },
+      "sr1t": 1.771,
+      "regimes": "N/A (short)",
+      "ts_pct": 0.9204,
+      "worst_day": -9336.0,
+      "worst_micro": -934.0,
+      "long_history": false
+    }
+  ]
+}

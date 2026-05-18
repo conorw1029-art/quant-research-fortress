@@ -9,7 +9,7 @@ filters, and outputs trade alerts when signals fire.
 NOT an execution engine — generates structured alerts for manual or
 API-driven execution.
 
-CONFIRMED STRATEGY PORTFOLIO (12 strategies)
+CONFIRMED STRATEGY PORTFOLIO (38 strategies)
 ─────────────────────────────────────────────
 V1 (from deep analysis + extended analysis):
   1. NQ/cvd_divergence_large_print/30m   Hours: UTC 14,19,20 only
@@ -30,6 +30,39 @@ V4 — Deep microstructure / footprint (stress-tested May 2026):
  10. GC/trade_absorption_signal/30m      All hours (100% TS, 1t-Sharpe=4.65, WR=51.5%, WorstDay=$-4.5k)
  11. ES/avg_order_size_divergence/30m    All hours (100% TS, 1t-Sharpe=1.03, WorstDay=$-3.9k)
  12. NQ/trade_absorption_signal/30m      All hours (100% TS, 1t-Sharpe=6.45, WorstDay=$-3.2k, n=21)
+
+V5 — Key-level CVD rejection (stress-tested May 2026):
+ 13. ES/key_level_cvd_rejection/15m      REVIEW_REQUIRED (5-month data)
+ 14. NQ/key_level_cvd_rejection/15m      REVIEW_REQUIRED (5-month data)
+ 15. GC/key_level_cvd_rejection/5m       DISABLED (worst-micro $1,623)
+
+V6/V7/V8 — Pure OHLCV, no CVD (stress-tested 2026-05-18, 23 survivors):
+ REVIEW_REQUIRED — long history (GC/SI 2020-2026):
+ 16. GC/vwap_mean_reversion/30m          1t-Sharpe=2.71, 7/7 yrs, worst-micro=$513
+ 17. GC/pivot_reversal/30m               1t-Sharpe=2.02, 6/7 yrs, worst-micro=$364
+ 18. SI/opening_range_fakeout/30m        1t-Sharpe=2.52, 6/7 yrs, worst-micro=$458
+ 19. SI/consecutive_close_momentum/3m    1t-Sharpe=2.28, 5/7 yrs, worst-micro=$883
+ 20. GC/pivot_reversal/15m               1t-Sharpe=1.85, 5/6 yrs, worst-micro=$671
+ 21. SI/ema_crossover/1m                 1t-Sharpe=1.80, 7/7 yrs, worst-micro=$952
+ 22. SI/vwap_mean_reversion/15m          1t-Sharpe=1.80, 5/7 yrs, worst-micro=$603
+ 23. SI/opening_range_fakeout/3m         1t-Sharpe=1.50, 5/7 yrs, worst-micro=$395
+ DISABLED_FOR_LIVE — long history, worst-micro > $1,000 (re-enable at $5k+ equity):
+ 24. GC/donchian_breakout/15m            1t-Sharpe=1.93, 6/7 yrs, worst-micro=$1,796
+ 25. SI/consecutive_close_momentum/5m    1t-Sharpe=2.40, 7/7 yrs, worst-micro=$2,122
+ 26. SI/ema_crossover/30m                1t-Sharpe=1.95, 6/7 yrs, worst-micro=$1,366
+ 27. GC/consecutive_close_momentum/15m   1t-Sharpe=1.87, 6/7 yrs, worst-micro=$1,414
+ 28. SI/ma_slope_regime/30m              1t-Sharpe=1.79, 5/7 yrs, worst-micro=$1,743
+ 29. SI/ema_crossover/5m                 1t-Sharpe=1.72, 6/7 yrs, worst-micro=$1,202
+ 30. SI/consecutive_close_momentum/15m   1t-Sharpe=1.69, 6/7 yrs, worst-micro=$1,680
+ 31. SI/consecutive_close_momentum/1m    1t-Sharpe=1.68, 6/7 yrs, worst-micro=$3,486
+ 32. GC/close_position_momentum/15m      1t-Sharpe=1.68, 7/7 yrs, worst-micro=$1,088
+ REVIEW_REQUIRED — short history (ES/NQ, Dec 2025+, regime check pending):
+ 33. ES/overnight_gap_fill/30m           1t-Sharpe=4.05, TS=100%, worst-micro=$222
+ 34. ES/overnight_gap_fill/15m           1t-Sharpe=3.16, TS=100%, worst-micro=$180
+ 35. NQ/ma_slope_regime/30m              1t-Sharpe=2.89, TS=100%, worst-micro=$311
+ 36. NQ/inside_bar_breakout/15m          1t-Sharpe=2.77, TS=100%, worst-micro=$413
+ 37. NQ/vwap_mean_reversion/30m          1t-Sharpe=2.35, TS=98.5%, worst-micro=$475
+ 38. ES/vwap_mean_reversion/30m          1t-Sharpe=1.93, TS=100%, worst-micro=$202
 
 Usage:
   python tick_live_executor.py                 # single-shot check
@@ -352,6 +385,106 @@ PORTFOLIO = [
     (15, "GC",  5, "key_level_cvd_rejection",
      {"key_level_window": 10, "cvd_window": 10, "rejection_atr_pct": 1.0},
      None,            None,      "v5"),    # 1t-Sharpe=0.92, 7/7 yrs, TS=99.3%, borderline Sharpe
+
+    # ── V6/V7/V8 — Pure OHLCV strategies (stress-tested 2026-05-18) ─────────────
+    # 23 PASS survivors. Near-zero correlation to V1-V5 CVD strategies.
+    # Long-history (GC/SI): 2020-2026. Short-history (ES/NQ): Dec 2025+ only.
+    # Allowlist controls dry-run eligibility — see live_strategy_allowlist.yaml.
+
+    # REVIEW_REQUIRED — long history, worst_micro <= $1,000
+    (16, "GC", 30, "vwap_mean_reversion",
+     {"z_thresh": 2.5, "vwap_window": 10},
+     None,            None,      "v6"),    # 1t-Sharpe=2.71, 7/7 yrs, TS=99.5%, worst-micro=$513
+
+    (17, "GC", 30, "pivot_reversal",
+     {"pivot_bars": 10, "bounce_atr_mult": 0.2, "atr_win": 10},
+     None,            None,      "v8"),    # 1t-Sharpe=2.02, 6/7 yrs, TS=100%, worst-micro=$364
+
+    (18, "SI", 30, "opening_range_fakeout",
+     {"orb_bars": 12, "reentry_atr_pct": 0.2, "atr_window": 14},
+     None,            None,      "v6"),    # 1t-Sharpe=2.52, 6/7 yrs, TS=97.9%, worst-micro=$458
+
+    (19, "SI",  3, "consecutive_close_momentum",
+     {"n": 5},
+     None,            None,      "v8"),    # 1t-Sharpe=2.28, 5/7 yrs, TS=98.4%, worst-micro=$883
+
+    (20, "GC", 15, "pivot_reversal",
+     {"pivot_bars": 20, "bounce_atr_mult": 0.2, "atr_win": 14},
+     None,            None,      "v8"),    # 1t-Sharpe=1.85, 5/6 yrs, TS=98.4%, worst-micro=$671
+
+    (21, "SI",  1, "ema_crossover",
+     {"fast": 5, "slow": 34, "slope_bars": 5},
+     None,            None,      "v7"),    # 1t-Sharpe=1.80, 7/7 yrs, TS=98.4%, worst-micro=$952
+
+    (22, "SI", 15, "vwap_mean_reversion",
+     {"z_thresh": 2.5, "vwap_window": 10},
+     None,            None,      "v6"),    # 1t-Sharpe=1.80, 5/7 yrs, TS=97.9%, worst-micro=$603
+
+    (23, "SI",  3, "opening_range_fakeout",
+     {"orb_bars": 3, "reentry_atr_pct": 0.05, "atr_window": 14},
+     None,            None,      "v6"),    # 1t-Sharpe=1.50, 5/7 yrs, TS=100%, worst-micro=$395
+
+    # DISABLED_FOR_LIVE — long history, worst_micro > $1,000 (re-enable at $5k+ equity)
+    (24, "GC", 15, "donchian_breakout",
+     {"n": 40, "confirm": 1},
+     None,            None,      "v7"),    # 1t-Sharpe=1.93, 6/7 yrs, TS=99.6%, worst-micro=$1,796
+
+    (25, "SI",  5, "consecutive_close_momentum",
+     {"n": 5},
+     None,            None,      "v8"),    # 1t-Sharpe=2.40, 7/7 yrs, TS=96.6%, worst-micro=$2,122
+
+    (26, "SI", 30, "ema_crossover",
+     {"fast": 13, "slow": 34, "slope_bars": 3},
+     None,            None,      "v7"),    # 1t-Sharpe=1.95, 6/7 yrs, TS=95.9%, worst-micro=$1,366
+
+    (27, "GC", 15, "consecutive_close_momentum",
+     {"n": 5},
+     None,            None,      "v8"),    # 1t-Sharpe=1.87, 6/7 yrs, TS=99.6%, worst-micro=$1,414
+
+    (28, "SI", 30, "ma_slope_regime",
+     {"ma_win": 20, "slope_bars": 3, "entry_rsi_win": 14, "rsi_ob": 60, "rsi_os": 40},
+     None,            None,      "v8"),    # 1t-Sharpe=1.79, 5/7 yrs, TS=96.7%, worst-micro=$1,743
+
+    (29, "SI",  5, "ema_crossover",
+     {"fast": 5, "slow": 34, "slope_bars": 5},
+     None,            None,      "v7"),    # 1t-Sharpe=1.72, 6/7 yrs, TS=96.9%, worst-micro=$1,202
+
+    (30, "SI", 15, "consecutive_close_momentum",
+     {"n": 5},
+     None,            None,      "v8"),    # 1t-Sharpe=1.69, 6/7 yrs, TS=96.1%, worst-micro=$1,680
+
+    (31, "SI",  1, "consecutive_close_momentum",
+     {"n": 5},
+     None,            None,      "v8"),    # 1t-Sharpe=1.68, 6/7 yrs, TS=97.9%, worst-micro=$3,486
+
+    (32, "GC", 15, "close_position_momentum",
+     {"cp_window": 5, "cp_thresh": 0.75},
+     None,            None,      "v8"),    # 1t-Sharpe=1.68, 7/7 yrs, TS=99.6%, worst-micro=$1,088
+
+    # REVIEW_REQUIRED — short history (ES/NQ, Dec 2025+), regime check skipped
+    (33, "ES", 30, "overnight_gap_fill",
+     {"gap_atr_mult": 0.3, "atr_window": 14},
+     None,            None,      "v6"),    # 1t-Sharpe=4.05, TS=100%, worst-micro=$222 — STAR short-window
+
+    (34, "ES", 15, "overnight_gap_fill",
+     {"gap_atr_mult": 0.3, "atr_window": 14},
+     None,            None,      "v6"),    # 1t-Sharpe=3.16, TS=100%, worst-micro=$180 — lowest worst-micro
+
+    (35, "NQ", 30, "ma_slope_regime",
+     {"ma_win": 15, "slope_bars": 3, "entry_rsi_win": 14, "rsi_ob": 60, "rsi_os": 40},
+     None,            None,      "v8"),    # 1t-Sharpe=2.89, TS=100%, worst-micro=$311
+
+    (36, "NQ", 15, "inside_bar_breakout",
+     {"n_inside": 2, "breakout_confirm": 0},
+     None,            None,      "v8"),    # 1t-Sharpe=2.77, TS=100%, worst-micro=$413
+
+    (37, "NQ", 30, "vwap_mean_reversion",
+     {"z_thresh": 2.5, "vwap_window": 40},
+     None,            None,      "v6"),    # 1t-Sharpe=2.35, TS=98.5%, worst-micro=$475
+
+    (38, "ES", 30, "vwap_mean_reversion",
+     {"z_thresh": 2.5, "vwap_window": 10},
+     None,            None,      "v6"),    # 1t-Sharpe=1.93, TS=100%, worst-micro=$202
 ]
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
