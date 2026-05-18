@@ -1,72 +1,159 @@
-We have completed the live-readiness audit, allowlist, kill switch, and dry-run validation harness.
+You are working inside the Quant Trading Research Factory (“the fortress”).
+
+We are now at an important decision point.
 
 Current classification:
 - DRY-RUN READY
 - NOT DEMO AUTO-TRADE READY
 - NOT LIVE READY
 
-The next blocker is Gate 6:
-Broker-native bracket/OCO/OSO order support in tick_tradovate_client.py.
+The system currently has:
+- OHLCV strategy layer
+- L2/tick/order-flow strategy layer
+- tick_live_executor.py
+- tick_risk_manager.py
+- tick_tradovate_client.py
+- tick_bar_builder.py
+- tick_news_monitor.py
+- live_strategy_allowlist.yaml
+- KILL_SWITCH.txt
+- dry-run validation harness
+- strategy allowlist
+- signal JSONL logging
+- remote monitoring/control path through Tailscale/RustDesk/SSH
+- 15-strategy tick portfolio analysis over approximately 150 days
 
-Your next job is to implement bracket-order support safely.
+The latest 150-day analysis shows:
+- 4,144 trades
+- 42.7% win rate
+- average winning trade around +$152.89
+- average losing trade around -$79.22
+- average trade around +$19.92
+- reward:risk around 1.93x
+- full portfolio profit factor around 1.44x
+- survivors-only profit factor around 1.87x
+- simulated total P&L around +$82,541
+- max drawdown around -$5,318
+- worst day around -$1,334
+- 93/129 positive days
+- GC generates about 46% of total profit from only about 14% of trades
+- ES/NQ only have around 150 days / 5.5 months of evidence
+- the last 30 days show ES mean-reversion struggling while GC continues to outperform
+- several strategies have very low trade counts or worst-day risk too high for deployment
+
+Important conclusion:
+The system is promising, but it is not ready for demo auto-trading or live/funded trading yet. The next phase is not more strategy research. The next phase is:
+
+EXECUTION SAFETY + EVIDENCE UPGRADE + TRUE L2 FEATURE EXPANSION PLAN
 
 Absolute rules:
-1. Do not place any live orders.
-2. Do not connect to a live account.
-3. Do not ask me to paste real credentials into code.
-4. Do not hard-code secrets.
-5. Demo mode only.
-6. Do not enable --live-auto-trade.
-7. Do not run demo auto-trade yet.
-8. Do not modify strategy logic.
-9. Do not loosen validation rules.
-10. Do not remove the bracket-order gate from tick_live_executor.py unless bracket orders are fully implemented and tested in mocked mode.
+1. Do not place live orders.
+2. Do not connect to live accounts.
+3. Do not start demo auto-trading yet.
+4. Do not enable funded-account trading.
+5. Do not loosen validation rules.
+6. Do not delete rejected strategies or historical results.
+7. Do not hard-code credentials.
+8. Default all trading/execution code to dry-run.
+9. Prop-firm automation must be treated as rule-sensitive and disabled unless explicitly allowed.
+10. Apex-style prop automation must be treated as prohibited unless written approval exists.
+11. No strategy should move from research to demo unless execution safety, risk, sample size, and evidence quality all support it.
+12. The AI brain must never be allowed to override the RiskManager, kill switch, allowlist, or compliance rules.
 
 ==================================================
-TASK 1 — AUDIT CURRENT TRADOVATE CLIENT
+TASK 1 — CREATE MASTER NEXT STEP REPORT
 ==================================================
-
-Read:
-
-04_codebase/tick_tradovate_client.py
-
-Document exactly what currently exists:
-- authentication method
-- endpoint selection
-- account lookup
-- contract lookup
-- order placement
-- cancel order
-- flatten position
-- position lookup
-- order status lookup
-- whether market orders are currently supported
-- whether stop orders are supported
-- whether limit orders are supported
-- whether OCO/OSO/bracket orders are supported
 
 Create:
 
-08_docs/tradovate_client_audit.md
+08_docs/master_next_step_analysis.md
 
-Classify the current client as:
-- READ_ONLY
-- MARKET_ORDER_ONLY
-- BASIC_DEMO_EXECUTION
-- BRACKET_CAPABLE_DEMO
-- LIVE_READY
+This report should deeply analyse the current system and include:
 
-Do not call it live-ready.
+1. Current system classification:
+   - DRY-RUN READY
+   - NOT DEMO AUTO-TRADE READY
+   - NOT LIVE READY
+
+2. Current strengths:
+   - research pipeline exists
+   - OHLCV strategy layer exists
+   - tick/order-flow strategy layer exists
+   - risk manager exists
+   - live executor exists
+   - allowlist exists
+   - kill switch exists
+   - dry-run validation passed
+   - signal logging exists
+   - strategy-level expectancy analysis exists
+   - remote monitoring/control setup exists
+
+3. Current weaknesses:
+   - ES/NQ only have about 150 days / 5.5 months of evidence
+   - GC concentration is high
+   - full portfolio PF around 1.44 is good but not huge
+   - survivors-only PF around 1.87 is better and should be trusted more than total P&L
+   - several strategies have tiny samples, including some with only 7–22 trades
+   - strategies with worst-day risk above practical account runway must stay disabled
+   - bracket orders are missing or not yet proven
+   - broker-native stops/targets are not yet proven
+   - state persistence is missing or incomplete
+   - broker reconciliation is missing or incomplete
+   - partial take-profit is impossible with 1 micro contract
+   - L2 bars are not the same as full event-level L2 simulation
+   - current data may reflect one favourable recent regime
+   - current 30-day performance shows regime weakness in some ES mean-reversion strategies
+   - there may be hidden degradation once live slippage, latency, missed fills, rejected orders, and broker execution are included
+
+4. Strategic decision:
+   - Do not add V5 strategies yet.
+   - First harden execution.
+   - Then upgrade evidence.
+   - Then expand the L2 feature engine.
+   - Then demo one strategy only.
+   - Do not deploy the 15-strategy portfolio.
+   - Do not treat all backtest survivors as live-eligible.
+
+5. Final decision:
+   The next development sprint should be:
+   - bracket order design and mocked tests
+   - state persistence design
+   - broker reconciliation design
+   - true L2 feature engine design
+   - evidence upgrade plan
+   - prop-firm/broker route analysis
+   - AI brain design
+   - 30-day roadmap
 
 ==================================================
-TASK 2 — IMPLEMENT SAFE BRACKET ORDER INTERFACE
+TASK 2 — BRACKET ORDER / OCO / OSO IMPLEMENTATION PLAN
 ==================================================
 
-Patch:
+Create:
 
-04_codebase/tick_tradovate_client.py
+08_docs/bracket_order_design.md
 
-Add a method with a clear interface, for example:
+Audit tick_tradovate_client.py and design safe bracket-order support.
+
+This should include:
+
+1. What currently exists:
+   - authentication
+   - endpoint selection
+   - account lookup
+   - contract lookup
+   - market order support
+   - stop order support
+   - limit order support
+   - cancel order support
+   - flatten position support
+   - order status lookup
+   - position lookup
+   - whether OCO/OSO/bracket orders are implemented
+   - whether order placement is demo-safe
+   - whether any live endpoint can be reached by accident
+
+2. Required future interface:
 
 place_bracket_order(
     symbol: str,
@@ -82,111 +169,661 @@ place_bracket_order(
     dry_run: bool = True
 )
 
-Requirements:
-1. dry_run=True by default.
-2. demo=True by default.
-3. Must validate:
-   - symbol exists
-   - side is BUY or SELL
-   - quantity > 0
-   - quantity <= configured max contracts
-   - stop is on correct side of entry
-   - target is on correct side of entry
-   - stop distance is not zero
-   - target distance is not zero
-   - estimated dollar risk <= max_trade_risk_usd
-4. Must generate a unique client_order_id.
-5. Must log the intended order before sending.
-6. Must return a structured result:
+3. Safety requirements:
+   - dry_run=True by default
+   - demo=True by default
+   - live=False by default
+   - never submit naked market entries in demo/live
+   - never use internally tracked stops only
+   - one-contract micro trading should use full exit only
+   - no partial TP until at least 2 contracts are allowed and tested
+   - validate side
+   - validate symbol
+   - validate quantity
+   - validate quantity <= max allowed contracts
+   - validate stop is on correct side of entry
+   - validate target is on correct side of entry
+   - validate tick rounding
+   - validate stop distance > 0
+   - validate target distance > 0
+   - validate estimated dollar risk <= $200
+   - validate session is open
+   - validate kill switch is not STOP
+   - validate strategy is allowlisted
+   - validate bracket support exists before demo-auto-trade can start
+
+4. Structured result format:
    {
      "ok": true/false,
-     "mode": "DRY_RUN"|"DEMO",
+     "mode": "DRY_RUN"|"DEMO"|"LIVE_BLOCKED",
      "entry_order_id": null or id,
      "stop_order_id": null or id,
      "target_order_id": null or id,
+     "oco_id": null or id,
+     "oso_id": null or id,
      "client_order_id": "",
-     "reason": ""
+     "reason": "",
+     "payload": {}
    }
-7. If dry_run=True, it must not call the API.
-8. If demo=False, it must refuse unless FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND, but do not test live mode.
+
+5. Required design decision:
+   If Tradovate OSO/OCO can be used safely, design how to implement it.
+   If not, do not fake bracket orders.
+   If true broker-native bracket orders cannot be proven, return ok=false with reason="BRACKET_NOT_SUPPORTED_YET" and keep demo-auto-trade blocked.
+
+6. Explicit conclusion:
+   The system must remain NOT DEMO AUTO-TRADE READY until broker-native stop and target protection is implemented and tested in mocks first.
+
+Do not implement live trading yet.
 
 ==================================================
-TASK 3 — BROKER-NATIVE PROTECTION REQUIREMENT
-==================================================
-
-The bracket order must ensure stop and target are broker/platform-native, not merely tracked inside Python.
-
-If Tradovate supports OSO/OCO bracket submission in the current API wrapper, implement it.
-
-If the existing client cannot safely create true native bracket orders yet, do not fake it. Instead:
-- implement the interface
-- return ok=false with reason="BRACKET_NOT_SUPPORTED_YET"
-- keep auto-trading blocked
-- document the missing API requirement
-
-Do not pretend bracket orders are implemented if they are not.
-
-==================================================
-TASK 4 — ADD MOCK TESTS
+TASK 3 — STATE PERSISTENCE AND BROKER RECONCILIATION PLAN
 ==================================================
 
 Create:
 
-04_codebase/test_tradovate_bracket_orders.py
+08_docs/state_reconciliation_design.md
 
-Tests must use mocks only. No real API calls.
+Design persistent state files under:
 
-Test:
-1. dry_run bracket order returns ok=true and no API call is made.
-2. invalid side is rejected.
-3. invalid quantity is rejected.
-4. stop on wrong side is rejected.
-5. target on wrong side is rejected.
-6. risk above $200 is rejected.
-7. demo order refuses if bracket implementation is incomplete.
-8. live order refuses without FORTRESS_LIVE_ENABLE.
-9. structured result always contains expected keys.
-10. tick_live_executor.py still refuses demo-auto-trade if bracket support is not confirmed.
+06_live_trading/state/
 
-Run the tests with:
+Required files:
+- positions.json
+- open_orders.json
+- daily_pnl.json
+- strategy_halts.json
+- account_state.json
+- last_seen_bar.json
+- heartbeat.json
+- active_brackets.json
+- processed_signals.json
+- broker_reconciliation_log.jsonl
 
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe test_tradovate_bracket_orders.py
+The live executor must be able to restart and recover:
+
+1. current open positions
+2. open orders
+3. active bracket order IDs
+4. entry prices
+5. stop prices
+6. target prices
+7. daily realized P&L
+8. unrealized P&L if available
+9. strategy-specific halts
+10. account halt status
+11. daily loss limit status
+12. trailing drawdown status
+13. last processed bar timestamp
+14. last processed signal ID
+15. duplicate-order protection state
+16. last successful broker reconciliation time
+17. stale data detection state
+
+Design broker reconciliation logic:
+
+1. Poll broker positions.
+2. Poll broker open orders.
+3. Poll broker account state.
+4. Compare broker state to local state.
+5. If local says flat but broker has position:
+   - halt new entries
+   - log CRITICAL
+   - alert user
+   - in demo mode only, optionally flatten if configured
+6. If local says position but broker is flat:
+   - halt strategy
+   - log mismatch
+   - clear/reconcile local state only after explicit logic
+7. If open bracket orders are missing:
+   - halt new entries
+   - log CRITICAL
+   - alert user
+   - never assume protection exists
+8. If duplicate orders are detected:
+   - halt the affected strategy
+   - alert user
+9. If broker API is unreachable:
+   - halt new entries
+   - keep existing broker-native stops/targets active
+   - alert user
+10. Never assume flat just because local memory is empty.
+
+The design should clearly distinguish:
+- local state
+- broker state
+- reconciled state
+- unknown/unsafe state
+
+The default behaviour in any unknown/unsafe state should be:
+- no new entries
+- alert user
+- preserve broker-native protection
+- do not trade until reconciled
 
 ==================================================
-TASK 5 — PATCH EXECUTOR INTEGRATION ONLY IF SAFE
-==================================================
-
-Patch tick_live_executor.py only enough to:
-1. Detect whether tick_tradovate_client.py reports bracket support.
-2. Keep demo-auto-trade blocked unless bracket support is confirmed.
-3. In dry-run mode, create and log the bracket order payload without sending.
-4. In demo mode, use place_bracket_order only if fully supported.
-5. Never use naked market entries in demo/live mode.
-
-==================================================
-TASK 6 — CREATE REPORT
+TASK 4 — TRUE L2 FEATURE ENGINE DESIGN
 ==================================================
 
 Create:
 
-08_docs/bracket_order_implementation_report.md
+08_docs/l2_feature_engine_design.md
 
-It must answer:
-1. Is bracket order support fully implemented?
-2. Are stops/targets broker-native?
-3. Was any real API call made?
-4. Did all mock tests pass?
-5. Is demo auto-trade now allowed or still blocked?
-6. What exact command should I run next?
-7. What remains unsafe?
+Design a true L2 feature engine separate from strategy code.
+
+Current issue:
+The system uses L2/tick/order-flow bars, but this is not the same as fully utilising event-level L2. The next system should separate feature engineering from strategy logic and make features reusable in backtest and live.
+
+Required architecture:
+
+04_codebase/src/l2/
+  feature_engine.py
+  schemas.py
+  ofi.py
+  imbalance.py
+  microprice.py
+  sweeps.py
+  absorption.py
+  liquidity_walls.py
+  quality_checks.py
+  tests/
+
+Required features:
+
+1. Price/book state:
+   - best bid
+   - best ask
+   - midprice
+   - weighted midprice
+   - microprice
+   - spread
+   - spread z-score
+   - tick-normalized spread
+   - book slope
+   - book pressure
+
+2. Depth imbalance:
+   - depth imbalance L1
+   - depth imbalance L3
+   - depth imbalance L5
+   - depth imbalance L10
+   - weighted depth imbalance
+   - near-touch depth
+   - far-depth imbalance
+   - bid depth decay
+   - ask depth decay
+
+3. Order flow imbalance:
+   - OFI 1s
+   - OFI 5s
+   - OFI 15s
+   - OFI 60s
+   - multi-level OFI
+   - OFI normalized by depth
+   - OFI normalized by volatility
+   - OFI z-score
+   - OFI slope
+   - OFI shock
+   - OFI decay
+
+4. Trade flow:
+   - aggressive buy volume
+   - aggressive sell volume
+   - CVD by window
+   - CVD slope
+   - rolling CVD z-score
+   - large trade clusters
+   - trade size percentile
+   - average buy order size
+   - average sell order size
+   - trade count intensity
+   - trade-to-quote ratio
+
+5. Liquidity dynamics:
+   - depth replenishment rate
+   - depth cancellation rate
+   - liquidity pull rate
+   - quote update intensity
+   - book flicker/noise score
+   - liquidity wall distance
+   - liquidity wall size
+   - liquidity wall persistence
+   - liquidity wall pull event
+   - liquidity vacuum score
+
+6. Sweeps:
+   - sweep detected
+   - sweep side
+   - sweep depth
+   - sweep volume
+   - sweep recovery time
+   - sweep continuation score
+   - sweep failure score
+   - sweep into prior high/low
+   - sweep into VWAP/value area if available
+
+7. Absorption:
+   - absorption score
+   - buy absorption
+   - sell absorption
+   - repeated replenishment at price
+   - price fails to move despite aggressive volume
+   - iceberg/replenishment proxy
+   - CVD divergence at level
+   - absorption reversal trigger
+
+8. Quality and safety:
+   - stale book detector
+   - missing data detector
+   - duplicate event detector
+   - latency gap detector
+   - abnormal spread detector
+   - low liquidity detector
+   - rollover warning
+   - market halt/session close detector
+
+Requirements:
+- Every feature must be timestamp-safe.
+- No feature can use future data.
+- Every feature must define exact lookback window.
+- Every feature must work in backtest and live.
+- Every feature must have unit tests.
+- If true MBO data is unavailable, queue position must be estimated conservatively from MBP-10.
+- Do not implement deep learning yet.
+- Do not add strategies yet; build the feature engine first.
+
+Strategy families to eventually test after feature engine exists:
+1. OFI continuation
+2. queue imbalance entry filter
+3. sweep + no replenishment continuation
+4. sweep + absorption reversal
+5. iceberg/replenishment reversal proxy
+6. liquidity wall magnet/rejection
+7. CVD divergence with book confirmation
+8. existing strategy meta-filter using L2 adverse-selection filter
 
 ==================================================
-STOP CONDITION
+TASK 5 — EVIDENCE UPGRADE PLAN
 ==================================================
 
-After this task, stop.
+Create:
 
-Do not run demo auto-trading.
+08_docs/evidence_upgrade_plan.md
+
+Purpose:
+Improve statistical confidence before trusting the system.
+
+Current issue:
+The 150-day results are promising but insufficient, especially for ES/NQ. GC appears to have more historical evidence, but ES/NQ need more regimes.
+
+Plan must include:
+
+1. Data expansion:
+   - Acquire or build more ES/NQ historical L2/tick/MBP-10 data.
+   - Minimum target: 2+ years for ES/NQ if affordable.
+   - Include a high-volatility/bear regime.
+   - Include a low-volatility/chop regime.
+   - Include trend regimes.
+   - Include news-heavy regimes.
+   - Include overnight and RTH.
+   - Preserve raw data separately from derived bars.
+   - Version all derived feature files.
+
+2. Regime slicing:
+   - high VIX / low VIX
+   - trend / chop
+   - high volume / low volume
+   - RTH / overnight
+   - news / non-news
+   - gold uptrend / gold range
+   - ES/NQ risk-on / risk-off
+   - high spread / normal spread
+   - high liquidity / low liquidity
+   - month-end / normal days
+   - FOMC/CPI/NFP days versus non-event days
+
+3. Validation:
+   - current WFO
+   - DSR
+   - add PBO/CSCV
+   - add family-level false discovery control
+   - add White Reality Check or SPA-style test if feasible
+   - add bootstrap-by-day analysis
+   - add outlier-day removal sensitivity
+   - add walk-forward degradation report
+   - add train/test by regime, not just by date
+
+4. Slippage and execution stress:
+   - 0.5 tick
+   - 1 tick
+   - 2 ticks
+   - 3 ticks
+   - missed fill probability
+   - one-bar delay
+   - 250ms latency
+   - 1s latency
+   - 5s latency
+   - widened spread
+   - rejected order
+   - bracket attach failure
+   - partial data outage
+   - broker disconnect
+
+5. Strategy eligibility rules:
+   A strategy cannot be demo-eligible unless:
+   - trade count is sufficient or rationale supports low frequency
+   - worst-day risk is under deployment limit
+   - performance survives realistic and stress costs
+   - performance survives regime slicing
+   - strategy has no missing metrics
+   - strategy has no known data sparsity issue
+   - dry-run signal path matches backtest logic
+   - strategy is on allowlist
+   - strategy has broker-native bracket support
+
+6. Reports to create later:
+   - evidence_upgrade_results.md
+   - live_vs_backtest_degradation.md
+   - regime_stability_report.md
+   - strategy_demotion_report.md
+
+==================================================
+TASK 6 — PROP FIRM / BROKER ROUTE ANALYSIS
+==================================================
+
+Create:
+
+08_docs/prop_vs_broker_execution_plan.md
+
+Analyze three possible execution routes.
+
+Route A — TopstepX API:
+- Potentially suitable for controlled automation if their rules/API access allow it.
+- Must obey Topstep rules.
+- Must avoid HFT, market manipulation, prohibited strategy behaviour, account abuse, mass order entry, and anything resembling latency/arbitrage exploitation.
+- Must remain flat by required daily cutoff.
+- Must start with one strategy only.
+- Must use demo/sim first.
+- Must not assume all prop firms allow bots just because API access exists.
+
+Route B — Apex / Rithmic / NinjaTrader:
+- Treat full automation as prohibited unless written approval exists.
+- Use the system only as an alert assistant or human-confirmed trade assistant unless compliance is confirmed.
+- Do not build autonomous Apex execution by default.
+- Do not use account stacking, copy trading, coordinated multi-account behaviour, or anything that could violate prop rules.
+- If NinjaTrader bridge is built, design it first as alert/human-confirmation, not automatic funded trading.
+
+Route C — Personal broker account:
+- Legally cleaner because it is your own capital.
+- Financially riskier because losses are real.
+- Use micros only.
+- Use tiny size.
+- Only after demo proof.
+- Only after bracket orders, reconciliation, state persistence, kill switch, and live-vs-backtest degradation report.
+- Personal broker route may be best long-term for true autonomy, but not until the system proves itself in demo.
+
+Final recommendation:
+- Build execution safety now.
+- Use TopstepX demo/API only if allowed.
+- Treat Apex as manual-confirmation only unless written approval exists.
+- Do not use personal broker real money until demo results prove execution.
+- Do not attempt fully autonomous prop-firm trading until compliance is confirmed.
+
+==================================================
+TASK 7 — AI BRAIN DESIGN
+==================================================
+
+Create:
+
+08_docs/ai_brain_design.md
+
+The AI brain must not be allowed to freely trade.
+
+Allowed functions:
+- monitor logs
+- detect stale data
+- detect broker mismatch
+- detect strategy drift
+- detect regime drift
+- detect unusual slippage
+- detect missing bars
+- detect risk-limit approach
+- summarize daily P&L
+- summarize strategy performance
+- recommend pausing strategies
+- generate research reports
+- create candidate strategy specs
+- notify via Telegram/Discord/email
+- produce daily end-of-day review
+- produce weekly performance review
+
+Forbidden functions:
+- increase size
+- enable disabled strategies
+- override RiskManager
+- override kill switch
+- override allowlist
+- trade live without approval
+- deploy new strategy without validation
+- modify prop-firm compliance rules
+- chase news
+- remove loss limits
+- edit historical results
+- hide rejected strategies
+- turn demo into live mode
+
+Design components:
+1. Monitor Agent
+   - watches heartbeat, logs, data freshness, process health
+
+2. Risk Sentinel
+   - watches daily loss, trailing drawdown, strategy halts, broker mismatch
+   - can pause strategies but cannot increase risk
+
+3. Research Scout
+   - creates candidate hypothesis cards
+   - cannot deploy
+
+4. Validation Agent
+   - runs backtests, WFO, DSR, PBO, regime slicing, slippage tests
+   - produces reports
+
+5. Deployment Gatekeeper
+   - checks allowlist, evidence, risk, execution safety, compliance
+   - blocks deployment unless all gates pass
+
+6. Daily Report Agent
+   - sends daily P&L, signals, skipped trades, risk events, errors
+
+7. Alert Bot
+   - Telegram/Discord/email alerts for:
+     - signal fired
+     - trade skipped
+     - strategy halted
+     - drawdown threshold hit
+     - broker mismatch
+     - data stale
+     - kill switch triggered
+     - daily summary ready
+
+All decisions must be logged.
+The AI brain can recommend actions, but high-risk actions require human confirmation.
+
+==================================================
+TASK 8 — MONITORING DASHBOARD / ALERTING PLAN
+==================================================
+
+Create:
+
+08_docs/monitoring_dashboard_plan.md
+
+Design a simple monitoring system.
+
+Minimum dashboard/alert fields:
+- current mode: DRY_RUN / DEMO / LIVE_BLOCKED
+- active strategies
+- disabled strategies
+- current positions
+- open orders
+- active brackets
+- daily P&L
+- per-strategy P&L
+- daily loss remaining
+- trailing drawdown remaining
+- kill switch status
+- broker connection status
+- data freshness
+- latest bar time by symbol
+- latest signal by strategy
+- rejected signals and reasons
+- strategy halts
+- upcoming high-impact news
+- rollover warning
+- heartbeat status
+- log file links/paths
+
+Implementation options:
+1. Simple local HTML dashboard
+2. JSON status file refreshed every 30–60 seconds
+3. Telegram bot alerts
+4. Discord webhook alerts
+
+Recommended first version:
+- write 06_live_trading/state/status.json
+- write 06_live_trading/state/heartbeat.json
+- build simple HTML dashboard later
+- Telegram alerts for critical events only
+
+Critical alerts:
+- kill switch STOP
+- broker mismatch
+- missing bracket
+- data stale
+- strategy halted
+- daily loss limit approached
+- account halt
+- order rejected
+- API disconnected
+- unexpected position found
+
+==================================================
+TASK 9 — CREATE 30-DAY DEVELOPMENT ROADMAP
+==================================================
+
+Create:
+
+08_docs/30_day_fortress_roadmap.md
+
+Week 1 — Execution safety design and mocks:
+- commit dry-run safety checkpoint
+- bracket-order design
+- mocked bracket-order tests
+- dry-run bracket payloads
+- no broker connection yet
+- state persistence design
+- broker reconciliation design
+- allowlist review
+- demote unsafe strategies
+
+Week 2 — Live data dry-run:
+- REST polling bar builder test
+- WebSocket bar builder test
+- stale data detection
+- contract rollover check
+- dry-run one strategy on live data
+- signal log verification
+- compare live dry-run signals with backtest expectations
+- no orders yet
+
+Week 3 — Demo only:
+- Tradovate demo credentials via environment variables only
+- one strategy only
+- one micro contract only
+- bracket orders required
+- broker-native stop/target required
+- reconciliation required
+- full logs
+- no funded accounts
+- no GC/NQ high-risk strategies
+- monitor slippage and order behaviour
+
+Week 4 — Evaluation:
+- live-vs-backtest degradation report
+- execution slippage report
+- missed signal / skipped signal report
+- strategy eligibility review
+- decide whether to:
+  - continue dry-run
+  - continue demo one strategy
+  - add second strategy
+  - pause system
+  - acquire more data
+- no live/funded trading unless reports support it
+
+==================================================
+TASK 10 — STRATEGY DEMOTION / DEPLOYMENT ELIGIBILITY
+==================================================
+
+Create:
+
+08_docs/strategy_deployment_eligibility.md
+
+Classify all 15 current strategies into:
+
+- DEMO_CANDIDATE
+- ENABLED_DRY_RUN
+- REVIEW_REQUIRED
+- RESEARCH_ONLY
+- DISABLED_FOR_LIVE
+
+Rules:
+1. Any strategy with worst day > $1,000 should not be demo/live eligible.
+2. Any strategy with missing metrics should be REVIEW_REQUIRED.
+3. Any strategy with fewer than 100 trades should be REVIEW_REQUIRED or RESEARCH_ONLY unless there is strong event-based rationale.
+4. Any strategy with known data sparsity issues should be REVIEW_REQUIRED.
+5. Any strategy with PF below 1.25 should not be demo candidate.
+6. Any strategy relying heavily on GC 1m sparse L2 should be demoted until verified.
+7. First demo candidate should remain:
+   ES / 15m / cvd_divergence_large_print
+   if and only if the internal metrics are complete and the allowlist confirms it.
+
+Do not promote GC first despite strong P&L because:
+- GC concentration is high
+- some GC variants have sparse 1m data
+- some GC strategies have high worst-day risk
+- GC may be regime-dependent
+- first demo should test execution safety, not maximize P&L
+
+Do not promote NQ first because:
+- NQ has larger tick volatility
+- worst-day risk is higher
+- ES is cleaner for first execution test
+
+==================================================
+TASK 11 — STOP CONDITION
+==================================================
+
+After creating these documents, stop and report:
+
+1. Files created
+2. Biggest risks found
+3. Safest exact next command
+4. Whether bracket implementation should begin next
+5. Whether any strategies should be demoted immediately
+6. Whether it is safe to connect Tradovate demo credentials
+7. Whether it is safe to start demo auto-trading
+8. Whether it is safe to touch funded accounts
+
+Expected answer should likely be:
+- Safe to continue dry-run: YES
+- Safe to begin bracket implementation with mocks: YES
+- Safe to connect demo credentials: NOT YET
+- Safe to start demo auto-trading: NO
+- Safe for funded accounts: NO
+- Safe for fully autonomous trading: NO
+
+Do not start demo trading.
 Do not connect to live.
-Do not start any funded account.
-Do not implement NinjaTrader bridge yet.
+Do not place any orders.
+Do not implement new strategies.
+Do not begin V5 research yet.
