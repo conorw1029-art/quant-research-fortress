@@ -100,6 +100,27 @@ try:
 except Exception:
     _RECONCILIATION_AVAILABLE = False
 
+try:
+    from tick_strategies_v6 import STRAT_MAP_V6
+    _V6_AVAILABLE = True
+except Exception:
+    _V6_AVAILABLE = False
+    STRAT_MAP_V6 = {}
+
+try:
+    from tick_strategies_v7 import STRAT_MAP_V7
+    _V7_AVAILABLE = True
+except Exception:
+    _V7_AVAILABLE = False
+    STRAT_MAP_V7 = {}
+
+try:
+    from tick_strategies_v8 import STRAT_MAP_V8
+    _V8_AVAILABLE = True
+except Exception:
+    _V8_AVAILABLE = False
+    STRAT_MAP_V8 = {}
+
 ROOT    = Path(__file__).parent.parent
 BAR_DIR = ROOT / "01_data" / "tick_bars"
 LOG_DIR = ROOT / "06_live_trading" / "logs"
@@ -456,6 +477,12 @@ def compute_signal(df: pd.DataFrame, strat_name: str,
         strat = STRAT_MAP_V3.get(strat_name)
     elif version == "v5":
         strat = STRAT_MAP_V5.get(strat_name)
+    elif version == "v6":
+        strat = STRAT_MAP_V6.get(strat_name)
+    elif version == "v7":
+        strat = STRAT_MAP_V7.get(strat_name)
+    elif version == "v8":
+        strat = STRAT_MAP_V8.get(strat_name)
     else:
         strat = STRAT_MAP_V4.get(strat_name)
     if strat is None:
