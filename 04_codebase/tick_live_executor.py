@@ -1416,6 +1416,23 @@ Examples:
                              portfolio=PORTFOLIO, verbose=verbose)
 
     # ── Local state reconciliation (all modes) ────────────────────────────────
+    _recon_log_path = LOG_DIR / "broker_reconciliation_log.jsonl"
+
+    def _log_reconciliation(result: dict, trigger: str) -> None:
+        try:
+            entry = {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "trigger":   trigger,
+                "mode":      mode,
+                **{k: result[k] for k in
+                   ("ok", "severity", "halt_new_entries", "requires_human_review",
+                    "actions", "reason") if k in result},
+            }
+            with open(_recon_log_path, "a", encoding="utf-8") as _f:
+                _f.write(json.dumps(entry) + "\n")
+        except Exception:
+            pass  # never let reconciliation logging crash the executor
+
     if sm and _RECONCILIATION_AVAILABLE:
         local_state = {
             "positions":    sm.load_positions(),
@@ -1424,6 +1441,7 @@ Examples:
         }
         broker_state = {"reachable": True, "positions": {}, "orders": {}}
         recon = _reconcile_state_fn(local_state, broker_state)
+        _log_reconciliation(recon, "startup")
         if not recon["ok"]:
             print(f"  [Reconcile] {recon['severity']}: {recon['reason']}")
         else:
