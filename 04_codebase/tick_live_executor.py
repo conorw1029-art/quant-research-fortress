@@ -88,6 +88,18 @@ try:
 except Exception:
     _KEY_LEVELS_AVAILABLE = False
 
+try:
+    from tick_state_manager import StateManager
+    _STATE_MANAGER_AVAILABLE = True
+except Exception:
+    _STATE_MANAGER_AVAILABLE = False
+
+try:
+    from tick_broker_reconciliation import reconcile_state as _reconcile_state_fn
+    _RECONCILIATION_AVAILABLE = True
+except Exception:
+    _RECONCILIATION_AVAILABLE = False
+
 ROOT    = Path(__file__).parent.parent
 BAR_DIR = ROOT / "01_data" / "tick_bars"
 LOG_DIR = ROOT / "06_live_trading" / "logs"
@@ -839,7 +851,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                           disable_v2: bool, verbose: bool = True,
                           tv_client=None, mode: str = MODE_DRY_RUN,
                           block_new_entries: bool = False,
-                          news_bias: dict | None = None) -> list[dict]:
+                          news_bias: dict | None = None,
+                          sm=None) -> list[dict]:
     """
     Run one check pass across all portfolio strategies.
     Returns list of alert dicts for any new signal entries.
@@ -868,6 +881,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
             print(f"  [{strat_id}] ⚠ {stale}")
 
         last_bar_ts = df.index[-1]
+        if sm:
+            sm.update_last_seen_bar(symbol, last_bar_ts.isoformat(), bar_min)
         spec        = get_spec(symbol)
         traded_sym  = resolve_symbol(symbol)
         atr         = current_atr(df)
@@ -925,6 +940,13 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
             # Only update signal tracker on actual closes (not ratchet/partial)
             if reason not in ("ratchet_1", "ratchet_2", "partial_tp"):
                 tracker.update(strat_id, 0)
+                if sm:
+                    pnl = ex.get("total_trade_pnl", ex.get("pnl", 0.0))
+                    sm.record_trade_pnl(str(strat_id), pnl)
+                    sm.remove_bracket(str(strat_id))
+                    current_positions = sm.load_positions()
+                    current_positions.pop(traded_sym, None)
+                    sm.save_positions(current_positions)
 
         # ── Hours filter ──────────────────────────────────────────────────
         if not hours_allowed(last_bar_ts, allowed_hours, session_block):
@@ -950,7 +972,10 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
         trade_risk = 0.0
         gate_reason = ""
         if last_sig != 0 and tracker.current(strat_id) == 0:
-            if block_new_entries:
+            if sm and sm.is_strategy_halted(str(strat_id)):
+                ok          = False
+                gate_reason = f"STRATEGY_HALTED: strategy {strat_id} was halted in a prior session"
+            elif block_new_entries:
                 ok          = False
                 gate_reason = "NEWS_WINDOW: new entries blocked"
             else:
@@ -984,12 +1009,31 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 })
                 last_sig = 0
 
+        # Dedup: skip if this exact signal was already processed (prevents re-entry on restart)
+        if last_sig != 0 and tracker.current(strat_id) == 0 and sm:
+            sig_key = f"{strat_id}:{last_bar_ts.isoformat()}"
+            if sm.is_signal_processed(sig_key):
+                if verbose:
+                    print(f"  [{strat_id}] {symbol}/{strat_name}/{bar_min}m  "
+                          f"signal already processed (restart dedup)")
+                last_sig = 0
+
         event, direction = tracker.update(strat_id, last_sig)
 
         if event in ("entry", "flip"):
             # Open trade in risk manager
             trade = rm.open_trade(strat_id, traded_sym, direction, entry_p, atr,
                                   spec["point_value"], spec["commission"])
+            if sm:
+                sig_key = f"{strat_id}:{last_bar_ts.isoformat()}"
+                sm.mark_signal_processed(sig_key)
+                current_positions = sm.load_positions()
+                current_positions[traded_sym] = {
+                    "net_pos": direction,
+                    "entry_px": entry_p,
+                    "strategy_id": strat_id,
+                }
+                sm.save_positions(current_positions)
             contracts = min(recommended_contracts(trade.risk_usd, rm.account.equity),
                             MAX_CONTRACTS_PER_TRADE)
             # Build alert dict
@@ -1077,6 +1121,14 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                               f"entry={br.get('entry_order_id')}  "
                               f"stop={br.get('stop_order_id')}  "
                               f"target={br.get('target_order_id')}")
+                        if sm:
+                            sm.add_bracket(str(strat_id), {
+                                "symbol":           tv_sym,
+                                "entry_order_id":   br.get("entry_order_id"),
+                                "stop_order_id":    br.get("stop_order_id"),
+                                "target_order_id":  br.get("target_order_id"),
+                                "entry_filled":     False,
+                            })
                     else:
                         print(f"  [Tradovate] Bracket REJECTED — {br.get('reason')}  "
                               f"(alert logged, manual entry required)")
@@ -1341,6 +1393,19 @@ Examples:
     start_time  = time.time()
     _weekend_closed = False
 
+    # ── State persistence layer ───────────────────────────────────────────────
+    sm = StateManager() if _STATE_MANAGER_AVAILABLE else None
+    if sm:
+        halts = sm.load_strategy_halts()
+        restored = [sid for sid, h in halts.items()
+                    if isinstance(h, dict) and h.get("active")]
+        if restored:
+            print(f"  [StateManager] Restoring {len(restored)} strategy halt(s) from prior session: {restored}")
+        else:
+            print(f"  [StateManager] No persistent strategy halts to restore.")
+    else:
+        print(f"  [StateManager] Not available — state will not be persisted this session.")
+
     # ── Contract rollover check ───────────────────────────────────────────────
     for warn in _contract_rollover_warning():
         print(f"\n  *** {warn} ***")
@@ -1350,8 +1415,26 @@ Examples:
         _reconcile_positions(tv_client, tracker, rm,
                              portfolio=PORTFOLIO, verbose=verbose)
 
+    # ── Local state reconciliation (all modes) ────────────────────────────────
+    if sm and _RECONCILIATION_AVAILABLE:
+        local_state = {
+            "positions":    sm.load_positions(),
+            "brackets":     sm.load_active_brackets(),
+            "last_updated": datetime.now(timezone.utc).isoformat(),
+        }
+        broker_state = {"reachable": True, "positions": {}, "orders": {}}
+        recon = _reconcile_state_fn(local_state, broker_state)
+        if not recon["ok"]:
+            print(f"  [Reconcile] {recon['severity']}: {recon['reason']}")
+        else:
+            print(f"  [Reconcile] Local state clean.")
+
     def one_pass(pass_num: int):
         nonlocal _weekend_closed
+
+        # ── Heartbeat ─────────────────────────────────────────────────────
+        if sm:
+            sm.update_heartbeat(mode=mode, bar_loop_count=pass_num)
 
         # ── Kill switch check ─────────────────────────────────────────────
         if _check_kill_switch():
@@ -1425,7 +1508,8 @@ Examples:
                                       verbose=verbose, tv_client=tv_client,
                                       mode=mode,
                                       block_new_entries=news_blocked,
-                                      news_bias=current_bias)
+                                      news_bias=current_bias,
+                                      sm=sm)
 
         if alerts:
             print(f"\n  >>> {len(alerts)} alert(s) fired <<<")

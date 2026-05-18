@@ -1,0 +1,11 @@
+{
+  "_start_timestamp": 1779107206.5152586,
+  "timestamp": "2026-05-18T12:36:34.308864+00:00",
+  "pid": 45188,
+  "mode": "DRY_RUN",
+  "uptime_seconds": 587,
+  "bar_loop_count": 1,
+  "last_signal_time": null,
+  "broker_connected": false,
+  "data_fresh": false
+}

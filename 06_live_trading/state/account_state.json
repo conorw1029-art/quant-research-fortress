@@ -1,0 +1,10 @@
+{
+  "last_updated": null,
+  "account_id": null,
+  "account_halt": false,
+  "account_halt_reason": null,
+  "daily_loss_triggered": false,
+  "trailing_drawdown_remaining": 800.0,
+  "max_drawdown_limit": 800.0,
+  "session_open": false
+}

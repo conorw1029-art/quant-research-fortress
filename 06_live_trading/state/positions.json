@@ -1,0 +1,23 @@
+{
+  "last_updated": "2026-05-18T12:26:47.058695+00:00",
+  "source": "local_unconfirmed",
+  "positions": {
+    "last_updated": "2026-05-18T12:26:47.011245+00:00",
+    "source": "local_unconfirmed",
+    "positions": {
+      "last_updated": null,
+      "source": "init",
+      "positions": {},
+      "MES": {
+        "net_pos": -1,
+        "entry_px": 7521.0,
+        "strategy_id": 3
+      }
+    },
+    "MES": {
+      "net_pos": -1,
+      "entry_px": 7521.0,
+      "strategy_id": 4
+    }
+  }
+}

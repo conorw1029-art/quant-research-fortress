@@ -1,0 +1,9 @@
+{
+  "date": null,
+  "last_updated": null,
+  "realized_pnl": 0.0,
+  "per_strategy": {},
+  "daily_loss_limit": -600.0,
+  "daily_loss_remaining": -600.0,
+  "halt_triggered": false
+}
