@@ -613,9 +613,9 @@ def _check_stale(df: pd.DataFrame, symbol: str, bar_min: int,
 # ES and NQ are ~90% correlated. Holding both long (or both short) at once
 # effectively doubles the position size. Log a warning when this occurs.
 
-_CORR_ES = frozenset({2, 3, 4, 7, 11, 13})   # ES-based strategy IDs
-_CORR_NQ = frozenset({1, 5, 6, 8, 12, 14})  # NQ-based strategy IDs
-_CORR_GC = frozenset({9, 10, 15})            # GC-based strategy IDs
+_CORR_ES = frozenset({2, 3, 4, 7, 11, 13})    # ES-based strategy IDs
+_CORR_NQ = frozenset({5, 6, 8, 12, 14})     # NQ-based strategy IDs
+_CORR_GC = frozenset({1, 9, 10, 15})        # GC-based strategy IDs
 
 
 def _correlation_warning(tracker: PositionTracker) -> str | None:
@@ -903,6 +903,25 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                               f"(circuit breaker at {RISK_CFG.max_consecutive_losses})")
                 if ex.get("account_halt"):
                     print(f"\n  *** ACCOUNT HALTED: {ex['account_halt']} ***")
+            # Log every exit event to JSONL (entries, ratchets, and full closes)
+            _log_signal({
+                "event_type":   "exit",
+                "timestamp":    datetime.now(timezone.utc).isoformat(),
+                "mode":         mode,
+                "strategy_id":  strat_id,
+                "strategy":     strat_name,
+                "symbol":       traded_sym,
+                "bar_minutes":  bar_min,
+                "version":      version,
+                **{k: ex[k] for k in (
+                    "reason", "exit_px", "pnl",
+                    "direction", "entry_px", "r_multiple",
+                    "bar_count", "ratchet_1_done", "ratchet_2_done",
+                ) if k in ex},
+                "total_trade_pnl": ex.get("total_trade_pnl", ex.get("pnl", 0.0)),
+                "consecutive_losses": ex.get("consecutive_losses", 0),
+                "account_halt":  ex.get("account_halt"),
+            })
             # Only update signal tracker on actual closes (not ratchet/partial)
             if reason not in ("ratchet_1", "ratchet_2", "partial_tp"):
                 tracker.update(strat_id, 0)
@@ -1150,7 +1169,7 @@ Examples:
     parser.add_argument("--poll",        type=int, default=0,
                         help="Poll interval in seconds (0=single shot)")
     parser.add_argument("--strategy",    type=int, default=None,
-                        help="Restrict to one strategy ID (1-12)")
+                        help="Restrict to one strategy ID (1-15)")
     parser.add_argument("--alert-file",  type=str, default=None,
                         help="JSON file to append alerts to")
     parser.add_argument("--disable-v2",  action="store_true",

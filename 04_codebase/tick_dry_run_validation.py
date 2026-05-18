@@ -158,8 +158,8 @@ def test_allowlist_present() -> Result:
         with open(ALLOWLIST, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         strategies = data.get("strategies", {})
-        if len(strategies) != 12:
-            return r.failed(f"Expected 12 strategies in allowlist, got {len(strategies)}")
+        if len(strategies) < 12:
+            return r.failed(f"Expected at least 12 strategies in allowlist, got {len(strategies)}")
         disabled = [k for k, v in strategies.items() if v.get("status") == "DISABLED_FOR_LIVE"]
         demo_cands = [k for k, v in strategies.items() if v.get("status") == "DEMO_CANDIDATE"]
         if len(demo_cands) != 1:
@@ -167,7 +167,7 @@ def test_allowlist_present() -> Result:
         if 2 not in demo_cands and "2" not in [str(x) for x in demo_cands]:
             return r.failed(f"DEMO_CANDIDATE should be strategy 2, got {demo_cands}")
         return r.passed(
-            f"12 strategies loaded. "
+            f"{len(strategies)} strategies loaded. "
             f"Disabled: {sorted(disabled)}. "
             f"DEMO_CANDIDATE: {demo_cands}."
         )

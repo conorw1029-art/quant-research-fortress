@@ -489,16 +489,26 @@ class RiskManager:
         else:
             self._consecutive_losses[trade.strat_id] = 0
 
+        stop_dist = trade.stop_dist if trade.stop_dist else 1e-9
+        r_multiple = round(trade.direction * (exit_px - trade.entry_px) / stop_dist, 3)
         return {
-            "strat_id":          trade.strat_id,
-            "symbol":            trade.symbol,
-            "reason":            reason,
-            "fraction":          remaining,
-            "exit_px":           exit_px,
-            "pnl":               round(pnl, 2),
-            "total_trade_pnl":   round(trade.realised_pnl, 2),
+            "strat_id":           trade.strat_id,
+            "symbol":             trade.symbol,
+            "reason":             reason,
+            "fraction":           remaining,
+            "direction":          trade.direction,
+            "entry_px":           trade.entry_px,
+            "initial_stop_px":    trade.initial_stop_px,
+            "target_px":          trade.target_px,
+            "exit_px":            exit_px,
+            "r_multiple":         r_multiple,
+            "bar_count":          trade.bar_count,
+            "ratchet_1_done":     trade.ratchet_1_done,
+            "ratchet_2_done":     trade.ratchet_2_done,
+            "pnl":                round(pnl, 2),
+            "total_trade_pnl":    round(trade.realised_pnl, 2),
             "consecutive_losses": self._consecutive_losses.get(trade.strat_id, 0),
-            "account_halt":      halt,
+            "account_halt":       halt,
         }
 
     # ── Status ────────────────────────────────────────────────────────────

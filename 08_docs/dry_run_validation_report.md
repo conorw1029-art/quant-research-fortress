@@ -1,5 +1,5 @@
 # Dry-Run Validation Report — Fortress Trading System
-**Date:** 2026-05-17 19:53 UTC
+**Date:** 2026-05-18 08:14 UTC
 **Validator:** tick_dry_run_validation.py
 **Executor:** tick_live_executor.py
 
@@ -56,7 +56,7 @@ Dry-run mode is confirmed working. The executor:
 
 **Status:** PASS
 **Command:** `python -c "import yaml; yaml.safe_load(open('live_strategy_allowlist.yaml'))"`
-**Detail:** 12 strategies loaded. Disabled: [1, 5, 6, 10, 11, 12]. DEMO_CANDIDATE: [2].
+**Detail:** 15 strategies loaded. Disabled: [1, 5, 6, 10, 11, 12]. DEMO_CANDIDATE: [2].
 
 ### ✓ T6 — Requesting disabled strategy exits with error
 
@@ -74,7 +74,7 @@ Dry-run mode is confirmed working. The executor:
 
 **Status:** PASS
 **Command:** `python tick_live_executor.py --quiet`
-**Detail:** Log exists: signals_20260517.jsonl (79146 bytes, 287 entries, valid JSONL)
+**Detail:** Log exists: signals_20260518.jsonl (49066 bytes, 179 entries, valid JSONL)
 
 ### ✓ T9 — No orders placed in dry-run output
 
@@ -95,7 +95,7 @@ Dry-run mode is confirmed working. The executor:
 | File | Status |
 |------|--------|
 | `04_codebase/live_strategy_allowlist.yaml` | EXISTS |
-| `06_live_trading/logs/signals_20260517.jsonl` | EXISTS |
+| `06_live_trading/logs/signals_20260518.jsonl` | EXISTS |
 | `08_docs/dry_run_validation_report.md` | THIS FILE |
 
 ---

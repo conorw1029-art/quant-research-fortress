@@ -254,6 +254,71 @@ def run(days: int = 30, survivors_only: bool = False, csv_path: str | None = Non
     print()
 
 
+def regime_check(long_days: int = 150, short_days: int = 30):
+    """
+    Regime monitor: compare short-window Sharpe vs long-window Sharpe
+    to detect strategies that may be in drawdown or regime change.
+    """
+    print(f"\n{'='*72}")
+    print(f"  REGIME CHECK — {short_days}d Sharpe vs {long_days}d Sharpe")
+    print(f"  Flag: short/long ratio < 0.5  (significant underperformance)")
+    print(f"{'='*72}")
+    print(f"\n  {'ID':>3}  {'Strategy':<40}  {long_days}d-Sharpe  {short_days}d-Sharpe  {'Status'}")
+    print(f"  {'─'*3}  {'─'*40}  {'─'*10}  {'─'*10}  {'─'*12}")
+
+    for (sid, symbol, bar_min, strat_name, params, version, is_survivor) in PORTFOLIO:
+        df_long  = load_recent(symbol, bar_min, long_days)
+        df_short = load_recent(symbol, bar_min, short_days)
+
+        if df_long is None or df_short is None:
+            continue
+
+        strat = _STRAT_MAPS.get(version, {}).get(strat_name)
+        if strat is None:
+            continue
+
+        try:
+            sigs_long  = strat["compute"](df_long,  **params)
+            sigs_short = strat["compute"](df_short, **params)
+        except Exception:
+            continue
+
+        trades_long  = run_backtest(df_long,  sigs_long,  symbol)
+        trades_short = run_backtest(df_short, sigs_short, symbol)
+
+        if trades_long.empty or len(trades_long) < 5:
+            continue
+        if trades_short.empty or len(trades_short) < 3:
+            star = "[SURVIVOR]" if is_survivor else "          "
+            print(f"  {sid:>3}  {star} {symbol}/{strat_name}/{bar_min}m"
+                  f"{'':>28}  too few recent trades")
+            continue
+
+        m_long  = compute_metrics(trades_long)
+        m_short = compute_metrics(trades_short)
+
+        s_long  = m_long["sharpe"]  if not np.isnan(m_long["sharpe"])  else 0.0
+        s_short = m_short["sharpe"] if not np.isnan(m_short["sharpe"]) else 0.0
+
+        # Flag if short Sharpe is less than half of long Sharpe (regime warning)
+        if s_long > 0 and s_short < s_long * 0.5:
+            status = "*** WARN"
+        elif s_long > 0 and s_short < 0:
+            status = "!!! DROP"
+        elif s_long < 0:
+            status = "(negative)"
+        else:
+            status = "OK"
+
+        star = "***" if is_survivor else "   "
+        pnl_short = trades_short["dollar_pnl"].sum() * MICRO_FACTOR
+        print(f"  {sid:>3} {star} {symbol}/{strat_name}/{bar_min}m"
+              f"{'':>2}  {s_long:>10.2f}  {s_short:>10.2f}  {status}  "
+              f"({short_days}d P&L {_fmt_pnl(pnl_short)})")
+
+    print()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Past-month performance report")
     parser.add_argument("--days",      type=int, default=30,
@@ -262,5 +327,9 @@ if __name__ == "__main__":
                         help="Only run the 5 hardened survivor strategies")
     parser.add_argument("--csv",       type=str, default=None,
                         help="Optional path to dump trade-level CSV")
+    parser.add_argument("--regime",    action="store_true",
+                        help="Show regime check (short vs long Sharpe comparison)")
     args = parser.parse_args()
     run(days=args.days, survivors_only=args.survivors, csv_path=args.csv)
+    if args.regime:
+        regime_check(long_days=150, short_days=args.days)

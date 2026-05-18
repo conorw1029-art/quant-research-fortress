@@ -356,6 +356,25 @@ class TradovateBarBuilder:
         self._running  = False
         self._ws       = None
 
+    def _seed_cvd_from_parquet(self, base: str, state: SymbolState):
+        """
+        Load the last stored CVD value from each parquet file so the
+        cumulative CVD continues smoothly after a restart instead of
+        resetting to 0.
+        """
+        for bs in self.bar_sizes:
+            path = BAR_DIR / f"{base}_bars_{bs}m.parquet"
+            if not path.exists():
+                continue
+            try:
+                df = pd.read_parquet(path, columns=["cvd"])
+                if not df.empty:
+                    last_cvd = int(df["cvd"].iloc[-1])
+                    state.cum_cvd[bs] = last_cvd
+                    log.debug(f"  Seeded CVD {base}/{bs}m from parquet: {last_cvd:+,}")
+            except Exception as e:
+                log.warning(f"  Could not seed CVD for {base}/{bs}m: {e}")
+
     # ── Setup ──────────────────────────────────────────────────────────────
 
     def _auth_and_resolve(self) -> bool:
@@ -375,7 +394,9 @@ class TradovateBarBuilder:
                 continue
             self.tv_symbols[base]  = tv_sym
             self.id_to_sym[cid]    = base
-            self.states[base]      = SymbolState(base, self.bar_sizes)
+            state = SymbolState(base, self.bar_sizes)
+            self._seed_cvd_from_parquet(base, state)
+            self.states[base]      = state
             log.info(f"  {base} → {tv_sym}  contractId={cid}")
 
         return bool(self.tv_symbols)
@@ -574,6 +595,22 @@ class RestBarBuilder:
         self.symbols   = symbols
         self.bar_sizes = bar_sizes
         self.cum_cvd: dict[tuple, int] = defaultdict(int)
+        self._seed_cvd_from_parquet()
+
+    def _seed_cvd_from_parquet(self):
+        """Load last CVD values from existing parquet files so cumulative CVD continues correctly after restart."""
+        for base in self.symbols:
+            for bs in self.bar_sizes:
+                path = BAR_DIR / f"{base}_bars_{bs}m.parquet"
+                if not path.exists():
+                    continue
+                try:
+                    df = pd.read_parquet(path, columns=["cvd"])
+                    if not df.empty:
+                        self.cum_cvd[(base, bs)] = int(df["cvd"].iloc[-1])
+                        log.debug(f"  CVD seeded {base}/{bs}m: {self.cum_cvd[(base, bs)]:+,}")
+                except Exception as e:
+                    log.warning(f"  Could not seed CVD for {base}/{bs}m: {e}")
 
     def fetch_recent_bars(self, tv_sym: str, bar_size: int, n_bars: int = 5) -> list[dict]:
         """Fetch recent N bars from Tradovate chart endpoint."""
