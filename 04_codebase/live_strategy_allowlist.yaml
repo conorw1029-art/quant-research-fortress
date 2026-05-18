@@ -206,16 +206,19 @@ strategies:
 
   15:
     key: "GC/key_level_cvd_rejection/5m"
-    status: REVIEW_REQUIRED
+    status: DISABLED_FOR_LIVE
     reason: >
+      Worst-day micro risk is $1,623, exceeding the $1,000 practical account
+      runway limit. Internal strategy daily halt is not broker-native protection
+      and cannot be relied upon to cap this exposure. 1t-Sharpe=0.92 also below
+      the 1.0 threshold. Demoted from REVIEW_REQUIRED 2026-05-18.
       V5 strategy. 7/7 years positive (2020-2026), Topstep 99.3% compliance,
-      3,315 trades. 1t-Sharpe=0.92 -- marginally below 1.0 threshold due to
-      high trade frequency and slippage cost at 5m. At 0.5t: Sharpe=1.03.
-      Worst day $-16,233 full GC ($-1,623 micro -- BUT risk manager caps at
-      $250/strategy/day in live trading). Runs dry-run only.
+      3,315 trades. At 0.5t: Sharpe=1.03. Re-evaluate only when worst-day micro
+      is reduced below $1,000 AND 1t-Sharpe confirmed >= 1.0 on live data.
     worst_day_usd: -16233
     trade_count: 3315
     sharpe_1t: 0.92
     topstep_compliant: true
     added_date: "2026-05-17"
-    note: "Elevate to ENABLED_DRY_RUN if 1t-Sharpe >= 1.0 confirmed on fresh data."
+    disabled_date: "2026-05-18"
+    note: "Demoted 2026-05-18: worst-day micro $1,623 > $1,000 runway limit. Do not re-enable until micro worst-day < $1,000 AND 1t-Sharpe >= 1.0."

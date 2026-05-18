@@ -334,4 +334,12 @@ Additionally, 1t-Sharpe of 0.92 is below the 1.0 threshold. Even at 0.5t: Sharpe
 
 ---
 
+## Change Log
+
+| Date | Strategy | Change | Reason |
+|---|---|---|---|
+| 2026-05-18 | Strategy 15 (GC/key_level_cvd_rejection/5m) | REVIEW_REQUIRED → **DISABLED_FOR_LIVE** | Worst-day micro risk $1,623 exceeds $1,000 account runway limit. Internal daily halt is not broker-native protection. |
+
+---
+
 *Review and update this document after each demo sprint evaluation.*

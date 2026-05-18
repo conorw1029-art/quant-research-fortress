@@ -44,6 +44,7 @@ import threading
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional
 import urllib.request
 import urllib.error
@@ -86,12 +87,64 @@ _LIVE_ENABLE_VALUE = "YES_I_UNDERSTAND"
 # OSO endpoint (all three legs sent atomically)
 _ENDPOINT_PLACE_OSO = "/order/placeOSO"
 
+# Minimum tick sizes (in points) per instrument base symbol
+_TICK_SIZE_MAP = {
+    "MGC": 0.10,
+    "MES": 0.25,
+    "MNQ": 0.25,
+    "GC":  0.10,
+    "ES":  0.25,
+    "NQ":  0.25,
+    "SI":  0.005,
+    "SIL": 0.005,
+}
+
+# Kill switch file — read at every bracket order attempt
+_KILL_SWITCH_PATH = Path(__file__).parent / "KILL_SWITCH.txt"
+
+# Client order IDs issued this process lifetime (duplicate protection)
+_issued_client_order_ids: set = set()
+
+# OSO exchange-verification flag — set to True only after real exchange test confirms
+# the payload structure, response shape, and OCO/OSO ID fields are correct.
+_OSO_EXCHANGE_VERIFIED = False
+
 
 def _point_value(symbol: str) -> float:
     """Look up point value for a symbol, using 3-char then 2-char prefix match."""
     base3 = symbol[:3].upper()
     base2 = symbol[:2].upper()
     return _POINT_VALUE_MAP.get(base3) or _POINT_VALUE_MAP.get(base2) or 5.0
+
+
+def _tick_size(symbol: str) -> float:
+    """Return minimum tick size for a symbol."""
+    base3 = symbol[:3].upper()
+    base2 = symbol[:2].upper()
+    return _TICK_SIZE_MAP.get(base3) or _TICK_SIZE_MAP.get(base2) or 0.25
+
+
+def _is_tick_rounded(price: float, symbol: str) -> bool:
+    """Return True if price is a valid multiple of the instrument's tick size."""
+    tick = _tick_size(symbol)
+    remainder = round(price % tick, 8)
+    return remainder < 1e-7 or abs(remainder - tick) < 1e-7
+
+
+def _read_kill_switch(path: Path = None) -> str:
+    """
+    Return the current kill switch value, uppercased and stripped.
+    Returns "RUN" if file is missing (safe default — don't block everything on missing file).
+    Returns "STOP" if file content is STOP (case-insensitive).
+    """
+    p = path or _KILL_SWITCH_PATH
+    try:
+        content = Path(p).read_text(encoding="utf-8").strip().upper()
+        return content if content in ("RUN", "STOP") else "RUN"
+    except FileNotFoundError:
+        return "RUN"
+    except Exception:
+        return "STOP"   # any read error → conservatively treat as STOP
 
 
 @dataclass
@@ -102,6 +155,8 @@ class BracketOrderResult:
     entry_order_id:  Optional[int]
     stop_order_id:   Optional[int]
     target_order_id: Optional[int]
+    oco_id:          Optional[str]  # OCO group ID linking stop + target (exchange-assigned)
+    oso_id:          Optional[str]  # OSO group ID linking entry + OCO bracket (exchange-assigned)
     client_order_id: str
     reason:          str
     payload:         dict = field(default_factory=dict)
@@ -113,6 +168,8 @@ class BracketOrderResult:
             "entry_order_id":  self.entry_order_id,
             "stop_order_id":   self.stop_order_id,
             "target_order_id": self.target_order_id,
+            "oco_id":          self.oco_id,
+            "oso_id":          self.oso_id,
             "client_order_id": self.client_order_id,
             "reason":          self.reason,
             "payload":         self.payload,
@@ -465,6 +522,8 @@ class TradovateClient:
         demo:            bool           = True,
         client_order_id: Optional[str]  = None,
         dry_run:         bool           = True,
+        strategy_key:    Optional[str]  = None,
+        session_open:    Optional[bool] = None,
     ) -> dict:
         """
         Place a bracket order (entry + broker-native stop + broker-native target).
@@ -502,28 +561,60 @@ class TradovateClient:
             return BracketOrderResult(
                 ok=False, mode=mode_str,
                 entry_order_id=None, stop_order_id=None, target_order_id=None,
+                oco_id=None, oso_id=None,
                 client_order_id=client_order_id, reason=reason,
             ).as_dict()
 
+        # ── Kill switch check (first — before anything else) ──────────────────
+        ks = _read_kill_switch()
+        if ks == "STOP":
+            return _fail("KILL_SWITCH_STOP: trading is halted by kill switch")
+
+        # ── Session-open check ────────────────────────────────────────────────
+        # session_open=None means "caller didn't specify" — trust account_state.json
+        # session_open=True/False means caller explicitly set it (used in tests)
+        if session_open is False:
+            return _fail("SESSION_CLOSED: market session is not open")
+
+        # ── Duplicate client_order_id protection ──────────────────────────────
+        if client_order_id in _issued_client_order_ids:
+            return _fail(f"DUPLICATE_CLIENT_ORDER_ID: {client_order_id} already issued this session")
+
+        # ── OSO exchange-verification gate (non-dry-run) ──────────────────────
+        if not dry_run and not _OSO_EXCHANGE_VERIFIED:
+            return _fail(
+                "BRACKET_OSO_UNVERIFIED: OSO payload format and response parsing have not been "
+                "verified against the real Tradovate exchange. Cannot place real bracket orders "
+                "until exchange verification is complete. Use dry_run=True."
+            )
+
         # ── Validation ────────────────────────────────────────────────────────
         if not symbol or not symbol.strip():
-            return _fail("symbol is empty")
+            return _fail("INVALID_SYMBOL: symbol is empty")
 
         side = side.upper()
         if side not in ("BUY", "SELL"):
-            return _fail(f"invalid side '{side}' — must be BUY or SELL")
+            return _fail(f"INVALID_SIDE: '{side}' — must be BUY or SELL")
 
         if quantity <= 0:
-            return _fail(f"invalid quantity {quantity} — must be > 0")
+            return _fail(f"INVALID_QUANTITY: {quantity} — must be > 0")
 
         if quantity > MAX_BRACKET_CONTRACTS:
-            return _fail(f"quantity {quantity} exceeds max {MAX_BRACKET_CONTRACTS} contracts")
+            return _fail(f"QUANTITY_EXCEEDS_MAX: {quantity} > {MAX_BRACKET_CONTRACTS} contracts")
 
         if entry_type.upper() not in ("MARKET", "LIMIT"):
-            return _fail(f"invalid entry_type '{entry_type}' — must be Market or Limit")
+            return _fail(f"INVALID_ENTRY_TYPE: '{entry_type}' — must be Market or Limit")
 
         if entry_type.upper() == "LIMIT" and entry_price is None:
-            return _fail("entry_price required for Limit orders")
+            return _fail("ENTRY_PRICE_REQUIRED: entry_price required for Limit orders")
+
+        # ── Tick rounding validation ──────────────────────────────────────────
+        if entry_price is not None and not _is_tick_rounded(entry_price, symbol):
+            return _fail(f"OFF_TICK_PRICE: entry_price {entry_price} is not a valid tick for {symbol} (tick={_tick_size(symbol)})")
+        if not _is_tick_rounded(stop_price, symbol):
+            return _fail(f"OFF_TICK_PRICE: stop_price {stop_price} is not a valid tick for {symbol} (tick={_tick_size(symbol)})")
+        if not _is_tick_rounded(target_price, symbol):
+            return _fail(f"OFF_TICK_PRICE: target_price {target_price} is not a valid tick for {symbol} (tick={_tick_size(symbol)})")
 
         ref_price = entry_price
         if ref_price is None:
@@ -533,37 +624,36 @@ class TradovateClient:
             if side == "BUY":
                 if stop_price >= ref_price:
                     return _fail(
-                        f"stop_price {stop_price} must be BELOW entry {ref_price} for BUY"
+                        f"STOP_ABOVE_ENTRY_FOR_BUY: stop {stop_price} must be below entry {ref_price}"
                     )
                 if target_price <= ref_price:
                     return _fail(
-                        f"target_price {target_price} must be ABOVE entry {ref_price} for BUY"
+                        f"TARGET_BELOW_ENTRY_FOR_BUY: target {target_price} must be above entry {ref_price}"
                     )
             else:  # SELL
                 if stop_price <= ref_price:
                     return _fail(
-                        f"stop_price {stop_price} must be ABOVE entry {ref_price} for SELL"
+                        f"STOP_BELOW_ENTRY_FOR_SELL: stop {stop_price} must be above entry {ref_price}"
                     )
                 if target_price >= ref_price:
                     return _fail(
-                        f"target_price {target_price} must be BELOW entry {ref_price} for SELL"
+                        f"TARGET_ABOVE_ENTRY_FOR_SELL: target {target_price} must be below entry {ref_price}"
                     )
 
         stop_dist = abs((ref_price or stop_price) - stop_price)
         if stop_dist == 0:
-            return _fail("stop distance is zero — cannot place bracket order")
+            return _fail("ZERO_STOP_DISTANCE: stop distance is zero")
 
         tgt_dist = abs((ref_price or target_price) - target_price)
         if tgt_dist == 0:
-            return _fail("target distance is zero — cannot place bracket order")
+            return _fail("ZERO_TARGET_DISTANCE: target distance is zero")
 
         if ref_price is not None:
             pv          = _point_value(symbol)
             est_risk    = abs(ref_price - stop_price) * pv * quantity
             if est_risk > MAX_BRACKET_RISK_USD:
                 return _fail(
-                    f"estimated risk ${est_risk:,.2f} exceeds maximum "
-                    f"${MAX_BRACKET_RISK_USD:,.0f} per trade"
+                    f"ESTIMATED_RISK_EXCEEDS_LIMIT: ${est_risk:,.2f} > ${MAX_BRACKET_RISK_USD:,.0f}"
                 )
 
         # ── Live mode guard ───────────────────────────────────────────────────
@@ -592,12 +682,16 @@ class TradovateClient:
             f"id={client_order_id}"
         )
 
+        # ── Register client_order_id (after all validation passes) ───────────
+        _issued_client_order_ids.add(client_order_id)
+
         # ── Dry-run — return payload without API call ─────────────────────────
         if dry_run:
             print(f"[Tradovate] DRY_RUN — payload validated, no API call made")
             return BracketOrderResult(
                 ok=True, mode="DRY_RUN",
                 entry_order_id=None, stop_order_id=None, target_order_id=None,
+                oco_id=None, oso_id=None,
                 client_order_id=client_order_id, reason="",
                 payload=payload,
             ).as_dict()
@@ -621,27 +715,41 @@ class TradovateClient:
                 stop_id   = stop_conf.get("orderId") or stop_conf.get("id")
                 target_id = target_conf.get("orderId") or target_conf.get("id")
 
+                # Extract OCO/OSO group IDs if present in response
+                # NOTE: field names unverified — update after exchange test confirms shape
+                oco_id = (entry_conf.get("ocoId") or stop_conf.get("ocoId")
+                          or target_conf.get("ocoId"))
+                oso_id = (entry_conf.get("osoId") or entry_conf.get("contingencyOrderId"))
+
+                if not entry_id or not stop_id or not target_id:
+                    print(f"[Tradovate] WARNING: incomplete order IDs in placeOSO response — "
+                          f"entry={entry_id} stop={stop_id} target={target_id}")
+                    print(f"[Tradovate] Raw response: {resp}")
+
                 print(
                     f"[Tradovate] Bracket placed: entry={entry_id} "
-                    f"stop={stop_id} target={target_id}"
+                    f"stop={stop_id} target={target_id} oco={oco_id} oso={oso_id}"
                 )
                 return BracketOrderResult(
                     ok=True, mode=mode_str,
                     entry_order_id=entry_id,
                     stop_order_id=stop_id,
                     target_order_id=target_id,
+                    oco_id=str(oco_id) if oco_id else None,
+                    oso_id=str(oso_id) if oso_id else None,
                     client_order_id=client_order_id, reason="",
                     payload=payload,
                 ).as_dict()
 
             elif isinstance(resp, dict) and resp.get("errorText"):
-                return _fail(f"API error: {resp['errorText']}")
+                return _fail(f"API_ERROR: {resp['errorText']}")
             else:
-                # Unknown response shape — log and flag for manual review
+                # Unknown response shape — log raw and flag for manual review
                 print(f"[Tradovate] placeOSO unexpected response shape: {resp}")
                 return BracketOrderResult(
                     ok=False, mode=mode_str,
                     entry_order_id=None, stop_order_id=None, target_order_id=None,
+                    oco_id=None, oso_id=None,
                     client_order_id=client_order_id,
                     reason=f"UNEXPECTED_RESPONSE: {str(resp)[:200]}",
                     payload=payload,
