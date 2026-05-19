@@ -532,7 +532,96 @@ def check_coordinator():
         _record("coordinator sanity checks", "FAIL", str(e), critical=True)
         return
 
-    # 4. Show active DRY_RUN config
+    # 4. Position sync module
+    try:
+        from tick_broker_position_sync import (
+            strip_month_code, tv_contract_to_coordinator_symbol,
+            build_broker_net_positions,
+        )
+        _record("position sync import", "PASS",
+                "tick_broker_position_sync importable")
+    except Exception as e:
+        _record("position sync import", "WARN",
+                f"tick_broker_position_sync not importable: {e}")
+        strip_month_code = None
+
+    if strip_month_code is not None:
+        # strip_month_code correctness spot-checks
+        _tests_ok = True
+        _cases = [
+            ("MESM5", "MES"), ("MGCM5", "MGC"), ("ESM5", "ES"),
+            ("GCJ6", "GC"), ("MNQZ4", "MNQ"), ("MGCU25", "MGC"),
+        ]
+        for inp, exp in _cases:
+            got = strip_month_code(inp)
+            if got != exp:
+                _record(f"strip_month_code({inp})", "FAIL",
+                        f"expected {exp}, got {got}", critical=True)
+                _tests_ok = False
+        if _tests_ok:
+            _record("strip_month_code correctness", "PASS",
+                    f"{len(_cases)} spot-checks all correct")
+
+        # tv_contract_to_coordinator_symbol spot-checks
+        _coord_tests = [
+            ("MESM5", "ES"), ("MGCM5", "GC"), ("MNQM5", "NQ"), ("SILM5", "SI"),
+        ]
+        _coord_ok = True
+        for inp, exp in _coord_tests:
+            got = tv_contract_to_coordinator_symbol(inp)
+            if got != exp:
+                _record(f"tv_contract_to_coordinator_symbol({inp})", "FAIL",
+                        f"expected {exp}, got {got}", critical=True)
+                _coord_ok = False
+        if _coord_ok:
+            _record("tv_contract_to_coordinator_symbol correctness", "PASS",
+                    f"{len(_coord_tests)} micro→base checks correct")
+
+        # build_broker_net_positions with empty input returns empty list
+        result = build_broker_net_positions([], {}, {})
+        if result == []:
+            _record("build_broker_net_positions(empty)", "PASS",
+                    "empty input → [] (no crash)")
+        else:
+            _record("build_broker_net_positions(empty)", "FAIL",
+                    f"expected [], got {result}", critical=True)
+
+    # 5. Check client has new methods
+    try:
+        from tick_tradovate_client import TradovateClient
+        has_bracket_ids  = hasattr(TradovateClient, "get_bracket_order_ids_by_symbol")
+        has_confirm      = hasattr(TradovateClient, "confirm_bracket_alive")
+        if has_bracket_ids and has_confirm:
+            _record("client bracket-sync methods", "PASS",
+                    "get_bracket_order_ids_by_symbol + confirm_bracket_alive present")
+        else:
+            missing = []
+            if not has_bracket_ids:
+                missing.append("get_bracket_order_ids_by_symbol")
+            if not has_confirm:
+                missing.append("confirm_bracket_alive")
+            _record("client bracket-sync methods", "WARN",
+                    f"Missing: {', '.join(missing)}")
+    except Exception as e:
+        _record("client bracket-sync methods", "WARN", str(e))
+
+    # 6. Executor _POSITION_SYNC_AVAILABLE flag
+    try:
+        import tick_live_executor as _exe2
+        sync_avail = getattr(_exe2, "_POSITION_SYNC_AVAILABLE", None)
+        if sync_avail is True:
+            _record("position sync wired in executor", "PASS",
+                    "_POSITION_SYNC_AVAILABLE=True")
+        elif sync_avail is False:
+            _record("position sync wired in executor", "WARN",
+                    "_POSITION_SYNC_AVAILABLE=False — broker positions will not feed coordinator")
+        else:
+            _record("position sync wired in executor", "WARN",
+                    "_POSITION_SYNC_AVAILABLE not found — executor may be outdated")
+    except Exception as e:
+        _record("position sync executor check", "WARN", str(e))
+
+    # 7. Show active DRY_RUN config
     print(f"\n      Coordinator DRY_RUN config:")
     print(f"        max_net_contracts_per_symbol: {cfg.max_net_contracts_per_symbol}")
     print(f"        max_total_open_symbols:       {cfg.max_total_open_symbols}")

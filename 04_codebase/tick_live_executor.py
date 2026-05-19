@@ -134,6 +134,13 @@ except Exception:
     _RECONCILIATION_AVAILABLE = False
 
 try:
+    from tick_broker_position_sync import build_broker_net_positions as _build_broker_net_positions
+    _POSITION_SYNC_AVAILABLE = True
+except Exception:
+    _POSITION_SYNC_AVAILABLE = False
+    _build_broker_net_positions = None
+
+try:
     from tick_portfolio_coordinator import (
         PortfolioCoordinator, CoordinatorConfig,
         SignalIntent, Side, VirtualStrategyPosition,
@@ -971,7 +978,8 @@ def _reconcile_positions(tv_client, tracker: PositionTracker, rm: RiskManager,
 
 
 def _sync_broker_state(tv_client, tracker: PositionTracker, rm: RiskManager,
-                        portfolio: list, verbose: bool = False) -> list[int]:
+                        portfolio: list, verbose: bool = False,
+                        sm=None) -> list[int]:
     """
     Lightweight broker sync run on every pass in DEMO/LIVE mode.
 
@@ -1010,6 +1018,8 @@ def _sync_broker_state(tv_client, tracker: PositionTracker, rm: RiskManager,
                 tracker.update(sid, 0)
                 if sid in rm._open:
                     rm.signal_close(sid, rm._open[sid].entry_px)
+                if sm:
+                    sm.remove_bracket(str(sid))
                 closed_ids.append(sid)
 
     if closed_ids and verbose:
@@ -1039,7 +1049,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                           block_new_entries: bool = False,
                           news_bias: dict | None = None,
                           sm=None,
-                          coordinator=None) -> list[dict]:
+                          coordinator=None,
+                          broker_net_positions=None) -> list[dict]:
     """
     Run one check pass across all portfolio strategies.
     Returns list of alert dicts for any new signal entries.
@@ -1229,7 +1240,7 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
             _coord_dec = coordinator.evaluate_single_signal(
                 signal=_coord_intent,
                 virtual_positions=_virtual_pos,
-                broker_positions=[],
+                broker_positions=broker_net_positions or [],
                 open_orders=[],
                 kill_switch=_check_kill_switch(),
             )
@@ -1367,6 +1378,31 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                                 "target_order_id":  br.get("target_order_id"),
                                 "entry_filled":     False,
                             })
+                        # Confirm both bracket legs are alive at the exchange
+                        _stop_id   = br.get("stop_order_id")
+                        _target_id = br.get("target_order_id")
+                        if _stop_id and _target_id and hasattr(tv_client, "confirm_bracket_alive"):
+                            try:
+                                _confirm = tv_client.confirm_bracket_alive(
+                                    _stop_id, _target_id, max_wait_seconds=30.0
+                                )
+                                if _confirm.get("alive"):
+                                    print(
+                                        f"  [Tradovate] Bracket confirmed alive "
+                                        f"in {_confirm['elapsed']}s "
+                                        f"(stop={_confirm['stop_status']} "
+                                        f"target={_confirm['target_status']})"
+                                    )
+                                else:
+                                    print(
+                                        f"  [Tradovate] WARNING: bracket not confirmed "
+                                        f"alive after {_confirm['elapsed']}s — "
+                                        f"reason={_confirm['reason']} "
+                                        f"stop={_confirm['stop_status']} "
+                                        f"target={_confirm['target_status']}"
+                                    )
+                            except Exception as _ce:
+                                print(f"  [Tradovate] Bracket confirm check failed: {_ce}")
                     else:
                         print(f"  [Tradovate] Bracket REJECTED — {br.get('reason')}  "
                               f"(alert logged, manual entry required)")
@@ -1752,7 +1788,7 @@ Examples:
         # ── Broker state sync (demo/live only) ───────────────────────────
         if tv_client and mode in (MODE_DEMO, MODE_LIVE):
             closed = _sync_broker_state(tv_client, tracker, rm,
-                                         PORTFOLIO, verbose=verbose)
+                                         PORTFOLIO, verbose=verbose, sm=sm)
             if closed and verbose:
                 print(f"  [Sync] {len(closed)} position(s) closed at broker since last check")
 
@@ -1777,13 +1813,31 @@ Examples:
             except Exception:
                 pass
 
+        # Build real broker positions for coordinator (DEMO/LIVE only)
+        _broker_net_pos = []
+        if (tv_client and mode in (MODE_DEMO, MODE_LIVE)
+                and _POSITION_SYNC_AVAILABLE and coordinator is not None):
+            try:
+                _tv_pos = tv_client.get_positions()
+                _bracket_ids = (
+                    tv_client.get_bracket_order_ids_by_symbol()
+                    if hasattr(tv_client, "get_bracket_order_ids_by_symbol") else {}
+                )
+                _sm_brackets = sm.load_active_brackets().get("brackets", {}) if sm else {}
+                _broker_net_pos = _build_broker_net_positions(
+                    _tv_pos, _bracket_ids, _sm_brackets
+                )
+            except Exception:
+                _broker_net_pos = []
+
         alerts = check_all_strategies(tracker, rm, args.disable_v2,
                                       verbose=verbose, tv_client=tv_client,
                                       mode=mode,
                                       block_new_entries=news_blocked,
                                       news_bias=current_bias,
                                       sm=sm,
-                                      coordinator=coordinator)
+                                      coordinator=coordinator,
+                                      broker_net_positions=_broker_net_pos)
 
         if alerts:
             print(f"\n  >>> {len(alerts)} alert(s) fired <<<")

@@ -442,6 +442,97 @@ class TradovateClient:
                           "ContingencyOrder", "PendingReplace"}
         return [o for o in raw if o.get("ordStatus") in _open_statuses]
 
+    def get_bracket_order_ids_by_symbol(self) -> dict:
+        """
+        Return {base_symbol: [order_id, ...]} for all active bracket legs.
+
+        Calls get_open_orders() (which filters to working/contingent statuses),
+        then strips month codes to group by base symbol (e.g. "MES", "MGC").
+
+        Returns {} if not authenticated or on any error.
+        """
+        _bracket_statuses = {
+            "Working", "ContingencyOrder", "PendingNew", "Accepted", "PendingReplace"
+        }
+        _month_codes = frozenset("FGHJKMNQUVXZ")
+
+        def _strip(sym: str) -> str:
+            s = sym.upper().strip()
+            i = len(s) - 1
+            while i > 0 and s[i].isdigit():
+                i -= 1
+            return s[:i] if i > 0 and s[i] in _month_codes else s
+
+        try:
+            raw = self.get_open_orders()
+            result: dict = {}
+            for o in raw:
+                if o.get("ordStatus") not in _bracket_statuses:
+                    continue
+                order_id = o.get("id") or o.get("orderId")
+                if not order_id:
+                    continue
+                sym = o.get("symbol", "")
+                if not sym:
+                    cid = o.get("contractId")
+                    if cid:
+                        sym = self._contract_id_to_symbol(int(cid))
+                if not sym:
+                    continue
+                base = _strip(str(sym))
+                result.setdefault(base, []).append(int(order_id))
+            return result
+        except Exception:
+            return {}
+
+    def confirm_bracket_alive(self, stop_order_id: int, target_order_id: int,
+                               max_wait_seconds: float = 30.0,
+                               poll_interval: float = 2.0) -> dict:
+        """
+        Poll until both bracket legs show a working/contingent status.
+
+        Returns:
+            {"alive": bool, "stop_status": str, "target_status": str,
+             "elapsed": float, "reason": str}
+        alive=True only when both legs are in the alive set.
+        """
+        _alive = {"Working", "ContingencyOrder", "Accepted"}
+        _terminal = {"Filled", "Cancelled", "Rejected", "Expired", "Error"}
+        start = time.time()
+        stop_status = "Unknown"
+        target_status = "Unknown"
+        while time.time() - start < max_wait_seconds:
+            try:
+                sr = self.get_order_status(stop_order_id)
+                stop_status = sr.get("ordStatus", "Unknown")
+            except Exception:
+                stop_status = "Unknown"
+            try:
+                tr = self.get_order_status(target_order_id)
+                target_status = tr.get("ordStatus", "Unknown")
+            except Exception:
+                target_status = "Unknown"
+            elapsed = round(time.time() - start, 2)
+            if stop_status in _alive and target_status in _alive:
+                return {
+                    "alive": True,
+                    "stop_status": stop_status, "target_status": target_status,
+                    "elapsed": elapsed, "reason": "ok",
+                }
+            if stop_status in _terminal or target_status in _terminal:
+                return {
+                    "alive": False,
+                    "stop_status": stop_status, "target_status": target_status,
+                    "elapsed": elapsed, "reason": "bracket_leg_terminal_state",
+                }
+            time.sleep(poll_interval)
+        elapsed = round(time.time() - start, 2)
+        return {
+            "alive": False,
+            "stop_status": stop_status, "target_status": target_status,
+            "elapsed": elapsed, "reason": "timeout",
+        }
+
     def get_positions_dict(self) -> dict[str, dict]:
         """
         Return current broker positions as {symbol: {net_pos, avg_price, open_pnl}}.
