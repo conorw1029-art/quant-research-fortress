@@ -182,6 +182,8 @@ def run(username: str, password: str, cid: int, secret: str,
     # ── Gate 6: Bracket Order (optional) ─────────────────────────────────────
     if test_order:
         _section("Gate 6: Bracket Order — place + cancel (far below market)")
+        import tick_tradovate_client as _tvc_mod
+        _orig_verified = _tvc_mod._OSO_EXCHANGE_VERIFIED
         try:
             mes_sym = TV_CONTRACT_MAP.get("MES", "MESM5")
 
@@ -200,6 +202,12 @@ def run(username: str, password: str, cid: int, secret: str,
             print(f"  Test order: BUY {mes_sym} limit @ {safe_entry:.2f} "
                   f"(stop={stop_price:.2f}, target={tgt_price:.2f})")
             print(f"  This is ~10% below market — will not fill.")
+            print(f"  Note: temporarily bypassing _OSO_EXCHANGE_VERIFIED for this test.")
+
+            # Temporarily unlock OSO for this one test — Gate 6 IS the verification step.
+            # After this test passes, manually set _OSO_EXCHANGE_VERIFIED = True in
+            # tick_tradovate_client.py to permanently enable demo/live bracket orders.
+            _tvc_mod._OSO_EXCHANGE_VERIFIED = True
 
             result = client.place_bracket_order(
                 symbol=mes_sym, side="BUY", quantity=1,
@@ -209,26 +217,38 @@ def run(username: str, password: str, cid: int, secret: str,
             )
 
             if result.get("ok"):
-                order_id = result.get("order_id")
+                entry_id  = result.get("entry_order_id")
+                stop_id   = result.get("stop_order_id")
+                target_id = result.get("target_order_id")
                 _pass("bracket order placed",
-                      f"Entry order ID: {order_id}")
+                      f"entry={entry_id}  stop={stop_id}  target={target_id}")
+                print(f"\n  Raw response (verify field names match expected):")
+                print(f"    {result}")
 
-                # Cancel immediately
+                # Cancel the entry leg immediately
                 time.sleep(1)
-                if order_id:
-                    cancel_result = client.cancel_order(order_id)
-                    _pass("bracket order cancelled", str(cancel_result)[:100])
+                if entry_id:
+                    cancel_result = client.cancel_order(entry_id)
+                    _pass("bracket order cancelled", str(cancel_result)[:120])
                 else:
-                    print(f"      No order_id in result — check cancel manually")
+                    print(f"      WARNING: No entry_order_id in result — cancel manually on broker platform")
+
+                print(f"\n  *** OSO VERIFICATION: If the above response shape is correct,")
+                print(f"      set _OSO_EXCHANGE_VERIFIED = True in tick_tradovate_client.py")
+                print(f"      to permanently enable demo/live bracket orders. ***")
             else:
                 _fail("bracket order",
                       f"Placement failed: {result.get('reason', result)}")
 
         except Exception as e:
             _fail("bracket order (test)", str(e))
+        finally:
+            # Always restore the flag — the permanent flip is a manual step
+            _tvc_mod._OSO_EXCHANGE_VERIFIED = _orig_verified
     else:
         print(f"\n  Gate 6 skipped — run with --test-order to verify OSO order placement")
         print(f"  (places a far-below-market limit and immediately cancels)")
+        print(f"  After Gate 6 passes: set _OSO_EXCHANGE_VERIFIED = True in tick_tradovate_client.py")
 
     # ── Summary ───────────────────────────────────────────────────────────────
     n_pass = sum(1 for r in _results if r["status"] == "PASS")

@@ -115,6 +115,7 @@ def check_bar_data(quick: bool = False):
         ("GC",  1),  ("GC",  3),  ("GC",  5),  ("GC", 15), ("GC", 30),
         ("ES",  3),  ("ES", 15),  ("ES", 30),
         ("NQ",  3),  ("NQ", 15),  ("NQ", 30),
+        ("SI",  1),  ("SI",  3),  ("SI", 15),  ("SI", 30),
     ]
     stale_threshold_min = 60   # warn if last bar > 60 min old during market hours
     now = datetime.now(timezone.utc)
