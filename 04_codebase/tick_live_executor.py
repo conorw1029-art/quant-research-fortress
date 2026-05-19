@@ -134,6 +134,20 @@ except Exception:
     _RECONCILIATION_AVAILABLE = False
 
 try:
+    from tick_portfolio_coordinator import (
+        PortfolioCoordinator, CoordinatorConfig,
+        SignalIntent, Side, VirtualStrategyPosition,
+    )
+    _COORDINATOR_AVAILABLE = True
+except Exception:
+    _COORDINATOR_AVAILABLE = False
+    PortfolioCoordinator = None
+    CoordinatorConfig = None
+    SignalIntent = None
+    Side = None
+    VirtualStrategyPosition = None
+
+try:
     from tick_strategies_v6 import STRAT_MAP_V6
     _V6_AVAILABLE = True
 except Exception:
@@ -235,7 +249,8 @@ def _log_signal(record: dict) -> None:
 
 
 def _mode_banner(mode: str, tv_client, strategies_active: list,
-                 cfg: "RiskConfig", allowlist: dict | None = None) -> str:
+                 cfg: "RiskConfig", allowlist: dict | None = None,
+                 coordinator=None) -> str:
     width = 62
     lines = [
         "=" * width,
@@ -280,6 +295,17 @@ def _mode_banner(mode: str, tv_client, strategies_active: list,
     ]
     if allowlist_line:
         lines.append(allowlist_line)
+    if coordinator is not None:
+        c = coordinator.config
+        lines += [
+            f"  Portfolio coordinator: ENABLED",
+            f"  Coord max_net_contracts_per_symbol: {c.max_net_contracts_per_symbol}",
+            f"  Coord max_total_open_symbols:       {c.max_total_open_symbols}",
+            f"  Coord one_strategy_only_demo:       {c.one_strategy_only_demo}",
+            f"  Coord demo_strategy_key:            {c.demo_strategy_key}",
+        ]
+    else:
+        lines.append("  Portfolio coordinator: DISABLED (import failed)")
     lines.append("=" * width)
     return "\n".join(lines)
 
@@ -1012,7 +1038,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                           tv_client=None, mode: str = MODE_DRY_RUN,
                           block_new_entries: bool = False,
                           news_bias: dict | None = None,
-                          sm=None) -> list[dict]:
+                          sm=None,
+                          coordinator=None) -> list[dict]:
     """
     Run one check pass across all portfolio strategies.
     Returns list of alert dicts for any new signal entries.
@@ -1167,6 +1194,57 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                     "atr": round(atr, 4), "risk_usd": round(trade_risk, 2),
                     "accepted": False, "rejection_reason": gate_reason,
                 })
+                last_sig = 0
+
+        # ── Portfolio coordinator gate (dry-run: logs decisions, no orders blocked in dry-run)
+        if last_sig != 0 and tracker.current(strat_id) == 0 and coordinator is not None:
+            _coord_intent = SignalIntent(
+                strategy_id=strat_id,
+                strategy_key=f"{symbol}/{strat_name}/{bar_min}m",
+                symbol=traded_sym,
+                contract=f"{traded_sym}M5",
+                side=Side.LONG if last_sig == 1 else Side.SHORT,
+                desired_qty=1,
+                entry_price=entry_p,
+                stop_price=round(entry_p - last_sig * STOP_MULT * atr, 4),
+                target_price=round(entry_p + last_sig * TP_MULT * atr, 4),
+                estimated_risk_usd=trade_risk,
+                timestamp=datetime.now(timezone.utc),
+            )
+            _virtual_pos = [
+                VirtualStrategyPosition(
+                    strategy_id=sid2,
+                    strategy_key=f"{sym2}/{sn2}/{bm2}m",
+                    symbol=sym2,
+                    side=Side.LONG if tracker.current(sid2) == 1 else Side.SHORT,
+                    qty=1,
+                    entry_price=0.0,
+                    stop_price=0.0,
+                    target_price=0.0,
+                    state="OPEN",
+                )
+                for (sid2, sym2, bm2, sn2, _, _, _, _) in PORTFOLIO
+                if tracker.current(sid2) != 0
+            ]
+            _coord_dec = coordinator.evaluate_single_signal(
+                signal=_coord_intent,
+                virtual_positions=_virtual_pos,
+                broker_positions=[],
+                open_orders=[],
+                kill_switch=_check_kill_switch(),
+            )
+            _log_signal({
+                "event_type": "coordinator_decision",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "mode": mode, "strategy_id": strat_id, "strategy": strat_name,
+                "symbol": traded_sym, "bar_minutes": bar_min, "version": version,
+                "coordinator_action": _coord_dec.action.value,
+                "coordinator_ok": _coord_dec.ok,
+                "coordinator_reason": _coord_dec.reason,
+            })
+            if not _coord_dec.ok:
+                if verbose:
+                    print(f"  [{strat_id}] COORDINATOR {_coord_dec.action.value}: {_coord_dec.reason}")
                 last_sig = 0
 
         # Dedup: skip if this exact signal was already processed (prevents re-entry on restart)
@@ -1437,6 +1515,22 @@ Examples:
     else:
         mode = MODE_DRY_RUN
 
+    # ── Portfolio coordinator ─────────────────────────────────────────────────
+    if _COORDINATOR_AVAILABLE:
+        _coord_cfg = CoordinatorConfig(
+            one_strategy_only_demo=(mode == MODE_DEMO),
+            max_total_open_symbols=1 if mode == MODE_DEMO else 10,
+            allow_opposite_strategy_signals_same_symbol=False,
+            allow_position_increase_same_symbol=False,
+            allow_reversal=False,
+            dry_run_only=(mode == MODE_DRY_RUN),
+        )
+        coordinator = PortfolioCoordinator(_coord_cfg)
+    else:
+        coordinator = None
+        print("  WARNING: tick_portfolio_coordinator.py not available — coordinator disabled.")
+        print("           Multi-strategy netting protection is inactive.")
+
     # ── Bracket order gate (required for any auto-trade) ─────────────────────
     if mode in (MODE_DEMO, MODE_LIVE):
         if not _TRADOVATE_AVAILABLE:
@@ -1544,7 +1638,8 @@ Examples:
         print(f"  [allowlist] {ALLOWLIST_PATH.name} not found — running all strategies (no allowlist control)")
 
     # ── Print mode banner ─────────────────────────────────────────────────────
-    print("\n" + _mode_banner(mode, tv_client, PORTFOLIO, RISK_CFG, allowlist=allowlist))
+    print("\n" + _mode_banner(mode, tv_client, PORTFOLIO, RISK_CFG,
+                               allowlist=allowlist, coordinator=coordinator))
 
     alert_path  = Path(args.alert_file) if args.alert_file else None
     tracker     = PositionTracker()
@@ -1687,7 +1782,8 @@ Examples:
                                       mode=mode,
                                       block_new_entries=news_blocked,
                                       news_bias=current_bias,
-                                      sm=sm)
+                                      sm=sm,
+                                      coordinator=coordinator)
 
         if alerts:
             print(f"\n  >>> {len(alerts)} alert(s) fired <<<")

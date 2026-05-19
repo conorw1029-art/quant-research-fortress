@@ -343,3 +343,40 @@ Additionally, 1t-Sharpe of 0.92 is below the 1.0 threshold. Even at 0.5t: Sharpe
 ---
 
 *Review and update this document after each demo sprint evaluation.*
+
+---
+
+## Rules R8–R10 — Portfolio Netting and Isolation (Added 2026-05-19)
+
+### R8 — Broker Netting Rule
+
+A strategy cannot be DEMO_CANDIDATE or LIVE eligible in a shared account unless the `PortfolioCoordinator` can map its `VirtualStrategyPosition` to the broker-level `BrokerNetPosition` and confirm that active bracket orders are tracked via `active_bracket_ids`.
+
+Independent same-symbol strategy positions are not assumed to exist at the broker. The broker maintains one net quantity per contract per account. Any strategy that generates a signal without going through the coordinator is blocked from execution.
+
+**Enforcement**: `PortfolioCoordinator.evaluate_single_signal()` must return `ok=True` before any signal reaches `place_bracket_order()`.
+
+---
+
+### R9 — Same-Symbol Conflict Rule
+
+Opposite-direction signals on the same symbol from different strategies are blocked by default (`allow_opposite_strategy_signals_same_symbol=False` in `CoordinatorConfig`).
+
+Same-direction signals on the same symbol cannot increase net exposure above `max_net_contracts_per_symbol` (default: 1) unless `allow_position_increase_same_symbol=True` is explicitly set.
+
+**Enforcement**: `detect_same_symbol_conflicts()` + Rule 7 in `evaluate_single_signal()`.
+
+---
+
+### R10 — First Demo Isolation Rule
+
+The first demo auto-trade run must operate under full isolation:
+- One strategy only (`one_strategy_only_demo=True`, `demo_strategy_key=` the approved candidate)
+- One symbol only (`max_total_open_symbols=1`)
+- One micro contract only (`max_net_contracts_per_symbol=1`)
+- No reversal allowed (`allow_reversal=False`)
+- No position stacking (`allow_position_increase_same_symbol=False`)
+
+Multi-strategy concurrent execution in demo is not permitted until the coordinator has completed 30+ validated demo sessions with zero `HUMAN_REVIEW_REQUIRED` events.
+
+**Enforcement**: `CoordinatorConfig` fields enforced by `PortfolioCoordinator`. Executor sets these in `MODE_DEMO`.
