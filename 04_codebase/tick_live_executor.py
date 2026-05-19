@@ -592,7 +592,8 @@ TV_CONTRACT_MAP = {
     "MGC": "MGCM5",   # micro gold
     "MES": "MESM5",   # micro S&P
     "MNQ": "MNQM5",   # micro NQ
-    "SIL": "SILM5",   # micro silver
+    "SIL": "SILM5",   # micro silver (Tradovate base symbol)
+    "SI":  "SILM5",   # micro silver (strategy base symbol → same contract)
     "GC":  "GCM5",    # full gold (fallback)
     "ES":  "ESM5",    # full ES  (fallback)
     "NQ":  "NQM5",    # full NQ  (fallback)
@@ -766,9 +767,11 @@ _CONTRACT_EXPIRY = {
     "MESM5": "2026-06-20",
     "MGCM5": "2026-06-27",
     "MNQM5": "2026-06-20",
+    "SILM5": "2026-06-27",  # micro silver — last business day of June
     "MESU5": "2026-09-19",  # next quarter, pre-populated for easy swap
     "MGCU5": "2026-09-26",
     "MNQU5": "2026-09-19",
+    "SILU5": "2026-09-26",  # micro silver next quarter
 }
 
 def _contract_rollover_warning() -> list[str]:

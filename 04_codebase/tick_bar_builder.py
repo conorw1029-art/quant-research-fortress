@@ -82,7 +82,7 @@ SYMBOL_MAP = {
 }
 
 DEFAULT_BAR_SIZES = [1, 3, 5, 15, 30]  # minutes
-DEFAULT_SYMBOLS   = ["GC", "ES", "NQ"]
+DEFAULT_SYMBOLS   = ["GC", "ES", "NQ", "SI"]
 
 # Minimum trade size to classify as "large" (institutional print)
 LARGE_TRADE_THRESH = {"GC": 10, "SI": 20, "ES": 30, "NQ": 20, "default": 20}
