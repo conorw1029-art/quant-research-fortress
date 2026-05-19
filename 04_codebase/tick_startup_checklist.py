@@ -432,6 +432,116 @@ def check_strategy_smoke():
         _record("strategy smoke-test", "FAIL", str(e), critical=True)
 
 
+# ── Check 11: Portfolio Coordinator ──────────────────────────────────────────
+
+def check_coordinator():
+    _section("11. Portfolio Coordinator")
+    # 1. Import
+    try:
+        from tick_portfolio_coordinator import (
+            PortfolioCoordinator, CoordinatorConfig,
+            SignalIntent, Side, VirtualStrategyPosition, BrokerNetPosition,
+            CoordinatorAction,
+        )
+    except Exception as e:
+        _record("coordinator import", "FAIL",
+                f"tick_portfolio_coordinator.py not importable: {e}", critical=True)
+        return
+
+    _record("coordinator import", "PASS")
+
+    # 2. Executor integration — check _COORDINATOR_AVAILABLE flag
+    try:
+        import tick_live_executor as _exe
+        available = getattr(_exe, "_COORDINATOR_AVAILABLE", None)
+        if available is True:
+            _record("coordinator wired in executor", "PASS",
+                    "_COORDINATOR_AVAILABLE=True in tick_live_executor")
+        elif available is False:
+            _record("coordinator wired in executor", "FAIL",
+                    "_COORDINATOR_AVAILABLE=False — import guard failed at executor load time",
+                    critical=True)
+        else:
+            _record("coordinator wired in executor", "WARN",
+                    "_COORDINATOR_AVAILABLE not found — executor may be outdated")
+    except Exception as e:
+        _record("coordinator executor check", "WARN", str(e))
+
+    # 3. Instantiate with DRY_RUN defaults and run two sanity evaluations
+    try:
+        from datetime import datetime, timezone
+        cfg = CoordinatorConfig(
+            one_strategy_only_demo=False,
+            max_net_contracts_per_symbol=1,
+            max_total_open_symbols=10,
+            allow_reversal=False,
+            dry_run_only=True,
+        )
+        coord = PortfolioCoordinator(cfg)
+
+        def _make_intent(sid, symbol, side):
+            return SignalIntent(
+                strategy_id=sid, strategy_key=f"{symbol}/test/1m",
+                symbol=symbol, contract=symbol + "M5", side=side,
+                desired_qty=1, entry_price=2000.0, stop_price=1990.0,
+                target_price=2020.0, estimated_risk_usd=100.0,
+                timestamp=datetime.now(timezone.utc),
+            )
+
+        # Sanity A: clean signal → ACCEPT_NEW
+        dec_a = coord.evaluate_single_signal(
+            _make_intent(1, "GC", Side.LONG), [], [], [], kill_switch=False,
+        )
+        if dec_a.action == CoordinatorAction.ACCEPT_NEW:
+            _record("coordinator sanity A (ACCEPT_NEW)", "PASS",
+                    "Clean GC long with no open positions → ACCEPT_NEW")
+        else:
+            _record("coordinator sanity A (ACCEPT_NEW)", "FAIL",
+                    f"Expected ACCEPT_NEW, got {dec_a.action}: {dec_a.reason}",
+                    critical=True)
+
+        # Sanity B: kill switch → REJECT_CONFLICT
+        dec_b = coord.evaluate_single_signal(
+            _make_intent(1, "GC", Side.LONG), [], [], [], kill_switch=True,
+        )
+        if dec_b.action == CoordinatorAction.REJECT_CONFLICT and not dec_b.ok:
+            _record("coordinator sanity B (kill switch)", "PASS",
+                    "Kill switch active → REJECT_CONFLICT, ok=False")
+        else:
+            _record("coordinator sanity B (kill switch)", "FAIL",
+                    f"Expected REJECT_CONFLICT/ok=False, got {dec_b.action}/ok={dec_b.ok}",
+                    critical=True)
+
+        # Sanity C: opposite signals in batch → both rejected
+        intents = [
+            _make_intent(16, "GC", Side.LONG),
+            _make_intent(17, "GC", Side.SHORT),
+        ]
+        decisions = coord.evaluate_signals(intents, [], [], [])
+        all_rejected = all(not d.ok for d in decisions.values())
+        if all_rejected:
+            _record("coordinator sanity C (conflict detection)", "PASS",
+                    "Opposite GC signals → both REJECT_CONFLICT")
+        else:
+            accepted = [sid for sid, d in decisions.items() if d.ok]
+            _record("coordinator sanity C (conflict detection)", "FAIL",
+                    f"Opposite signals should both be rejected; accepted: {accepted}",
+                    critical=True)
+
+    except Exception as e:
+        _record("coordinator sanity checks", "FAIL", str(e), critical=True)
+        return
+
+    # 4. Show active DRY_RUN config
+    print(f"\n      Coordinator DRY_RUN config:")
+    print(f"        max_net_contracts_per_symbol: {cfg.max_net_contracts_per_symbol}")
+    print(f"        max_total_open_symbols:       {cfg.max_total_open_symbols}")
+    print(f"        allow_reversal:               {cfg.allow_reversal}")
+    print(f"        one_strategy_only_demo:       {cfg.one_strategy_only_demo}  (False in DRY_RUN)")
+    print(f"        demo_strategy_key:            {cfg.demo_strategy_key}")
+    print(f"        max_portfolio_risk_usd:       ${cfg.max_portfolio_risk_usd:,.0f}")
+
+
 # ── Check 10: Log directory ───────────────────────────────────────────────────
 
 def check_log_directory():
@@ -519,6 +629,7 @@ def main():
     check_contract_expiry()
     check_risk_config()
     check_bracket_order()
+    check_coordinator()
     check_log_directory()
 
     if not args.quick:
