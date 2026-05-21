@@ -175,6 +175,13 @@ except Exception:
     _V8_AVAILABLE = False
     STRAT_MAP_V8 = {}
 
+try:
+    from tick_strategies_v9 import STRAT_MAP_V9
+    _V9_AVAILABLE = True
+except Exception:
+    _V9_AVAILABLE = False
+    STRAT_MAP_V9 = {}
+
 ROOT    = Path(__file__).parent.parent
 BAR_DIR = ROOT / "01_data" / "tick_bars"
 LOG_DIR = ROOT / "06_live_trading" / "logs"
@@ -338,6 +345,7 @@ MICRO_MAP = {
     "ES": "MES",   # $5/pt   (full ES = $50/pt)
     "NQ": "MNQ",   # $2/pt   (full NQ = $20/pt)
     "SI": "SIL",   # $1000/pt (full SI = $5000/pt)
+    "CL": "MCL",   # $100/pt (full CL = $1000/pt)
 }
 
 def resolve_symbol(base: str) -> str:
@@ -422,102 +430,111 @@ PORTFOLIO = [
     # ── V6/V7/V8 — Pure OHLCV strategies (stress-tested 2026-05-18) ─────────────
     # 23 PASS survivors. Near-zero correlation to V1-V5 CVD strategies.
     # Long-history (GC/SI): 2020-2026. Short-history (ES/NQ): Dec 2025+ only.
+    # Session filters applied 2026-05-20: every strategy improved (avg +37% Sharpe).
     # Allowlist controls dry-run eligibility — see live_strategy_allowlist.yaml.
 
     # REVIEW_REQUIRED — long history, worst_micro <= $1,000
     (16, "GC", 30, "vwap_mean_reversion",
      {"z_thresh": 2.5, "vwap_window": 10},
-     None,            None,      "v6"),    # 1t-Sharpe=2.71, 7/7 yrs, TS=99.5%, worst-micro=$513
+     {0,1,2,4,5,6,8,10,11,13,15,16,17,18,19,20,21,22}, None, "v6"),  # avoid UTC 3,7,9,12,14,23 | filtered Sharpe=1.132 (+27.6%)
 
     (17, "GC", 30, "pivot_reversal",
      {"pivot_bars": 10, "bounce_atr_mult": 0.2, "atr_win": 10},
-     None,            None,      "v8"),    # 1t-Sharpe=2.02, 6/7 yrs, TS=100%, worst-micro=$364
+     {0,1,2,3,6,7,9,10,13,14,15,16,17,18,20,21,22}, None, "v8"),  # avoid UTC 4,5,8,11,12,19,23 | filtered Sharpe=1.041 (+37.5%)
 
     (18, "SI", 30, "opening_range_fakeout",
      {"orb_bars": 12, "reentry_atr_pct": 0.2, "atr_window": 14},
-     None,            None,      "v6"),    # 1t-Sharpe=2.52, 6/7 yrs, TS=97.9%, worst-micro=$458
+     {0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,18,19,20,21,22,23}, None, "v6"),  # avoid UTC 8,17 | filtered Sharpe=0.835 (+19.1%)
 
     (19, "SI",  3, "consecutive_close_momentum",
      {"n": 5},
-     None,            None,      "v8"),    # 1t-Sharpe=2.28, 5/7 yrs, TS=98.4%, worst-micro=$883
+     {0,2,3,8,9,10,11,12,13,14,15,16,18,19,20,21,22,23}, None, "v8"),  # avoid UTC 1,4,5,6,7,17 | filtered Sharpe=1.388 (+16.7%)
 
     (20, "GC", 15, "pivot_reversal",
      {"pivot_bars": 20, "bounce_atr_mult": 0.2, "atr_win": 14},
-     None,            None,      "v8"),    # 1t-Sharpe=1.85, 5/6 yrs, TS=98.4%, worst-micro=$671
+     {0,1,2,3,4,5,7,8,9,10,11,13,14,15,17,18,20,21,22,23}, None, "v8"),  # avoid UTC 6,12,16,19 | filtered Sharpe=0.735 (+88.8%)
 
     (21, "SI",  1, "ema_crossover",
      {"fast": 5, "slow": 34, "slope_bars": 5},
-     None,            None,      "v7"),    # 1t-Sharpe=1.80, 7/7 yrs, TS=98.4%, worst-micro=$952
+     {1,2,3,4,5,6,7,8,10,12,13,14,15,16,17,18,19,20,21,23}, None, "v7"),  # avoid UTC 0,9,11,22 | filtered Sharpe=1.449 (+10.8%)
 
     (22, "SI", 15, "vwap_mean_reversion",
      {"z_thresh": 2.5, "vwap_window": 10},
-     None,            None,      "v6"),    # 1t-Sharpe=1.80, 5/7 yrs, TS=97.9%, worst-micro=$603
+     {0,1,3,4,6,7,9,10,12,14,15,17,18,20,21,23}, None, "v6"),  # avoid UTC 2,5,8,11,13,16,19,22 | filtered Sharpe=0.808 (+52.6%)
 
     (23, "SI",  3, "opening_range_fakeout",
      {"orb_bars": 3, "reentry_atr_pct": 0.05, "atr_window": 14},
-     None,            None,      "v6"),    # 1t-Sharpe=1.50, 5/7 yrs, TS=100%, worst-micro=$395
+     {0,2,4,5,7,12,13,14,15,16,18,19,20,21,22,23}, None, "v6"),  # avoid UTC 1,3,6,8,9,10,11,17 | filtered Sharpe=0.795 (+26.9%)
 
     # DISABLED_FOR_LIVE — long history, worst_micro > $1,000 (re-enable at $5k+ equity)
     (24, "GC", 15, "donchian_breakout",
      {"n": 40, "confirm": 1},
-     None,            None,      "v7"),    # 1t-Sharpe=1.93, 6/7 yrs, TS=99.6%, worst-micro=$1,796
+     {0,3,4,5,6,7,8,10,12,14,15,16,17,18,19,21,23}, None, "v7"),  # avoid UTC 1,2,9,11,13,20,22 | filtered Sharpe=1.786 (+19.9%)
 
     (25, "SI",  5, "consecutive_close_momentum",
      {"n": 5},
-     None,            None,      "v8"),    # 1t-Sharpe=2.40, 7/7 yrs, TS=96.6%, worst-micro=$2,122
+     {0,1,2,3,5,8,9,10,11,12,13,14,15,16,18,19,20,21,22,23}, None, "v8"),  # avoid UTC 4,6,7,17 | filtered Sharpe=1.060 (+15.4%)
 
     (26, "SI", 30, "ema_crossover",
      {"fast": 13, "slow": 34, "slope_bars": 3},
-     None,            None,      "v7"),    # 1t-Sharpe=1.95, 6/7 yrs, TS=95.9%, worst-micro=$1,366
+     {1,2,3,5,6,7,8,11,14,15,16,17,18,20,21,22}, None, "v7"),  # avoid UTC 0,4,9,10,12,13,19,23 | filtered Sharpe=0.983 (+30.2%)
 
     (27, "GC", 15, "consecutive_close_momentum",
      {"n": 5},
-     None,            None,      "v8"),    # 1t-Sharpe=1.87, 6/7 yrs, TS=99.6%, worst-micro=$1,414
+     {0,1,2,3,5,7,9,11,12,13,14,16,17,19,22,23}, None, "v8"),  # avoid UTC 4,6,8,10,15,18,20,21 | filtered Sharpe=1.383 (+27.7%)
 
     (28, "SI", 30, "ma_slope_regime",
      {"ma_win": 20, "slope_bars": 3, "entry_rsi_win": 14, "rsi_ob": 60, "rsi_os": 40},
-     None,            None,      "v8"),    # 1t-Sharpe=1.79, 5/7 yrs, TS=96.7%, worst-micro=$1,743
+     {0,1,2,3,4,5,6,7,9,11,12,14,15,16,18,19,20,22,23}, None, "v8"),  # avoid UTC 8,10,13,17,21 | filtered Sharpe=0.840 (+23.7%)
 
     (29, "SI",  5, "ema_crossover",
      {"fast": 5, "slow": 34, "slope_bars": 5},
-     None,            None,      "v7"),    # 1t-Sharpe=1.72, 6/7 yrs, TS=96.9%, worst-micro=$1,202
+     {1,2,3,4,5,7,11,12,13,14,15,16,17,18,19,22,23}, None, "v7"),  # avoid UTC 0,6,8,9,10,20,21 | filtered Sharpe=1.152 (+29.2%)
 
     (30, "SI", 15, "consecutive_close_momentum",
      {"n": 5},
-     None,            None,      "v8"),    # 1t-Sharpe=1.69, 6/7 yrs, TS=96.1%, worst-micro=$1,680
+     {0,1,2,3,5,7,8,9,10,11,14,15,16,17,18,19,21,22,23}, None, "v8"),  # avoid UTC 4,6,12,13,20 | filtered Sharpe=1.349 (+55.7%)
 
     (31, "SI",  1, "consecutive_close_momentum",
      {"n": 5},
-     None,            None,      "v8"),    # 1t-Sharpe=1.68, 6/7 yrs, TS=97.9%, worst-micro=$3,486
+     {0,2,3,8,9,10,11,12,13,14,15,16,18,19,20,22}, None, "v8"),  # avoid UTC 1,4,5,6,7,17,21,23 | filtered Sharpe=1.236 (+32.3%)
 
     (32, "GC", 15, "close_position_momentum",
      {"cp_window": 5, "cp_thresh": 0.75},
-     None,            None,      "v8"),    # 1t-Sharpe=1.68, 7/7 yrs, TS=99.6%, worst-micro=$1,088
+     {0,1,2,5,7,9,10,11,12,13,14,15,16,17,19,20,21}, None, "v8"),  # avoid UTC 3,4,6,8,18,22,23 | filtered Sharpe=1.167 (+33.6%)
 
     # REVIEW_REQUIRED — short history (ES/NQ, Dec 2025+), regime check skipped
     (33, "ES", 30, "overnight_gap_fill",
      {"gap_atr_mult": 0.3, "atr_window": 14},
-     None,            None,      "v6"),    # 1t-Sharpe=4.05, TS=100%, worst-micro=$222 — STAR short-window
+     {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22}, None, "v6"),  # avoid UTC 23 | filtered Sharpe=4.124 (+165.8%) STAR
 
     (34, "ES", 15, "overnight_gap_fill",
      {"gap_atr_mult": 0.3, "atr_window": 14},
-     None,            None,      "v6"),    # 1t-Sharpe=3.16, TS=100%, worst-micro=$180 — lowest worst-micro
+     {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22}, None, "v6"),  # avoid UTC 23 | filtered Sharpe=3.615 (+181.3%) STAR
 
     (35, "NQ", 30, "ma_slope_regime",
      {"ma_win": 15, "slope_bars": 3, "entry_rsi_win": 14, "rsi_ob": 60, "rsi_os": 40},
-     None,            None,      "v8"),    # 1t-Sharpe=2.89, TS=100%, worst-micro=$311
+     {1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23}, None, "v8"),  # avoid UTC 0,5 | filtered Sharpe=2.369 (+25.2%)
 
     (36, "NQ", 15, "inside_bar_breakout",
      {"n_inside": 2, "breakout_confirm": 0},
-     None,            None,      "v8"),    # 1t-Sharpe=2.77, TS=100%, worst-micro=$413
+     {0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,20,22,23}, None, "v8"),  # avoid UTC 1,19,21 | filtered Sharpe=2.132 (+34.2%)
 
     (37, "NQ", 30, "vwap_mean_reversion",
      {"z_thresh": 2.5, "vwap_window": 40},
-     None,            None,      "v6"),    # 1t-Sharpe=2.35, TS=98.5%, worst-micro=$475
+     {0,1,2,3,4,5,6,7,8,9,10,11,13,15,17,18,19,20,21,22,23}, None, "v6"),  # avoid UTC 12,14,16 | filtered Sharpe=2.375 (+30.8%)
 
     (38, "ES", 30, "vwap_mean_reversion",
      {"z_thresh": 2.5, "vwap_window": 10},
-     None,            None,      "v6"),    # 1t-Sharpe=1.93, TS=100%, worst-micro=$202
+     {0,1,2,3,4,5,6,7,9,10,11,12,13,16,17,18,19,20,21,22,23}, None, "v6"),  # avoid UTC 8,14,15 | filtered Sharpe=2.277 (+88.1%)
+
+    # ── V9 — Calendar/event-driven strategies ─────────────────────────────────
+    # fomc_drift: pre-FOMC upward drift on MES. Enter 21:00 UTC on FOMC eve,
+    # hold through announcement day 19:00 UTC. Always long. No parameters.
+    # Phase 4 backtest: 57 trades/12yr, 66.7% WR, $170 avg win, DSR=1.627, PF=1.45.
+    (39, "ES", 30, "fomc_drift",
+     {},
+     None,            None,      "v9"),    # event-driven, ~5 trades/year, REVIEW_REQUIRED
 ]
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
@@ -585,6 +602,7 @@ MICRO_SPECS = {
     "MES": {"point_value": 5.0,    "tick_size": 0.25,  "commission": 2.0},
     "MNQ": {"point_value": 2.0,    "tick_size": 0.25,  "commission": 2.0},
     "SIL": {"point_value": 1000.0, "tick_size": 0.005, "commission": 2.0},
+    "MCL": {"point_value": 100.0,  "tick_size": 0.01,  "commission": 2.5},
 }
 
 # Tradovate-ready contract symbols — UPDATE EACH QUARTERLY ROLLOVER (June → Sep → Dec → Mar)
@@ -594,9 +612,12 @@ TV_CONTRACT_MAP = {
     "MNQ": "MNQM5",   # micro NQ
     "SIL": "SILM5",   # micro silver (Tradovate base symbol)
     "SI":  "SILM5",   # micro silver (strategy base symbol → same contract)
+    "MCL": "MCLM5",   # micro crude oil
+    "CL":  "MCLM5",   # crude oil strategy → micro contract
     "GC":  "GCM5",    # full gold (fallback)
     "ES":  "ESM5",    # full ES  (fallback)
     "NQ":  "NQM5",    # full NQ  (fallback)
+    "CL_FULL": "CLM5", # full crude (not used in live — MCL only)
 }
 
 
@@ -650,6 +671,8 @@ def compute_signal(df: pd.DataFrame, strat_name: str,
         strat = STRAT_MAP_V7.get(strat_name)
     elif version == "v8":
         strat = STRAT_MAP_V8.get(strat_name)
+    elif version == "v9":
+        strat = STRAT_MAP_V9.get(strat_name)
     else:
         strat = STRAT_MAP_V4.get(strat_name)
     if strat is None:
@@ -767,11 +790,13 @@ _CONTRACT_EXPIRY = {
     "MESM5": "2026-06-20",
     "MGCM5": "2026-06-27",
     "MNQM5": "2026-06-20",
-    "SILM5": "2026-06-27",  # micro silver — last business day of June
-    "MESU5": "2026-09-19",  # next quarter, pre-populated for easy swap
+    "SILM5": "2026-06-27",
+    "MCLM5": "2026-06-20",  # micro crude oil — expires with ES/NQ cycle
+    "MESU5": "2026-09-19",
     "MGCU5": "2026-09-26",
     "MNQU5": "2026-09-19",
-    "SILU5": "2026-09-26",  # micro silver next quarter
+    "SILU5": "2026-09-26",
+    "MCLU5": "2026-09-19",  # micro crude oil next quarter
 }
 
 def _contract_rollover_warning() -> list[str]:

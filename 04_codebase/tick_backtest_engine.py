@@ -16,10 +16,12 @@ import pandas as pd
 
 # ── Contract specifications ──────────────────────────────────────────────────
 SPECS = {
-    "GC": {"point_value": 100.0,  "tick_size": 0.10,  "commission": 3.0},
-    "SI": {"point_value": 5000.0, "tick_size": 0.005, "commission": 3.0},
-    "ES": {"point_value": 50.0,   "tick_size": 0.25,  "commission": 3.0},
-    "NQ": {"point_value": 20.0,   "tick_size": 0.25,  "commission": 3.0},
+    "GC":  {"point_value": 100.0,  "tick_size": 0.10,  "commission": 3.0},
+    "SI":  {"point_value": 5000.0, "tick_size": 0.005, "commission": 3.0},
+    "ES":  {"point_value": 50.0,   "tick_size": 0.25,  "commission": 3.0},
+    "NQ":  {"point_value": 20.0,   "tick_size": 0.25,  "commission": 3.0},
+    "CL":  {"point_value": 1000.0, "tick_size": 0.01,  "commission": 3.0},
+    "MCL": {"point_value": 100.0,  "tick_size": 0.01,  "commission": 2.5},
 }
 
 

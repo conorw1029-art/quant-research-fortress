@@ -53,16 +53,19 @@ _MONTH_INFO = {
 
 # Micro contract base names
 _MICROS = {
-    "MES": "ES",
-    "MNQ": "NQ",
-    "MGC": "GC",
+    "MES":  "ES",
+    "MNQ":  "NQ",
+    "MGC":  "GC",
+    "SIL":  "SI",
+    "MCL":  "CL",
 }
 
 # All files that reference contract symbols
 _FILES = {
-    "executor":  CODE_DIR / "tick_live_executor.py",
-    "builder":   CODE_DIR / "tick_bar_builder.py",
-    "client":    CODE_DIR / "tick_tradovate_client.py",
+    "executor":   CODE_DIR / "tick_live_executor.py",
+    "builder":    CODE_DIR / "tick_bar_builder.py",
+    "builder_db": CODE_DIR / "tick_bar_builder_databento.py",
+    "client":     CODE_DIR / "tick_tradovate_client.py",
 }
 
 
@@ -92,6 +95,7 @@ def show_current():
             ("MNQ", ("MNQ", "NQ")),
             ("MGC", ("MGC", "GC")),
             ("SIL", ("SIL", "SI")),
+            ("MCL", ("MCL", "CL")),
         ]:
             found = False
             for key in base_keys:

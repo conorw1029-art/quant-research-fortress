@@ -94,17 +94,18 @@ SYMBOL_MAP: dict[str, str] = {
     "ES": "MESM5",   # micro S&P   — June 2026
     "NQ": "MNQM5",   # micro NQ    — June 2026
     "SI": "SILM5",   # micro silver — June 2026
+    "CL": "MCLM5",   # micro crude oil — June 2026
 }
 
 # Symbols that use mbp-10 (need DOM). Others get trades schema.
-DOM_SYMBOLS: frozenset[str] = frozenset({"GC", "SI"})
+DOM_SYMBOLS: frozenset[str] = frozenset({"GC", "SI", "CL"})
 
 DEFAULT_BAR_SIZES: list[int] = [1, 3, 5, 15, 30]
-DEFAULT_SYMBOLS:   list[str]  = ["GC", "ES", "NQ", "SI"]
+DEFAULT_SYMBOLS:   list[str]  = ["GC", "ES", "NQ", "SI", "CL"]
 
 # Minimum trade size to classify as "large" (institutional print)
 LARGE_TRADE_THRESH: dict[str, int] = {
-    "GC": 10, "SI": 20, "ES": 30, "NQ": 20, "default": 20
+    "GC": 10, "SI": 20, "ES": 30, "NQ": 20, "CL": 10, "default": 20
 }
 
 OBI_LEVELS       = 5     # book levels to use for OBI computation

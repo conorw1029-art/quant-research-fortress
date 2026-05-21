@@ -75,17 +75,18 @@ MD_REST_URL  = "https://md.tradovateapi.com/v1"
 
 # Symbols and contract month — UPDATE EACH QUARTERLY ROLLOVER
 SYMBOL_MAP = {
-    "GC": "MGCM5",   # micro gold — June 2025
-    "ES": "MESM5",   # micro S&P — June 2025
-    "NQ": "MNQM5",   # micro NQ  — June 2025
-    "SI": "SILM5",   # micro silver — June 2025 (check availability)
+    "GC": "MGCM5",   # micro gold  — June 2026
+    "ES": "MESM5",   # micro S&P   — June 2026
+    "NQ": "MNQM5",   # micro NQ    — June 2026
+    "SI": "SILM5",   # micro silver — June 2026
+    "CL": "MCLM5",   # micro crude oil — June 2026
 }
 
 DEFAULT_BAR_SIZES = [1, 3, 5, 15, 30]  # minutes
-DEFAULT_SYMBOLS   = ["GC", "ES", "NQ", "SI"]
+DEFAULT_SYMBOLS   = ["GC", "ES", "NQ", "SI", "CL"]
 
 # Minimum trade size to classify as "large" (institutional print)
-LARGE_TRADE_THRESH = {"GC": 10, "SI": 20, "ES": 30, "NQ": 20, "default": 20}
+LARGE_TRADE_THRESH = {"GC": 10, "SI": 20, "ES": 30, "NQ": 20, "CL": 10, "default": 20}
 
 # DOM depth levels to use for OBI computation
 OBI_LEVELS = 5
