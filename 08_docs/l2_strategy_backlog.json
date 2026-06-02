@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-06-02",
+  "description": "L2/microstructure strategy backlog — next candidates for the L2 backtest battery. Strategies already tested (OFI Continuation/Reversal/Microprice, CVD VWAP/Microprice/Slope/Acceleration, Sweep Continuation/Absorption/SessionHL, Absorption Reversal, CVD Absorption, Repeated Replenishment, Depth Imbalance Momentum/MeanRev, MultiTF OFI) are NOT listed here.",
+  "data_required_for_all": ["mbp-10", "trades"],
+  "entries": [
+    {
+      "key": "ofi_multi_level_confirmation",
+      "family": "A_OFI",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When L1, L3, and L5 OFI are all aligned in the same direction, the signal is more reliable than any single level alone. Multi-level OFI confirmation reduces false signals from noise at a single price level.",
+      "entry_logic": "Enter long when OFI_L1, OFI_L3, OFI_L5 all in top N-th percentile simultaneously. Enter short when all in bottom N-th percentile.",
+      "exit_logic": "ATR-based stop (1.0x), target (rr_ratio x stop), hold_bars timeout",
+      "risk_model": "Same as existing L2 strategies: 1-tick slippage + $4.50 RT commission",
+      "features_required": ["ofi_1", "ofi_3", "ofi_5", "imbal_L3_last", "imbal_L5_last"],
+      "lookahead_risks": ["Rolling percentile uses only past data; no future bar close"],
+      "expected_failure_modes": ["Multi-level alignment too rare → low trade count", "Correlation between levels → no added signal over single level"],
+      "param_grid": {
+        "n_levels": [3, 5],
+        "pct_thresh": [80, 90],
+        "rr_ratio": [1.5, 2.0],
+        "hold_bars": [5, 10]
+      }
+    },
+    {
+      "key": "ofi_shock_post_sweep",
+      "family": "A_OFI",
+      "priority": 2,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When a price sweep (large directional move + high volume) is immediately followed by an OFI reversal in the opposite direction, the sweep has been absorbed and a short-term mean reversion follows.",
+      "entry_logic": "On bar N: detect sweep (buy_sweeps or sell_sweeps above threshold). On bar N+1 to N+3: if OFI shows opposite-direction extreme, enter fade trade.",
+      "exit_logic": "ATR stop, rr_ratio target, hold_bars timeout",
+      "features_required": ["buy_sweeps", "sell_sweeps", "ofi_5", "absorption_score"],
+      "lookahead_risks": ["Must not peek at bar N+1 to define bar N signal"],
+      "expected_failure_modes": ["Sweep detection too noisy", "OFI response too slow for meaningful entry"]
+    },
+    {
+      "key": "depth_wall_rejection",
+      "family": "B_DEPTH",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When price approaches a large bid or ask wall (extreme depth at a specific level) and fails to break through, a bounce occurs. Large passive orders act as price magnets and then push price back.",
+      "entry_logic": "Detect bars where price touches but does not exceed a large depth level. Enter fade on next bar if no breakout. Requires L10 or L5 depth columns.",
+      "exit_logic": "Stop beyond the wall level, target = rr_ratio × stop",
+      "features_required": ["imbal_L5_last", "imbal_L5_mean", "midprice_last"],
+      "param_grid": {
+        "wall_thresh": [0.6, 0.7, 0.8],
+        "rr_ratio": [1.0, 1.5],
+        "hold_bars": [3, 5]
+      },
+      "lookahead_risks": ["Depth values must be from current bar only"],
+      "expected_failure_modes": ["GC/SI don't have level-by-level depth in current columns — only aggregate depth imbalance. Requires mbp-10 level parse."]
+    },
+    {
+      "key": "bid_ask_replenishment_continuation",
+      "family": "B_DEPTH",
+      "priority": 3,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When one side of the book is rapidly replenished after being consumed (absorption), the market maker defending that level signals strong directional conviction. Continue in direction of replenishment.",
+      "entry_logic": "Detect high absorption_score + price stable at level + spread returning to normal. Enter in direction of the absorbing side.",
+      "features_required": ["absorption_buy", "absorption_sell", "absorption_score", "spread_max", "sweep_net_size"],
+      "expected_failure_modes": ["RepeatedReplenishment strategy already covers similar ground — may duplicate"]
+    },
+    {
+      "key": "sweep_no_replenishment_continuation",
+      "family": "C_SWEEP",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When a sweep happens and the consumed side is NOT replenished (absorption_score low, book stays thin), the sweep initiates a sustained trend. Trend continuation after unreplenished sweep.",
+      "entry_logic": "Detect sweep (net_sweeps extreme) + absorption_score below threshold on next bar. Enter in sweep direction.",
+      "exit_logic": "ATR stop behind entry, trend hold_bars",
+      "features_required": ["net_sweeps", "sweep_net_size", "absorption_score", "absorption_buy", "absorption_sell"],
+      "param_grid": {
+        "sweep_pct": [75, 85],
+        "absorption_max": [0.3, 0.4],
+        "rr_ratio": [1.5, 2.0],
+        "hold_bars": [8, 12]
+      }
+    },
+    {
+      "key": "failed_breakout_absorption",
+      "family": "D_ABSORPTION",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When price breaks a recent high/low but immediately shows high absorption_score (aggressive volume absorbed by passive), the breakout is false. Fade the failed breakout.",
+      "entry_logic": "Bar closes above N-bar high OR below N-bar low AND absorption_score in top percentile → fade (enter opposite direction)",
+      "features_required": ["absorption_score", "absorption_buy", "absorption_sell"],
+      "param_grid": {
+        "level_bars": [10, 20],
+        "absorption_pct": [80, 90],
+        "rr_ratio": [1.0, 1.5],
+        "hold_bars": [3, 5]
+      }
+    },
+    {
+      "key": "cvd_divergence_vwap",
+      "family": "E_CVD",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "CVD divergence is most meaningful when it occurs at or near VWAP. At VWAP, order flow imbalance signals institutional positioning, not just random noise. Already partially tested (CVD_VWAP is a survivor), but direct divergence (price vs CVD disagreement) at VWAP not tested.",
+      "entry_logic": "Price at VWAP band + CVD moving opposite to recent price direction. Enter in CVD direction.",
+      "features_required": ["session_vwap", "ofi_5"],
+      "status": "BACKLOG",
+      "notes": "CVD_VWAP already tested and is a top survivor. This variant uses divergence explicitly rather than CVD percentile."
+    },
+    {
+      "key": "cvd_divergence_session_hl",
+      "family": "E_CVD",
+      "priority": 2,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "CVD divergence at prior session high/low (key decision points) provides stronger signal than mid-range CVD divergence.",
+      "entry_logic": "Price at prior session high/low ± tolerance AND CVD divergence present. Enter fade or continuation depending on CVD direction.",
+      "features_required": ["ofi_5", "session_vwap"],
+      "expected_failure_modes": ["Prior session HL needs computation from 17:00 reset logic"]
+    },
+    {
+      "key": "vwap_deviation_cvd_divergence",
+      "family": "F_VWAP",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When price deviates from VWAP by more than 1 ATR and CVD diverges from the price direction, the deviation will mean-revert. Classic VWAP stretch reversal with microstructure confirmation.",
+      "entry_logic": "Price > VWAP + 1*ATR AND CVD trend opposing price → short. Price < VWAP - 1*ATR AND CVD trend opposite → long.",
+      "features_required": ["session_vwap", "ofi_5"],
+      "param_grid": {
+        "vwap_atr_mult": [0.75, 1.0, 1.5],
+        "cvd_pct": [60, 70],
+        "rr_ratio": [1.0, 1.5],
+        "hold_bars": [5, 8]
+      }
+    },
+    {
+      "key": "mtf_30m_context_1m_ofi_entry",
+      "family": "G_MULTI_TF",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "A 30-minute directional bias filter reduces false signals from 1-minute OFI entries. Only take OFI continuation trades in the direction of the 30m trend.",
+      "entry_logic": "30m bar: compute trend (e.g., price vs 10-bar MA). 1m bar: OFI in top/bottom N-th percentile AND aligned with 30m trend → enter.",
+      "features_required": ["ofi_5"],
+      "data_notes": "Requires joining 30m bars with 1m bars. 30m bars available at 01_data/tick_bars/GC_bars_30m.parquet.",
+      "expected_failure_modes": ["Look-ahead: must use COMPLETED 30m bar at time of 1m signal"],
+      "param_grid": {
+        "trend_window_30m": [5, 10],
+        "ofi_pct_1m": [80, 90],
+        "rr_ratio": [1.5, 2.0],
+        "hold_bars": [5, 10]
+      }
+    },
+    {
+      "key": "nq_leads_es_ofi",
+      "family": "H_CROSS_MARKET",
+      "priority": 2,
+      "status": "BACKLOG",
+      "symbols": ["ES", "NQ"],
+      "timeframes": ["1m"],
+      "hypothesis": "NQ is a risk-on instrument that tends to lead ES at turning points. When NQ OFI signals a direction before ES, trading ES in that direction yields higher win rate.",
+      "entry_logic": "NQ OFI in top/bottom percentile on bar N. ES enters same direction on bar N+1.",
+      "data_notes": "Requires both NQ and ES bar files to be L2-enriched. Currently only GC/SI have L2 bars.",
+      "status": "BLOCKED_DATA",
+      "blocking_reason": "ES and NQ do not yet have L2 feature bars. Requires ES/NQ mbp-10 historical data.",
+      "estimated_data_cost": "~$30-50 for 6 months ES+NQ mbp-10"
+    },
+    {
+      "key": "gc_si_confirmation",
+      "family": "H_CROSS_MARKET",
+      "priority": 1,
+      "status": "BACKLOG",
+      "symbols": ["GC", "SI"],
+      "timeframes": ["1m"],
+      "hypothesis": "When both GC and SI OFI agree on direction, the signal is stronger. Gold-Silver correlation means aligned microstructure flow = institutional conviction.",
+      "entry_logic": "Both GC and SI OFI in same direction in top/bottom percentile simultaneously. Enter GC (or SI) trade.",
+      "data_notes": "Both GC and SI L2 bars exist. Needs join on timestamp.",
+      "features_required": ["ofi_5 (GC)", "ofi_5 (SI)"],
+      "expected_failure_modes": ["Correlation too high — confirmation doesn't add independence", "Timing mismatch between GC and SI signals"]
+    }
+  ],
+  "already_tested": [
+    "OFI_Continuation (GC✓ SI tested)",
+    "OFI_Reversal (tested)",
+    "OFI_Microprice (tested)",
+    "Sweep_Continuation (tested)",
+    "Sweep_Absorption_Reversal (GC★ SI fail)",
+    "SessionHighLow_Sweep_Reversal (tested)",
+    "Absorption_Reversal (tested)",
+    "CVD_Absorption (tested)",
+    "Repeated_Replenishment (tested)",
+    "CVD_Microprice (SI★ GC tested)",
+    "CVD_Slope_Regime (tested)",
+    "CVD_Acceleration (tested)",
+    "CVD_VWAP (GC★ SI★ top survivors)",
+    "Depth_Imbalance_Momentum (tested)",
+    "Depth_Imbalance_MeanRev (tested)",
+    "MultiTF_OFI (tested, fixed overtrading bug)"
+  ]
+}
