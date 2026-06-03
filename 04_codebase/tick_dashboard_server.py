@@ -7,7 +7,7 @@ Features:
   - SSE stream pushes full system snapshot every 3 seconds
   - Reads signal logs, bar files, state files in real-time
   - AI terminal via Claude (set ANTHROPIC_API_KEY)
-  - All 39 strategies displayed with live P&L and status
+  - All 44 strategies displayed with live P&L and status
 
 Run:
   python tick_dashboard_server.py
@@ -391,7 +391,7 @@ def api_chat():
     ]
 
     system_ctx = f"""You are the AI trading assistant for Fortress, a quantitative futures trading system.
-You trade 39 strategies across GC (gold), ES (S&P 500), NQ (Nasdaq), SI (silver), CL (crude oil) futures using micro contracts.
+You trade 44 strategies across GC (gold), ES (S&P 500), NQ (Nasdaq), SI (silver), CL (crude oil) futures using micro contracts. Strategies V1-V9 are OHLCV/CVD. V10 (IDs 40-44) are L2 tick microstructure strategies on GC and SI requiring L2 bar files.
 
 LIVE STATE ({snap.get('ts','')[:16]} UTC):
 Mode: {snap.get('heartbeat',{}).get('mode','OFFLINE')} | Broker: {'CONNECTED' if snap.get('heartbeat',{}).get('broker_connected') else 'DISCONNECTED'} | Data: {'FRESH' if snap.get('heartbeat',{}).get('data_fresh') else 'STALE'}
