@@ -9,7 +9,7 @@ filters, and outputs trade alerts when signals fire.
 NOT an execution engine — generates structured alerts for manual or
 API-driven execution.
 
-CONFIRMED STRATEGY PORTFOLIO (38 strategies)
+CONFIRMED STRATEGY PORTFOLIO (43 strategies)
 ─────────────────────────────────────────────
 V1 (from deep analysis + extended analysis):
   1. NQ/cvd_divergence_large_print/30m   Hours: UTC 14,19,20 only
@@ -63,6 +63,14 @@ V6/V7/V8 — Pure OHLCV, no CVD (stress-tested 2026-05-18, 23 survivors):
  36. NQ/inside_bar_breakout/15m          1t-Sharpe=2.77, TS=100%, worst-micro=$413
  37. NQ/vwap_mean_reversion/30m          1t-Sharpe=2.35, TS=98.5%, worst-micro=$475
  38. ES/vwap_mean_reversion/30m          1t-Sharpe=1.93, TS=100%, worst-micro=$202
+ 39. ES/fomc_drift/30m                    event-driven, ~5 trades/year
+
+V10 — L2 tick microstructure (news-filtered evidence 2026-06-03):
+ 40. GC/Depth_Imbalance_Momentum/1m       WF Sharpe=4.52, DSR=1.000, 3t-Sharpe=1.006
+ 41. SI/Depth_Imbalance_Momentum/1m       WF Sharpe=3.65, DSR=1.000, 3t-Sharpe=0.284
+ 42. SI/CVD_Microprice/1m                 WF Sharpe=2.52, DSR=1.000, 3t-Sharpe=0.935 STAR
+ 43. GC/CVD_Acceleration/1m              WF Sharpe≈3.4,  DSR=1.000, 3t-Sharpe≈0.6
+ 44. GC/Repeated_Replenishment/1m        WF Sharpe=4.10, DSR=1.000, 3t-Sharpe=0.899
 
 Usage:
   python tick_live_executor.py                 # single-shot check
@@ -181,6 +189,13 @@ try:
 except Exception:
     _V9_AVAILABLE = False
     STRAT_MAP_V9 = {}
+
+try:
+    from tick_strategies_l2 import STRAT_MAP_L2
+    _L2_AVAILABLE = True
+except Exception:
+    _L2_AVAILABLE = False
+    STRAT_MAP_L2 = {}
 
 ROOT    = Path(__file__).parent.parent
 BAR_DIR = ROOT / "01_data" / "tick_bars"
@@ -535,6 +550,32 @@ PORTFOLIO = [
     (39, "ES", 30, "fomc_drift",
      {},
      None,            None,      "v9"),    # event-driven, ~5 trades/year, REVIEW_REQUIRED
+
+    # ── V10 — L2 tick microstructure survivors (news-filtered evidence 2026-06-03) ─
+    # All confirmed via news-filtered evidence upgrade: GC 45/45 pass, SI 21/21 pass.
+    # Requires L2 bar files: {symbol}_bars_l2_1m.parquet (imbal_L5_last, cvd_delta, etc.)
+    # Dispatched via STRAT_MAP_L2 → tick_strategies_l2.py
+    # REVIEW_REQUIRED — live dry-run pending; evidence gate DSR=1.000 across all params.
+
+    (40, "GC", 1, "Depth_Imbalance_Momentum",
+     {"imbal_thr": 0.4, "persist_bars": 2, "rr_ratio": 2.0, "hold_bars": 5},
+     None, None, "v10"),   # WF Sharpe=4.516, DSR=1.000, 3-tick Sharpe=1.006 — TOP GC
+
+    (41, "SI", 1, "Depth_Imbalance_Momentum",
+     {"imbal_thr": 0.4, "persist_bars": 2, "rr_ratio": 2.0, "hold_bars": 5},
+     None, None, "v10"),   # WF Sharpe=3.647, DSR=1.000, 3-tick Sharpe=0.284
+
+    (42, "SI", 1, "CVD_Microprice",
+     {"cvd_pct": 60, "mp_ticks": 1.0, "rr_ratio": 2.0, "hold_bars": 5},
+     None, None, "v10"),   # WF Sharpe=2.522, DSR=1.000, 3-tick Sharpe=0.935 — MOST RESILIENT
+
+    (43, "GC", 1, "CVD_Acceleration",
+     {"accel_std": 2.0, "roll_win": 30, "rr_ratio": 2.0, "hold_bars": 5},
+     None, None, "v10"),   # WF Sharpe≈3.4, DSR=1.000, 3-tick Sharpe≈0.6
+
+    (44, "GC", 1, "Repeated_Replenishment",
+     {"imbal_thr": 0.4, "persist_bars": 5, "cvd_negative": True, "rr_ratio": 2.0, "hold_bars": 8},
+     None, None, "v10"),   # WF Sharpe=4.102, DSR=1.000, 3-tick Sharpe=0.899
 ]
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
@@ -606,18 +647,19 @@ MICRO_SPECS = {
 }
 
 # Tradovate-ready contract symbols — UPDATE EACH QUARTERLY ROLLOVER (June → Sep → Dec → Mar)
+# ROLLED 2026-06-03: M5 (Jun, expires Jun 20-27) → U5 (Sep, expires Sep 19-26)
 TV_CONTRACT_MAP = {
-    "MGC": "MGCM5",   # micro gold
-    "MES": "MESM5",   # micro S&P
-    "MNQ": "MNQM5",   # micro NQ
-    "SIL": "SILM5",   # micro silver (Tradovate base symbol)
-    "SI":  "SILM5",   # micro silver (strategy base symbol → same contract)
-    "MCL": "MCLM5",   # micro crude oil
-    "CL":  "MCLM5",   # crude oil strategy → micro contract
-    "GC":  "GCM5",    # full gold (fallback)
-    "ES":  "ESM5",    # full ES  (fallback)
-    "NQ":  "NQM5",    # full NQ  (fallback)
-    "CL_FULL": "CLM5", # full crude (not used in live — MCL only)
+    "MGC": "MGCU5",   # micro gold
+    "MES": "MESU5",   # micro S&P
+    "MNQ": "MNQU5",   # micro NQ
+    "SIL": "SILU5",   # micro silver (Tradovate base symbol)
+    "SI":  "SILU5",   # micro silver (strategy base symbol → same contract)
+    "MCL": "MCLU5",   # micro crude oil
+    "CL":  "MCLU5",   # crude oil strategy → micro contract
+    "GC":  "GCU5",    # full gold (fallback)
+    "ES":  "ESU5",    # full ES  (fallback)
+    "NQ":  "NQU5",    # full NQ  (fallback)
+    "CL_FULL": "CLU5", # full crude (not used in live — MCL only)
 }
 
 
@@ -633,6 +675,17 @@ def get_spec(base_symbol: str) -> dict:
 
 def load_bars(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame | None:
     path = BAR_DIR / f"{symbol}_bars_{bar_min}m.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    df.index = pd.to_datetime(df.index, utc=True)
+    df.sort_index(inplace=True)
+    return df.iloc[-lookback:] if len(df) > lookback else df
+
+
+def load_bars_l2(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame | None:
+    """Load L2-augmented bars (imbal_L5_last, cvd_delta, microprice_last, session_vwap)."""
+    path = BAR_DIR / f"{symbol}_bars_l2_{bar_min}m.parquet"
     if not path.exists():
         return None
     df = pd.read_parquet(path)
@@ -673,6 +726,8 @@ def compute_signal(df: pd.DataFrame, strat_name: str,
         strat = STRAT_MAP_V8.get(strat_name)
     elif version == "v9":
         strat = STRAT_MAP_V9.get(strat_name)
+    elif version == "v10":
+        strat = STRAT_MAP_L2.get(strat_name)
     else:
         strat = STRAT_MAP_V4.get(strat_name)
     if strat is None:
@@ -1095,7 +1150,10 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
         if disable_v2 and version == "v2":
             continue
 
-        df = load_bars(symbol, bar_min, lookback=500)
+        if version == "v10":
+            df = load_bars_l2(symbol, bar_min, lookback=500)
+        else:
+            df = load_bars(symbol, bar_min, lookback=500)
         if df is None or len(df) < ATR_WINDOW + 5:
             if verbose:
                 print(f"  [{strat_id}] {symbol}/{strat_name}/{bar_min}m — no data")
@@ -1241,7 +1299,7 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 strategy_id=strat_id,
                 strategy_key=f"{symbol}/{strat_name}/{bar_min}m",
                 symbol=traded_sym,
-                contract=f"{traded_sym}M5",
+                contract=TV_CONTRACT_MAP.get(traded_sym, f"{traded_sym}U5"),
                 side=Side.LONG if last_sig == 1 else Side.SHORT,
                 desired_qty=1,
                 entry_price=entry_p,

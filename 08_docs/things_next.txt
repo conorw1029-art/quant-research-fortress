@@ -1,346 +1,126 @@
-
-None selected
-
-
-
-You are working inside the Quant Trading Research Factory (“the fortress”).
-
-We have completed the execution safety roadmap and deployment eligibility documents.
-
-Current classification:
-- DRY-RUN READY
-- SAFE TO BEGIN BRACKET IMPLEMENTATION WITH MOCKS
-- NOT SAFE TO CONNECT TRADOVATE DEMO CREDENTIALS
-- NOT SAFE TO START DEMO AUTO-TRADING
-- NOT SAFE FOR FUNDED ACCOUNTS
-- NOT SAFE FOR FULLY AUTONOMOUS TRADING
-
-The latest stop-condition report identified these critical blockers:
-1. Bracket order OSO format is unverified.
-2. No state persistence.
-3. Broker reconciliation is not built.
-4. Kill switch check is missing inside place_bracket_order().
-5. Session-open gate is missing.
-6. Duplicate-order protection is missing.
-7. Strategy 15 should be demoted from REVIEW_REQUIRED to DISABLED_FOR_LIVE because worst-day micro risk is $1,623, above the $1,000 runway limit.
-
-Your next job is Week 1 implementation:
-MOCK-FIRST BRACKET ORDER SAFETY + STRATEGY 15 DEMOTION
-
-Absolute rules:
-1. Do not connect to Tradovate.
-2. Do not ask for credentials.
-3. Do not place real orders.
-4. Do not start demo auto-trading.
-5. Do not touch funded accounts.
-6. Do not loosen risk rules.
-7. Do not remove the dry-run default.
-8. Do not allow naked market entries in demo/live.
-9. Do not mark the system demo-ready unless bracket mocks, state skeleton, and reconciliation skeleton pass.
-10. All tests must run using:
-   C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe
-
-==================================================
-TASK 1 — DEMOTE STRATEGY 15
-==================================================
-
-Patch:
-
-04_codebase/live_strategy_allowlist.yaml
-
-Find:
-GC/key_level_cvd_rejection/5m
-
-Change its status from REVIEW_REQUIRED to DISABLED_FOR_LIVE.
-
-Reason:
-Worst-day micro risk is $1,623, above the $1,000 practical runway limit. Internal strategy daily halt is not enough because it is not broker-native protection.
-
-After patching, update:
-
-08_docs/strategy_deployment_eligibility.md
-
-Add a short change note:
-- Strategy 15 demoted to DISABLED_FOR_LIVE
-- reason: worst-day micro risk exceeds account runway
-- date: 2026-05-18
-
-==================================================
-TASK 2 — RUN STARTUP CHECKLIST
-==================================================
-
-Run:
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 tick_startup_checklist.py --quick
-
-Then run:
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 tick_signal_log_reader.py --days 7 --trades
-
-Capture the results in:
-
-08_docs/week1_startup_check_results.md
-
-The report must include:
-- command run
-- PASS/FAIL result
-- data freshness result
-- allowlist integrity result
-- kill switch status
-- recent signal log status
-- any warnings
-- whether it is safe to proceed to mock bracket implementation
-
-==================================================
-TASK 3 — CREATE MOCK BRACKET TEST FILE
-==================================================
-
-Create:
-
-04_codebase/tick_tradovate_client_mock_tests.py
-
-These tests must use mocks only.
-No real Tradovate connection.
-No credentials.
-No API calls.
-No live orders.
-No demo orders.
-
-Test all of the following:
-
-1. dry_run=True returns structured ok result and makes no API call
-2. invalid side rejected
-3. invalid symbol rejected
-4. quantity <= 0 rejected
-5. quantity above configured max rejected
-6. stop on wrong side rejected for BUY
-7. stop on wrong side rejected for SELL
-8. target on wrong side rejected for BUY
-9. target on wrong side rejected for SELL
-10. zero stop distance rejected
-11. zero target distance rejected
-12. tick rounding applied or invalid tick rejected
-13. estimated dollar risk > $200 rejected
-14. kill switch STOP rejects order
-15. session closed rejects order
-16. disabled strategy rejects order
-17. duplicate client_order_id rejected or safely idempotent
-18. result struct always contains:
-    - ok
-    - mode
-    - entry_order_id
-    - stop_order_id
-    - target_order_id
-    - oco_id
-    - oso_id
-    - client_order_id
-    - reason
-    - payload
-19. demo order refuses if bracket implementation is incomplete or OSO/OCO support is unverified
-
-The test file should be runnable directly:
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 tick_tradovate_client_mock_tests.py
-
-==================================================
-TASK 4 — PATCH place_bracket_order SAFELY
-==================================================
-
-Patch:
-
-04_codebase/tick_tradovate_client.py
-
-Implement or improve:
-
-place_bracket_order(...)
-
-Requirements:
-1. dry_run=True by default.
-2. demo=True by default.
-3. live is impossible unless FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND.
-4. Validate all 19 safety checks from the mock test file.
-5. Add kill switch check.
-6. Add session-open check.
-7. Add tick rounding / tick validation.
-8. Add stop-side validation.
-9. Add target-side validation.
-10. Add max dollar risk validation.
-11. Add allowlist strategy validation if strategy key is supplied.
-12. Add duplicate client_order_id protection.
-13. Add oco_id / oso_id fields to returned result.
-14. Never submit a naked market entry in demo/live.
-15. If OSO/OCO implementation is not exchange-verified, return ok=false for non-dry-run with reason:
-    BRACKET_OSO_UNVERIFIED
-16. In dry-run, build and log the intended payload but do not call the API.
-17. Do not claim broker-native bracket support is complete unless it is actually complete.
-
-==================================================
-TASK 5 — CREATE STATE PERSISTENCE SKELETON
-==================================================
-
-Create folder:
-
-06_live_trading/state/
-
-Create skeleton files if missing:
-
-positions.json
-open_orders.json
-daily_pnl.json
-strategy_halts.json
-account_state.json
-last_seen_bar.json
-heartbeat.json
-active_brackets.json
-processed_signals.json
-
-Create:
-
-04_codebase/tick_state_manager.py
-
-It should provide safe helper functions:
-- load_json(path, default)
-- atomic_write_json(path, data)
-- update_heartbeat()
-- load_positions()
-- save_positions()
-- load_open_orders()
-- save_open_orders()
-- load_active_brackets()
-- save_active_brackets()
-- load_processed_signals()
-- save_processed_signals()
-- record_strategy_halt()
-- load_account_state()
-- save_account_state()
-
-Requirements:
-1. atomic writes only
-2. backups or temp-file replace
-3. no corrupted JSON on interruption
-4. safe defaults
-5. no broker connection
-6. no orders
-7. all state files are human-readable JSON
-
-Create:
-
-04_codebase/test_state_manager.py
-
-Test:
-1. all files can be created
-2. atomic write works
-3. corrupted JSON is handled safely
-4. heartbeat updates
-5. processed signal duplicate detection works
-6. active bracket state can be saved and loaded
-
-==================================================
-TASK 6 — CREATE BROKER RECONCILIATION SKELETON
-==================================================
-
-Create:
-
-04_codebase/tick_broker_reconciliation.py
-
-This should not connect to Tradovate yet.
-
-Implement pure functions that compare local state vs broker snapshot:
-
-reconcile_state(local_state, broker_state)
-
-It should detect:
-1. local flat, broker has position
-2. local has position, broker flat
-3. local bracket exists, broker missing stop
-4. local bracket exists, broker missing target
-5. duplicate broker orders
-6. unknown broker order
-7. stale local state
-8. broker unreachable snapshot
-9. mismatched quantity
-10. mismatched symbol
-
-Return structured result:
-{
-  "ok": true/false,
-  "severity": "INFO"|"WARNING"|"CRITICAL",
-  "halt_new_entries": true/false,
-  "requires_human_review": true/false,
-  "actions": [],
-  "reason": ""
-}
-
-Create:
-
-04_codebase/test_broker_reconciliation.py
-
-All tests are pure mocked data only.
-
-==================================================
-TASK 7 — RUN TESTS
-==================================================
-
-Run:
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 tick_tradovate_client_mock_tests.py
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 test_state_manager.py
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 test_broker_reconciliation.py
-
-Also rerun:
-
-C:\Users\conor\Desktop\quant-research\venv_new\Scripts\python.exe -X utf8 tick_startup_checklist.py --quick
-
-==================================================
-TASK 8 — CREATE WEEK 1 IMPLEMENTATION REPORT
-==================================================
-
-Create:
-
-08_docs/week1_bracket_state_reconciliation_report.md
-
-It must include:
-1. Files changed
-2. Strategy 15 demotion status
-3. Startup checklist result
-4. Bracket mock test result
-5. State manager test result
-6. Broker reconciliation test result
-7. Whether place_bracket_order is dry-run safe
-8. Whether non-dry-run bracket orders remain blocked
-9. Whether demo credentials are still blocked
-10. Whether demo auto-trading is still blocked
-11. Whether funded accounts are still blocked
-12. Exact next recommended command
-13. Remaining blockers before demo:
-    - exchange-verified OSO/OCO
-    - live data dry-run sessions
-    - read-only credentials test
-    - broker reconciliation using actual demo snapshots
-    - 2+ sessions of dry-run live data
-    - one-strategy demo only after all gates
-
-==================================================
-STOP CONDITION
-==================================================
-
-After completing this, stop and report:
-1. Files modified/created
-2. Tests run and pass/fail
-3. Whether Strategy 15 was demoted
-4. Whether any API call was made
-5. Whether any order was placed
-6. Whether it is safe to connect demo credentials
-7. Whether it is safe to start demo auto-trading
-8. Whether it is safe to touch funded accounts
-
-Expected final answers:
-- Strategy 15 demoted: YES
-- API calls made: NO
-- Orders placed: NO
-- Safe to connect demo credentials: probably NOT YET
-- Safe to start demo auto-trading: NO
-- Safe for funded accounts: NO
-- Safe to continue dry-run/mock development: YES
+QUANT RESEARCH PROJECT — CURRENT STATE
+Last updated: 2026-06-03
+=======================================
+
+
+WHAT IS COMPLETE
+----------------
+
+OHLCV Backtesting (Sessions 1-4)
+  - 345+ strategies tested across GC, SI, ES, NQ, CL
+  - 5 OHLCV survivors: VWAP_Reclaim GC/SI, and 3 others
+  - Phase 4 portfolio backtest: DSR +8.84, 10/12 positive years, Topstep PASS
+  - Pre-live gate: Monte Carlo P(DD breach)=0.15%, 82% monthly WR
+  - Live executor built (tick_live_executor.py) — 44 strategies wired
+
+L2 Tick Microstructure Backtesting (Sessions 4-5)
+  - 653 combos tested (GC + SI, news-filtered)
+  - GC: 45/45 evidence gate pass. SI: 21/21 evidence gate pass
+  - Position exclusivity bug fixed (prevents overlapping trades)
+  - Depth_Imbalance_Momentum rehabilitated (position fix revealed genuine edge)
+  - 5 confirmed L2 survivors:
+      CVD_Microprice SI       — WF Sharpe=2.52, 3-tick Sharpe=0.935 STAR (most resilient)
+      Depth_Imbalance GC      — WF Sharpe=4.52, 3-tick Sharpe=1.006 TOP GC
+      Repeated_Replenishment  — WF Sharpe=4.10, 3-tick Sharpe=0.899
+      CVD_Acceleration GC     — WF Sharpe≈3.4,  3-tick Sharpe≈0.6
+      Depth_Imbalance SI      — WF Sharpe=3.65, 3-tick Sharpe=0.284 (borderline)
+
+Live Executor (tick_live_executor.py)
+  - 44 strategies wired (IDs 1-44)
+  - V1-V9: OHLCV + CVD + event-driven strategies
+  - V10 (NEW): L2 microstructure survivors — IDs 40-44
+  - Contract rollover DONE: M5 → U5 (rolled 2026-06-03, Sep expiry Sep 19-26)
+  - Portfolio coordinator: zero high-correlation pairs across all 7 news-filtered eligible
+  - RiskManager, StateManager, ratchet stops all implemented
+
+Allowlist (live_strategy_allowlist.yaml)
+  - 44 entries (IDs 1-44)
+  - IDs 40-44: REVIEW_REQUIRED (evidence gate passed, dry-run pending)
+  - 1 DEMO_CANDIDATE: ES/cvd_divergence_large_print/15m (ID 2)
+
+Strategy Universe
+  - 80 entries, 18 families (generate_strategy_universe_json.py)
+  - 7 confirmed survivors tracked in universe JSON
+
+Documents
+  - depth_imbalance_position_limit_report.md: rehabilitation section added
+  - news_filtered_backtest_report.md: complete
+  - portfolio_candidate_report.json: 7 strategies, zero high-corr pairs
+
+
+WHAT IS BLOCKING LIVE / DEMO
+-----------------------------
+
+Gate 7 (Reconciliation) — NOT COMPLETE
+  - tick_broker_reconciliation.py exists but not validated with real credentials
+  - Required before DEMO auto-trade on any strategy
+
+Gate 9 (Demo credentials)
+  - Tradovate DEMO API credentials not yet configured
+  - TV_CONTRACT_MAP now set to U5 — credentials needed to test connection
+
+L2 Bar Files
+  - tick_processor.py needs to produce {symbol}_bars_l2_1m.parquet
+  - These files do NOT exist yet for live data
+  - V10 strategies (IDs 40-44) will show "no data" until bar files are present
+  - L2 bar columns required: imbal_L5_last, cvd_delta, microprice_last, session_vwap
+
+
+NEXT MANUAL STEPS (IN ORDER)
+------------------------------
+
+1. Tradovate DEMO credentials
+   - Sign up for Tradovate demo account
+   - Add credentials to tick_live_executor.py (TV_API_KEY, TV_SECRET)
+   - Run Gate 7: python tick_live_executor.py --demo --strategy 2
+   - Verify bracket order attach, reconciliation, and ratchet stop work
+
+2. L2 bar file generation
+   - Wire tick_processor.py to emit _bars_l2_1m.parquet with L2 columns
+   - Verify files appear in 01_data/tick_bars/
+   - Run executor with --strategy 42 (CVD_Microprice SI) to see first dry-run signal
+
+3. V10 dry-run validation
+   - Run executor with V10 strategies for 2+ live sessions
+   - Compute worst_micro for each (update allowlist entries 40-44)
+   - Elevate to ENABLED_DRY_RUN once worst_micro confirmed < $1,000
+
+4. SI demo live (CVD_Microprice SI — ID 42)
+   - 3-tick Sharpe=0.935 is exceptional — most slippage-resilient in portfolio
+   - Elevate ID 42 to DEMO_CANDIDATE after worst_micro confirmed
+
+
+KNOWN CODE GAPS (no blocking issues, just incomplete)
+------------------------------------------------------
+
+- tick_processor.py: L2 column emission (imbal_L5_last, cvd_delta, etc.)
+  The V10 strategy code is wired; the bar file generator needs updating
+- Topstep compliance check for V10 strategies (not yet run)
+
+
+CONFIRMED SURVIVOR REGISTRY
+-----------------------------
+
+| Strategy                    | Symbol | 3-tick? | WF Sharpe | Priority |
+|-----------------------------|--------|---------|-----------|----------|
+| CVD_Microprice (rr=2.0)     | SI     | YES 0.935 | 2.52   | DEPLOY FIRST |
+| Depth_Imbalance (imbal=0.4) | GC     | YES 1.006 | 4.52   | HIGH     |
+| Repeated_Replenishment      | GC     | YES 0.899 | 4.10   | HIGH     |
+| CVD_Acceleration            | GC     | ~0.6    | 3.4       | MEDIUM   |
+| Depth_Imbalance (imbal=0.4) | SI     | borderline 0.284 | 3.65 | MEDIUM |
+| CVD_VWAP                    | GC     | NO (fails) | 3.x   | OHLCV era|
+| VWAP_Reclaim                | GC/SI  | untested  | OHLCV era| —       |
+
+
+KEY FILE LOCATIONS
+------------------
+
+  04_codebase/tick_live_executor.py          — main executor (44 strategies)
+  04_codebase/tick_strategies_l2.py          — V10 L2 strategy map (NEW)
+  04_codebase/live_strategy_allowlist.yaml   — allowlist (44 entries)
+  04_codebase/src/strategies/                — L2 strategy class implementations
+  05_backtests/l2_results/                   — all backtest outputs
+  08_docs/news_filtered_backtest_report.md   — complete backtest report
+  08_docs/depth_imbalance_position_limit_report.md — rehabilitation doc
+  08_docs/portfolio_candidate_report.json    — optimizer output
+  08_docs/strategy_universe_exhaustive.json  — 80-entry universe
