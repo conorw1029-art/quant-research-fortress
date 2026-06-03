@@ -13,10 +13,18 @@ Output schema (parquet per symbol):
   Book:    spread_mean, bid_sz_mean, ask_sz_mean, book_pressure  (GC/SI only)
   OBI:     obi_5 (order book imbalance, top 5 levels)            (GC/SI only)
 
+With --l2 flag, also writes {symbol}_bars_l2_{bar}m.parquet containing all
+columns above PLUS the V10 L2 strategy features:
+  imbal_L5_last   — top-5 depth imbalance at bar close [-1, +1]
+  microprice_last — (bid*ask_sz + ask*bid_sz)/(bid_sz+ask_sz) at bar close
+  session_vwap    — cumulative VWAP reset at midnight UTC each day
+
 Usage:
   python tick_processor.py --symbol GC
   python tick_processor.py --all
   python tick_processor.py --all --bar-minutes 5
+  python tick_processor.py --symbol GC --l2          # emit L2 bar file
+  python tick_processor.py --all --l2                # emit L2 for all mbp symbols
 """
 
 import argparse
@@ -184,11 +192,64 @@ def build_mbp10_bars(mbp10: pd.DataFrame, freq: str) -> pd.DataFrame:
     return bars
 
 
+def build_l2_bars(
+    trades: pd.DataFrame,
+    mbp1: pd.DataFrame,
+    mbp10: pd.DataFrame,
+    freq: str,
+) -> pd.DataFrame:
+    """
+    Build the extra columns required by V10 L2 strategies:
+      imbal_L5_last  — top-5 depth imbalance at bar close  [-1, +1]
+      microprice_last — (bid * ask_sz + ask * bid_sz)/(bid_sz + ask_sz) at bar close
+      session_vwap   — cumulative VWAP reset at midnight UTC each day
+
+    Returns a DataFrame indexed on the bar timestamps (same as trade bars).
+    """
+    # ── microprice and imbal from mbp-10 (last tick per bar) ──────────────
+    mbp10 = mbp10.set_index("ts_event").sort_index()
+    mbp1  = mbp1.set_index("ts_event").sort_index()
+
+    bid_sz_cols = [f"bid_sz_{i:02d}" for i in range(5)]
+    ask_sz_cols = [f"ask_sz_{i:02d}" for i in range(5)]
+
+    bid5 = mbp10[bid_sz_cols].sum(axis=1)
+    ask5 = mbp10[ask_sz_cols].sum(axis=1)
+    denom5 = (bid5 + ask5).replace(0, np.nan)
+    imbal_tick = (bid5 - ask5) / denom5
+
+    bid0 = mbp1["bid_sz_00"]
+    ask0 = mbp1["ask_sz_00"]
+    bid_px = mbp1["bid_px_00"]
+    ask_px = mbp1["ask_px_00"]
+    denom_mp = (bid0 + ask0).replace(0, np.nan)
+    micro_tick = (bid_px * ask0 + ask_px * bid0) / denom_mp
+
+    bars = pd.DataFrame({
+        "imbal_L5_last":   imbal_tick.resample(freq).last(),
+        "microprice_last": micro_tick.resample(freq).last(),
+    })
+
+    # ── session VWAP from trades, reset at midnight UTC each day ──────────
+    t = trades.set_index("ts_event").sort_index().copy()
+    t["pv"] = t["price"] * t["size"]
+
+    # Group by date then compute cumulative sums within each date
+    t["date"] = t.index.normalize()
+    t["cum_pv"]  = t.groupby("date")["pv"].cumsum()
+    t["cum_vol"] = t.groupby("date")["size"].cumsum()
+    t["vwap_tick"] = t["cum_pv"] / t["cum_vol"].replace(0, np.nan)
+
+    bars["session_vwap"] = t["vwap_tick"].resample(freq).last()
+
+    return bars
+
+
 # ---------------------------------------------------------------------------
 # Main per-symbol processor
 # ---------------------------------------------------------------------------
 
-def process_symbol(symbol: str, bar_minutes: int) -> None:
+def process_symbol(symbol: str, bar_minutes: int, emit_l2: bool = False) -> None:
     freq = f"{bar_minutes}min"
     print(f"\n{'='*60}")
     print(f"  Processing {symbol}  ({bar_minutes}-minute bars)")
@@ -196,27 +257,49 @@ def process_symbol(symbol: str, bar_minutes: int) -> None:
 
     trades = load_trades(symbol)
     bars = build_trade_bars(trades, symbol, freq)
-    del trades
 
+    mbp1 = mbp10 = None
     if symbol in HAS_MBP:
         mbp1 = load_mbp1(symbol)
         mbp1_bars = build_mbp1_bars(mbp1, freq)
-        del mbp1
         bars = bars.join(mbp1_bars, how="left")
 
         mbp10 = load_mbp10(symbol)
         mbp10_bars = build_mbp10_bars(mbp10, freq)
-        del mbp10
         bars = bars.join(mbp10_bars, how="left")
 
     BAR_DIR.mkdir(parents=True, exist_ok=True)
     out = BAR_DIR / f"{symbol}_bars_{bar_minutes}m.parquet"
     bars.to_parquet(out, engine="pyarrow", compression="snappy")
-
     size_mb = out.stat().st_size / 1e6
     print(f"\n  Saved: {len(bars):,} bars  ({size_mb:.1f} MB)  ->  {out}")
     print(f"  Date range: {bars.index.min()}  to  {bars.index.max()}")
     print(f"  Columns: {bars.columns.tolist()}")
+
+    # ── Optional: emit L2 bar file for V10 strategies ─────────────────────
+    if emit_l2:
+        if symbol not in HAS_MBP:
+            print(f"  SKIP L2 output: {symbol} has no mbp data")
+            del trades
+            return
+        if mbp1 is None or mbp10 is None:
+            print(f"  SKIP L2 output: mbp files not loaded")
+            del trades
+            return
+
+        print(f"  Building L2 columns (imbal_L5_last, microprice_last, session_vwap)...")
+        l2_extra = build_l2_bars(trades, mbp1, mbp10, freq)
+        bars_l2 = bars.join(l2_extra, how="left")
+
+        out_l2 = BAR_DIR / f"{symbol}_bars_l2_{bar_minutes}m.parquet"
+        bars_l2.to_parquet(out_l2, engine="pyarrow", compression="snappy")
+        size_l2 = out_l2.stat().st_size / 1e6
+        print(f"  Saved L2: {len(bars_l2):,} bars  ({size_l2:.1f} MB)  ->  {out_l2}")
+        print(f"  L2 columns added: {[c for c in l2_extra.columns.tolist()]}")
+
+    del trades
+    if mbp1 is not None: del mbp1
+    if mbp10 is not None: del mbp10
 
 
 # ---------------------------------------------------------------------------
@@ -229,12 +312,15 @@ def main():
     parser.add_argument("--all", action="store_true", help="Process all available symbols")
     parser.add_argument("--bar-minutes", type=int, default=1,
                         help="Bar size in minutes (default: 1)")
+    parser.add_argument("--l2", action="store_true",
+                        help="Also emit {symbol}_bars_l2_{bar}m.parquet with L2 columns "
+                             "(imbal_L5_last, microprice_last, session_vwap). "
+                             "Only for GC/SI which have mbp-10 data.")
     args = parser.parse_args()
 
     if args.symbol:
         symbols = [args.symbol.upper()]
     elif args.all:
-        # Only process symbols that have trades files
         symbols = [
             s for s in ["GC", "SI", "ES", "NQ"]
             if (TICK_DIR / f"{s}_tick_trades.csv").exists()
@@ -245,10 +331,12 @@ def main():
 
     print(f"Symbols to process: {symbols}")
     print(f"Bar size: {args.bar_minutes} minute(s)")
+    if args.l2:
+        print("L2 output: ENABLED (will write _bars_l2_ files for GC/SI)")
 
     for sym in symbols:
         try:
-            process_symbol(sym, args.bar_minutes)
+            process_symbol(sym, args.bar_minutes, emit_l2=args.l2)
         except Exception as e:
             print(f"  ERROR processing {sym}: {e}")
             import traceback; traceback.print_exc()
