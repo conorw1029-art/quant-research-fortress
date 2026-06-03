@@ -22,3 +22,8 @@ __pycache__/
 # ── Live trading logs (runtime output, not source) ────────────────────────────
 06_live_trading/logs/
 06_live_trading/performance/
+
+.env
+*.key
+*secret*
+06_live_trading/secrets/

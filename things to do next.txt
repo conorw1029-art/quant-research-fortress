@@ -1,0 +1,1132 @@
+You are working inside the Quant Trading Research Factory (“the fortress”).
+
+We are now defining the full professional roadmap for:
+
+1. Full data acquisition from Databento
+2. Exhaustive but statistically honest strategy testing
+3. Manual signal trading system
+4. Full automation system for a PERSONAL BROKER route, not prop firms
+5. AI brain / monitoring / research assistant integration
+6. Portfolio construction where the genuinely good strategies are combined safely
+7. Execution safety before any real money
+
+Current high-level state from the latest work:
+
+* GC 5-year L2 backtest completed:
+
+  * 331 combos
+  * 48 hardened survivors
+* SI 5-year L2 backtest completed:
+
+  * 322 combos
+  * 16 hardened survivors
+* Evidence upgrade bugs fixed:
+
+  * Cornish-Fisher sign flip
+  * kurtosis convention mismatch
+  * commission not included in P&L
+  * evidence gate too strict at 3-tick slippage
+* GC and SI evidence pipeline now appears much more credible.
+* Mock broker exists:
+
+  * tick_mock_broker.py
+  * bracket order simulation
+  * smoke tests and reconciliation tests passed
+* Existing docs:
+
+  * no_demo_account_execution_plan.md
+  * l2_strategy_backlog.json
+  * databento_and_l2_next_action_report.md
+* Key finding:
+
+  * CVD_Microprice SI is highly slippage-resilient and survives 3-tick slippage.
+  * Sweep_Continuation SI appears genuine over 5 years.
+  * Sweep_Absorption_Reversal GC appears to be a recency artifact and should not be deployed.
+  * Depth_Imbalance_Momentum GC likely has unrealistic overlapping-position inflation and needs 1-contract enforcement.
+* Current blockers:
+
+  * tick_tradovate_client.py has no verified real bracket/OSO/OCO implementation.
+  * No state persistence for live restart recovery.
+  * No stale-bar detection.
+  * Partial TP is impossible with one micro contract and must be disabled in one-contract mode.
+  * ES/NQ only have ~5.5 months of evidence and are not statistically valid yet.
+  * No news-filtered L2 backtest.
+  * No Tradovate demo account currently exists.
+  * Prop-firm full automation is not the chosen path right now.
+  * The long-term route is personal broker automation after demo/sim validation.
+
+Current classification:
+
+* RESEARCH PIPELINE: STRONG
+* GC/SI L2 EVIDENCE: PROMISING
+* MOCK BROKER: WORKING
+* MANUAL SIGNAL SYSTEM: NOT YET BUILT
+* PERSONAL BROKER AUTOMATION: NOT READY
+* PROP FIRM AUTOMATION: BLOCKED / NOT TARGET ROUTE
+* LIVE TRADING: BLOCKED
+* FUNDED ACCOUNTS: BLOCKED
+
+Absolute rules:
+
+1. Do not place real orders.
+2. Do not connect to funded accounts.
+3. Do not connect to real personal broker accounts yet.
+4. Do not hard-code secrets.
+5. Do not commit .env.
+6. Do not download paid Databento data without cost estimate and explicit approval.
+7. Do not treat short-history ES/NQ as valid.
+8. Do not treat low-trade-count strategies as deployable.
+9. Do not deploy any strategy without broker-native brackets, state persistence, stale data detection, and reconciliation.
+10. Manual alert system is allowed before automation.
+11. Full automation should be designed for a personal broker route, not prop firms.
+12. Prop firms can remain a possible manual-alert route only; do not build prop-firm automation now.
+
+==================================================
+PHASE 1 — CREATE MASTER PROJECT ROADMAP
+=======================================
+
+Create:
+
+08_docs/master_fortress_roadmap_personal_broker.md
+
+This must be the master plan for the entire system.
+
+It must include these sections:
+
+1. Current state
+2. What is genuinely built
+3. What is not built
+4. What is statistically credible
+5. What is not statistically credible
+6. Data still needed
+7. Strategy families still needed
+8. Manual signal trading system plan
+9. Personal broker automation plan
+10. AI brain plan
+11. Risk management plan
+12. Portfolio construction plan
+13. Deployment gates
+14. 90-day roadmap
+15. Hard stop rules
+
+Final classification must be:
+
+* Continue research: YES
+* Build manual signal system: YES
+* Build personal-broker automation architecture: YES
+* Use prop firm automation: NO
+* Touch live money now: NO
+
+==================================================
+PHASE 2 — DATABENTO FULL DATA ACQUISITION PLAN
+==============================================
+
+Create:
+
+08_docs/databento_full_data_acquisition_plan.md
+
+Goal:
+Make sure we know exactly what data is needed to test the entire strategy universe properly.
+
+Data priority:
+
+Tier 1 — Immediate:
+
+* GC
+* SI
+* ES
+* NQ
+* CL
+
+Tier 2 — Next:
+
+* MES
+* MNQ
+* MGC
+* SIL
+* MCL
+
+Tier 3 — Later:
+
+* ZN
+* ZB
+* 6E
+* 6J
+* 6B
+* RTY/M2K
+* YM/MYM
+
+Schemas:
+
+A. trades:
+
+* required for CVD, trade flow, large prints, trade intensity, sweep analysis
+
+B. mbp-1:
+
+* required for best bid/ask, spread, top-of-book imbalance, microprice approximation
+
+C. mbp-10:
+
+* required for depth imbalance, liquidity walls, sweep depth, depth replenishment, book slope, L2 pressure
+
+D. mbo:
+
+* optional later
+* required for true queue-position modelling, order-level event analysis, more realistic iceberg/replenishment logic
+
+Historical range targets:
+
+Minimum acceptable:
+
+* 2022-01-01 to present for ES/NQ/GC/SI/CL
+
+Better target:
+
+* 2020-01-01 to present
+
+Ideal target:
+
+* 2018-01-01 to present for GC/SI/ES/NQ/CL if affordable
+
+Deep archive:
+
+* use only after cost review
+
+Data rules:
+
+1. Always run cost estimate first.
+2. Never download full historical data without explicit approval.
+3. Start with tiny sample download:
+
+   * 1 day trades
+   * 1 day mbp-1
+   * 1 day mbp-10
+4. Validate converter on tiny sample.
+5. Then download one month.
+6. Then one year.
+7. Then multi-year.
+8. Raw data is append-only.
+9. Every download writes a manifest.
+10. Every processed file records source raw files.
+
+Create/update scripts:
+
+04_codebase/tick_databento_cost_planner.py
+04_codebase/tick_databento_download_manager.py
+04_codebase/tick_databento_to_features.py
+
+Requirements:
+
+* Cost estimate before download
+* --dry-run default
+* --approve-download required for actual download
+* --max-cost-usd required
+* no overwrite of raw files
+* manifest logging
+* temp-file download then atomic move
+* validation after download
+* exact symbol/schema/date recorded
+* clear stop if Databento key missing
+
+Create:
+
+08_docs/databento_cost_matrix.md
+
+It should include recommended cost estimates for:
+
+* ES trades 1 day / 1 month / 1 year
+* ES mbp-1 1 day / 1 month / 1 year
+* ES mbp-10 1 day / 1 month / 1 year
+* NQ same
+* GC same
+* SI same
+* CL same
+* MBO one-day feasibility only
+
+Do not download full data yet.
+Only create planner and cost-estimation tools.
+
+==================================================
+PHASE 3 — STRATEGY UNIVERSE MASTER LIST
+=======================================
+
+Create:
+
+08_docs/strategy_universe_exhaustive.md
+
+Create:
+
+08_docs/strategy_universe_exhaustive.json
+
+Purpose:
+Define every major testable strategy family we should eventually test. This should be exhaustive but structured.
+
+Include these families:
+
+1. Current proven/near-proven families
+
+* CVD_Microprice SI
+* Sweep_Continuation SI
+* GC/SI VWAP mean reversion
+* GC/SI pivot reversal
+* GC/SI consecutive close momentum
+* GC/SI key-level CVD rejection
+* GC/SI Donchian breakout
+* existing OHLCV survivors:
+
+  * vwap_reclaim_gc
+  * bollinger_rsi_gc
+  * vwap_reclaim_si
+  * donchian_breakout_cl
+  * fomc_drift
+
+2. OFI strategies
+
+* OFI continuation
+* OFI reversal after exhaustion
+* multi-level OFI confirmation
+* OFI plus microprice alignment
+* OFI shock after sweep
+* OFI decay reversal
+* OFI with spread filter
+* OFI with volatility filter
+* OFI session-conditioned strategy
+
+3. Queue/depth imbalance
+
+* queue imbalance entry filter
+* L1/L3/L5/L10 imbalance momentum
+* weighted depth imbalance reversal
+* liquidity wall rejection
+* liquidity wall pull breakout
+* bid replenishment continuation
+* ask replenishment continuation
+* adverse-selection filter for existing signals
+
+4. Sweep strategies
+
+* sweep + no replenishment continuation
+* sweep + absorption reversal
+* prior high/low sweep reversal
+* session high/low sweep reversal
+* news sweep fade
+* liquidity vacuum continuation
+* failed sweep reversal
+* multi-level sweep continuation
+
+5. Absorption / iceberg proxy
+
+* aggressive volume no price progress
+* repeated replenishment at price
+* CVD divergence plus absorption
+* volume cluster absorption
+* failed breakout absorption
+* iceberg proxy continuation
+* iceberg proxy reversal
+
+6. CVD strategies
+
+* CVD divergence with microprice confirmation
+* CVD slope regime filter
+* CVD acceleration/deceleration
+* CVD divergence at VWAP
+* CVD divergence at prior session high/low
+* CVD divergence at value area
+* CVD trend continuation
+* CVD exhaustion reversal
+
+7. VWAP / volume profile
+
+* VWAP deviation + CVD divergence
+* VWAP reclaim with OFI confirmation
+* VWAP reject with imbalance confirmation
+* value-area high rejection
+* value-area low rejection
+* VPOC magnet
+* low-volume-node breakout
+* anchored VWAP from event release
+* anchored VWAP from session open
+* VWAP band fade
+* VWAP band breakout
+
+8. Multi-timeframe L2
+
+* 30m trend + 3m L2 entry
+* 15m range context + 1m OFI
+* daily/overnight bias + intraday sweep
+* GC trend + MGC entry
+* SI trend + SIL entry
+* ES risk regime + MES entry
+* higher-timeframe CVD trend + lower-timeframe microprice entry
+
+9. Cross-market L2
+
+* NQ leads ES
+* ES/NQ divergence
+* Gold/Silver confirmation
+* Gold/Silver ratio reversal
+* CL risk regime
+* Bonds/equities risk-on/risk-off
+* Dollar/gold inverse confirmation if 6E/DX proxy available
+* GC/SI cross-confirmed CVD divergence
+
+10. Calendar/news/event
+
+* FOMC drift
+* CPI reaction
+* NFP reaction
+* EIA crude oil inventories
+* Fed minutes
+* Treasury auction
+* month-end rebalance
+* options expiry
+* holiday liquidity effect
+* event-release anchored VWAP
+
+11. Trend-following
+
+* MA crossover
+* EMA trend pullback
+* Keltner breakout
+* Donchian breakout
+* ATR channel breakout
+* rolling return continuation
+* volatility-adjusted momentum
+* multi-timeframe trend filter
+
+12. Mean reversion
+
+* RSI 2 reversal
+* Bollinger RSI
+* z-score mean reversion
+* rolling mean reversion
+* VWAP mean reversion
+* failed breakout reversal
+* opening drive fade
+* overextension reversal
+
+13. ORB/session
+
+* 5m ORB
+* 15m ORB
+* 30m ORB
+* opening range fakeout
+* London open breakout
+* Asia range breakout into London
+* premarket gap fill
+* overnight high/low sweep
+* London close reversal
+* Sunday open gap fill
+
+14. ML/meta-labeling later
+
+* meta-label existing strategy entries
+* probability-of-profit classifier
+* regime classifier
+* slippage-risk classifier
+* trade/no-trade filter
+* random forest / gradient boosting
+* logistic regression baseline
+* deep LOB later only after enough event-level data
+
+For each strategy in the JSON:
+{
+"key": "",
+"family": "",
+"data_required": [],
+"symbols": [],
+"timeframes": [],
+"hypothesis": "",
+"entry_logic": "",
+"exit_logic": "",
+"risk_model": "",
+"features_required": [],
+"lookahead_risks": [],
+"failure_modes": [],
+"priority": 1,
+"status": "BACKLOG"
+}
+
+Do not implement all strategies yet.
+This is the master strategy map.
+
+==================================================
+PHASE 4 — STRATEGY TESTING FACTORY
+==================================
+
+Create:
+
+08_docs/strategy_testing_factory_design.md
+
+Purpose:
+Make sure “every possible strategy” is tested systematically without overfitting.
+
+Build/verify framework:
+
+1. Strategy hypothesis card
+2. Parameter grid limiter
+3. Walk-forward
+4. DSR
+5. PBO/CSCV
+6. Bootstrap-by-day
+7. Slippage ladder
+8. News-filtered version
+9. Regime slicing
+10. Trade-count minimum checks
+11. Portfolio correlation
+12. Strategy-family false discovery control
+13. Deployment eligibility report
+
+Create/extend:
+
+04_codebase/tick_strategy_research_factory.py
+
+Capabilities:
+
+* load strategy backlog JSON
+* select strategies by family/priority
+* run controlled batches
+* enforce max parameter combinations
+* log all trials
+* prevent accidental cherry-picking
+* append results to zoo/research ledger
+* produce family-level report
+* mark strategies as:
+
+  * REJECTED
+  * RESEARCH_ONLY
+  * RETEST_WITH_MORE_DATA
+  * WATCHLIST
+  * PAPER_CANDIDATE
+  * DEMO_CANDIDATE
+  * LIVE_BLOCKED
+
+Do not run giant batch yet.
+Create the framework and first tiny smoke test only.
+
+==================================================
+PHASE 5 — MANUAL TRADING SIGNAL SYSTEM
+======================================
+
+Create:
+
+08_docs/manual_signal_system_design.md
+
+Goal:
+Build a full manual trading system first so I can receive signals and manually execute before automation.
+
+This is required before personal-broker automation.
+
+Manual signal system requirements:
+
+1. Runs on live Databento bars.
+2. No broker connection required.
+3. No orders placed.
+4. Reads allowlisted manual-signal strategies only.
+5. Uses PortfolioCoordinator.
+6. Uses StateManager.
+7. Uses stale-bar detection.
+8. Uses news filter.
+9. Generates signal alerts with:
+
+   * strategy
+   * symbol
+   * side
+   * entry zone
+   * stop
+   * target
+   * risk
+   * reason
+   * confidence/context
+   * invalidation condition
+   * timestamp
+   * market regime
+   * whether signal is blocked or actionable
+10. Sends alerts through:
+
+* console
+* JSONL
+* optional Telegram
+* optional Discord
+* optional local dashboard
+
+11. Logs every signal and every rejected signal.
+12. Tracks hypothetical/manual fill if I enter it later.
+13. Produces daily report.
+
+Create:
+
+04_codebase/tick_manual_signal_engine.py
+
+Create:
+
+04_codebase/tick_alert_router.py
+
+Create:
+
+04_codebase/tick_daily_signal_report.py
+
+Create:
+
+08_docs/manual_signal_user_guide.md
+
+Modes:
+
+* --dry-run
+* --watch
+* --once
+* --strategy allowlist
+* --symbols
+* --telegram optional
+* --discord optional
+
+Do not use broker.
+Do not place orders.
+
+First manual-signal candidates:
+
+* CVD_Microprice SI
+* Sweep_Continuation SI
+* strongest GC/SI 5-year survivors after deployment eligibility review
+* existing OHLCV survivors as contextual alerts only
+
+Important:
+Manual system must be built before automation.
+
+==================================================
+PHASE 6 — PERSONAL BROKER AUTOMATION DESIGN
+===========================================
+
+Create:
+
+08_docs/personal_broker_automation_design.md
+
+Goal:
+Design full automation for a personal broker account, not prop firm.
+
+Supported possible routes:
+
+Route A — NinjaTrader Brokerage / NinjaTrader execution
+
+* Use NinjaTrader ATM for broker-native stop/target management.
+* Python fortress remains research/AI/signal engine.
+* NinjaTrader receives signal and handles order execution.
+* Later, NinjaScript can run selected strategies natively.
+* Good for futures and micro futures.
+
+Route B — Interactive Brokers TWS API
+
+* Python can connect to TWS/IB Gateway.
+* Requires account permissions, market data subscriptions, and strict order validation.
+* Good long-term broker-neutral route.
+* Needs bracket order validation and state reconciliation.
+
+Route C — Tradovate personal account
+
+* Continue existing tick_tradovate_client.py only if a true personal/demo account exists.
+* Bracket/OCO/OSO must be exchange-verified before any real money.
+
+Do not pick a broker implementation yet.
+Create a broker abstraction layer design.
+
+Create:
+
+04_codebase/src/broker/
+**init**.py
+base.py
+mock_broker.py
+broker_models.py
+broker_reconciliation.py
+broker_risk_gateway.py
+
+Future adapters:
+ninjatrader_adapter.py
+ibkr_adapter.py
+tradovate_adapter.py
+
+BrokerAdapter interface:
+
+* connect()
+* disconnect()
+* get_account_state()
+* get_positions()
+* get_open_orders()
+* place_bracket_order()
+* cancel_order()
+* cancel_all()
+* flatten_symbol()
+* flatten_all()
+* reconcile()
+* heartbeat()
+* is_demo()
+* is_live()
+
+Automation safety:
+
+* dry_run default
+* paper/sim first
+* one strategy
+* one symbol
+* one micro contract
+* max daily loss
+* max trailing DD
+* stale data halt
+* news halt
+* kill switch
+* broker-native bracket required
+* state persistence required
+* reconciliation required
+* no naked orders
+* no partial TP with one contract
+* live requires FORTRESS_LIVE_ENABLE
+
+Create:
+
+08_docs/personal_broker_selection_matrix.md
+
+Compare:
+
+* NinjaTrader Brokerage
+* IBKR
+* Tradovate personal
+* other futures broker if relevant
+
+Criteria:
+
+* API support
+* bracket orders
+* simulator/demo quality
+* micro futures support
+* Python friendliness
+* cost/commissions
+* market data fees
+* reliability
+* ease of integration
+* capital required
+* risk for small account
+* whether it fits full autonomy
+
+Do not connect to any broker yet.
+
+==================================================
+PHASE 7 — AI BRAIN INTEGRATION
+==============================
+
+Create:
+
+08_docs/ai_brain_full_design.md
+
+Goal:
+Build AI integration around the system, but the AI must not freely trade.
+
+AI brain roles:
+
+1. Monitor Agent
+
+* watches logs
+* heartbeat
+* stale bars
+* missing data
+* broker mismatch
+* strategy halts
+* errors
+
+2. Risk Sentinel
+
+* monitors daily loss
+* strategy loss
+* trailing DD
+* account risk
+* correlation/exposure
+* can pause strategies
+* cannot increase size
+
+3. Research Scout
+
+* reads strategy backlog
+* proposes new hypotheses
+* scans reports
+* suggests tests
+* cannot deploy
+
+4. Validation Agent
+
+* runs research factory
+* produces DSR/PBO/regime/slippage reports
+* cannot promote without gate
+
+5. Deployment Gatekeeper
+
+* checks eligibility rules
+* blocks risky strategies
+* requires human approval
+
+6. Daily Report Agent
+
+* sends daily summary
+* P&L
+* signals
+* skipped signals
+* regime notes
+* errors
+
+7. Alert Bot
+
+* Telegram/Discord/email alerts
+* critical only by default
+
+8. Data Librarian
+
+* tracks Databento downloads
+* manifests
+* schema changes
+* data gaps
+* cost reports
+
+9. Strategy Librarian
+
+* tracks all tested strategies
+* status
+* family
+* evidence
+* deployment status
+
+Allowed AI actions:
+
+* summarize
+* alert
+* recommend
+* pause in safe mode if configured
+* generate reports
+* create candidate specs
+* run non-trading diagnostics
+
+Forbidden AI actions:
+
+* place live orders
+* enable live mode
+* increase size
+* override kill switch
+* override RiskManager
+* override allowlist
+* deploy new strategies
+* edit historical results
+* remove loss limits
+* hide losses
+* connect funded accounts
+* trade around news without rule
+
+Create:
+
+04_codebase/ai_brain/
+**init**.py
+monitor_agent.py
+risk_sentinel.py
+research_scout.py
+validation_agent.py
+deployment_gatekeeper.py
+daily_report_agent.py
+alert_bot.py
+data_librarian.py
+strategy_librarian.py
+decision_log.py
+
+Decision log:
+06_live_trading/ai_logs/ai_decisions_YYYYMMDD.jsonl
+
+Every AI recommendation/action must log:
+
+* timestamp
+* agent
+* observation
+* recommendation
+* action_taken
+* human_approval_required
+* risk_level
+* linked evidence file
+
+Create:
+
+08_docs/ai_brain_safety_policy.md
+
+Do not connect the AI to live trading.
+Do not allow autonomous execution.
+
+==================================================
+PHASE 8 — PORTFOLIO CONSTRUCTION: MASH GOOD STRATEGIES TOGETHER SAFELY
+======================================================================
+
+Create:
+
+08_docs/portfolio_construction_master_plan.md
+
+Goal:
+Combine the genuinely good strategies, but not by blindly running everything.
+
+Rules:
+
+1. A good individual strategy is not automatically good in portfolio.
+2. Strategies must be combined by correlation, drawdown overlap, regime dependence, and broker execution constraints.
+3. The portfolio must respect account-level net positions.
+4. Same-symbol strategy conflicts must be coordinated.
+5. One account cannot assume separate long/short strategy positions on the same futures contract.
+6. PortfolioCoordinator decides final broker-level exposure.
+7. Manual signal system can show multiple strategy votes, but live automation must net/resolve them.
+
+Portfolio layers:
+
+Layer 1 — Research portfolio:
+
+* includes all evidence-passed strategies for analysis only
+
+Layer 2 — Paper/manual alert portfolio:
+
+* includes selected strategies that can generate manual alerts
+
+Layer 3 — Demo/paper broker portfolio:
+
+* one strategy first
+* then one additional uncorrelated strategy
+* then small portfolio
+
+Layer 4 — Personal broker live portfolio:
+
+* only after demo proof
+* one micro contract
+* slow scaling
+
+Create:
+
+04_codebase/tick_portfolio_optimizer.py
+
+Capabilities:
+
+* load all strategy trade ledgers
+* compute correlation matrix
+* compute drawdown overlap
+* compute monthly/weekly/day stability
+* compute contribution by symbol
+* compute risk parity weights
+* compute equal-risk portfolio
+* compute max-DD constrained portfolio
+* compute Top-N robust portfolio
+* exclude low-trade-count strategies
+* exclude high-worst-day strategies
+* exclude strategies with overlapping-position unrealistic assumptions
+* output recommended candidate portfolio
+
+Create:
+
+08_docs/portfolio_candidate_report.md
+
+Do not deploy the portfolio.
+Only recommend candidates.
+
+==================================================
+PHASE 9 — NEWS FILTER AND HONEST P&L
+====================================
+
+Create/update:
+
+04_codebase/tick_news_filter.py
+
+Create/update:
+
+04_codebase/tick_l2_backtest.py
+
+Add:
+--filter-news
+
+News filter:
+
+* block entries 30 minutes before/after high-impact events by default
+* optional 10/15/30/60 minute windows
+* FOMC
+* CPI
+* NFP
+* PPI
+* GDP
+* ISM
+* Fed speeches if available
+* EIA crude for CL
+* central bank events if FX later
+
+Create:
+
+08_docs/news_filtered_backtest_report.md
+
+Run first:
+
+* GC 5-year survivors
+* SI 5-year survivors
+* CVD_Microprice SI
+* Sweep_Continuation SI
+
+Compare:
+
+* original P&L
+* news-filtered P&L
+* trade count reduction
+* Sharpe/DSR degradation
+* worst day
+* drawdown
+
+Do not deploy any strategy until news-filtered result is known.
+
+==================================================
+PHASE 10 — FIX KNOWN STRATEGY ISSUES
+====================================
+
+Task 10.1 — Depth_Imbalance_Momentum realism fix
+
+Problem:
+Depth_Imbalance_Momentum GC produced huge trade counts and likely overlapping positions. P&L is inflated.
+
+Fix:
+
+* enforce one position at a time
+* enforce one micro contract
+* no overlapping entries
+* no multiple simultaneous entries
+* realistic exit before new entry
+* re-run evidence
+* produce:
+  08_docs/depth_imbalance_position_limit_report.md
+
+Task 10.2 — Partial TP fix
+
+Problem:
+Partial TP impossible with one contract.
+
+Fix:
+
+* if quantity=1:
+
+  * disable partial TP
+  * full exit at target
+  * stop to breakeven only if broker supports modify order safely
+* if quantity>=2:
+
+  * partial TP can be supported later
+* update backtest assumptions
+* update mock broker
+* update docs
+
+Produce:
+08_docs/partial_tp_fix_report.md
+
+Task 10.3 — Stale bar detection
+
+Add to executor/manual signal system:
+
+* if latest bar older than threshold, block signal
+* threshold configurable by timeframe:
+
+  * 1m: 3 minutes
+  * 3m: 6 minutes
+  * 5m: 10 minutes
+  * 15m: 25 minutes
+  * 30m: 45 minutes
+* produce:
+  08_docs/stale_bar_detection_report.md
+
+==================================================
+PHASE 11 — MANUAL FIRST, AUTOMATION SECOND
+==========================================
+
+Create:
+
+08_docs/manual_to_automation_transition_plan.md
+
+The path must be:
+
+Stage 1 — Historical evidence:
+
+* multi-year data
+* evidence tests
+* news filter
+* slippage ladder
+* portfolio correlation
+
+Stage 2 — Live data dry-run:
+
+* Databento live
+* no broker
+* signals logged
+
+Stage 3 — Manual signal trading:
+
+* alerts only
+* I manually decide/click
+* track hypothetical and actual manual fill
+* compare to backtest
+
+Stage 4 — Personal broker sim:
+
+* broker simulation
+* one strategy
+* one micro
+* bracket orders
+* reconciliation
+
+Stage 5 — Personal broker tiny live:
+
+* one strategy
+* one micro
+* max daily loss
+* kill switch
+* no scaling
+
+Stage 6 — Small automated portfolio:
+
+* only after 30-60 days live/sim proof
+* add second strategy
+* avoid same-symbol conflicts
+
+Stage 7 — AI-assisted operations:
+
+* AI monitors and recommends
+* cannot trade freely
+
+==================================================
+PHASE 12 — STOP CONDITION AND REPORT
+====================================
+
+After completing the planning/scaffolding tasks, stop and report:
+
+1. Files created/modified
+2. Whether any paid Databento data was downloaded
+3. Whether any broker connection was made
+4. Whether any order was placed
+5. Whether .env remains ignored
+6. Whether Databento cost planner exists
+7. Whether download manager exists
+8. Whether strategy universe master exists
+9. Whether manual signal system scaffold exists
+10. Whether personal broker automation design exists
+11. Whether AI brain design exists
+12. Whether portfolio construction plan exists
+13. Whether news filter plan/code exists
+14. Whether Depth_Imbalance_Momentum is fixed or still pending
+15. Whether partial TP is fixed or still pending
+16. Whether stale bar detection is fixed or still pending
+17. Exact next command I should run
+
+Expected classification:
+
+* Safe to continue research: YES
+* Safe to run Databento cost estimates: YES
+* Safe to do tiny approved sample download: only after cost approval
+* Safe to run manual signal system: only after live data dry-run passes
+* Safe for personal broker automation: NO
+* Safe for personal broker sim: NOT YET
+* Safe for live money: NO
+* Safe for prop-firm automation: NO
+
+Do not start paid full downloads.
+Do not start new giant strategy batches.
+Do not connect broker.
+Do not place orders.
+Do not enable automation.
+Stop after report.

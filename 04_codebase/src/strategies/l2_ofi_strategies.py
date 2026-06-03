@@ -204,16 +204,35 @@ def _l2_trades(
     max_bars_per_trade: int,
     spread_col: Optional[str] = None,
 ) -> List[Dict]:
-    """Shared trade builder for L2 strategies using ATR-based stops."""
+    """Shared trade builder for L2 strategies using ATR-based stops.
+
+    Enforces one-position-at-a-time: a new trade cannot be entered while
+    a previous trade is still open. This prevents overlapping-position
+    inflation that caused Depth_Imbalance_Momentum to show 10k–30k trades
+    with unrealistically high P&L on a single-contract system.
+    """
     timeout = min(hold_bars, max_bars_per_trade)
 
     atr = _compute_atr(data, period=10)
 
     trades = []
+    next_entry_loc = 0  # position exclusivity: no new entry before this bar index
+
+    news_blocked = data.get("_news_blocked", pd.Series(False, index=data.index))
+
     for idx in signals[signals != 0].index:
         try:
             direction = int(signals[idx])
             sig_loc   = data.index.get_loc(idx)
+
+            # Skip if still inside an open trade (1-contract position exclusivity)
+            if sig_loc < next_entry_loc:
+                continue
+
+            # Skip if this bar is within a news event window
+            if news_blocked.iloc[sig_loc]:
+                continue
+
             if sig_loc + 1 >= len(data):
                 continue
 
@@ -241,6 +260,14 @@ def _l2_trades(
                 "gross_pnl": (exit_price - entry_price) * direction,
                 "stop_price": stop_price, "target_price": target_price,
             })
+
+            # Advance position exclusivity cursor past this trade's exit bar
+            try:
+                exit_loc = data.index.get_loc(exit_time)
+            except KeyError:
+                exit_loc = sig_loc + 1 + timeout
+            next_entry_loc = exit_loc + 1
+
         except Exception:
             continue
     return trades

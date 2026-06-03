@@ -1,0 +1,407 @@
+[
+  {
+    "strategy":"OFI_Continuation",
+    "symbol":"GC",
+    "params":"{\"ofi_pct\": 90, \"roll_win\": 120, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.2332,
+    "stress_pnl":8652.5,
+    "stress_wr":0.4062,
+    "stress_trades":2243
+  },
+  {
+    "strategy":"OFI_Continuation",
+    "symbol":"GC",
+    "params":"{\"ofi_pct\": 93, \"roll_win\": 120, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.172,
+    "stress_pnl":5895.5,
+    "stress_wr":0.4059,
+    "stress_trades":2183
+  },
+  {
+    "strategy":"OFI_Continuation",
+    "symbol":"GC",
+    "params":"{\"ofi_pct\": 95, \"roll_win\": 120, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.1227,
+    "stress_pnl":4075.5,
+    "stress_wr":0.4083,
+    "stress_trades":2045
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.2, \"persist_bars\": 3, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.3949,
+    "stress_pnl":32668.92,
+    "stress_wr":0.4116,
+    "stress_trades":4325
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.2, \"persist_bars\": 3, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.3514,
+    "stress_pnl":31478.42,
+    "stress_wr":0.4068,
+    "stress_trades":4184
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.2, \"persist_bars\": 5, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.4608,
+    "stress_pnl":64081.0,
+    "stress_wr":0.4156,
+    "stress_trades":3612
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.2, \"persist_bars\": 5, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.4533,
+    "stress_pnl":61009.0,
+    "stress_wr":0.4089,
+    "stress_trades":3500
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 3, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.4654,
+    "stress_pnl":63086.42,
+    "stress_wr":0.4138,
+    "stress_trades":3480
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 3, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.4479,
+    "stress_pnl":62217.92,
+    "stress_wr":0.4052,
+    "stress_trades":3369
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 5, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.4809,
+    "stress_pnl":70956.5,
+    "stress_wr":0.4203,
+    "stress_trades":2931
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 5, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.4882,
+    "stress_pnl":68020.0,
+    "stress_wr":0.4101,
+    "stress_trades":2848
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 3, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.7001,
+    "stress_pnl":67684.92,
+    "stress_wr":0.4165,
+    "stress_trades":2759
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 3, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.5986,
+    "stress_pnl":64818.92,
+    "stress_wr":0.4039,
+    "stress_trades":2669
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 5, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.73,
+    "stress_pnl":68122.0,
+    "stress_wr":0.4232,
+    "stress_trades":2278
+  },
+  {
+    "strategy":"Repeated_Replenishment",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 5, \"cvd_negative\": true, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.6681,
+    "stress_pnl":65748.0,
+    "stress_wr":0.4084,
+    "stress_trades":2216
+  },
+  {
+    "strategy":"CVD_Microprice",
+    "symbol":"GC",
+    "params":"{\"cvd_pct\": 60, \"mp_ticks\": 0.5, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.3655,
+    "stress_pnl":72807.0,
+    "stress_wr":0.4121,
+    "stress_trades":7542
+  },
+  {
+    "strategy":"CVD_Microprice",
+    "symbol":"GC",
+    "params":"{\"cvd_pct\": 60, \"mp_ticks\": 1.0, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.3562,
+    "stress_pnl":95716.5,
+    "stress_wr":0.4144,
+    "stress_trades":6911
+  },
+  {
+    "strategy":"CVD_Microprice",
+    "symbol":"GC",
+    "params":"{\"cvd_pct\": 80, \"mp_ticks\": 0.5, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.4851,
+    "stress_pnl":66403.5,
+    "stress_wr":0.4192,
+    "stress_trades":5549
+  },
+  {
+    "strategy":"CVD_Microprice",
+    "symbol":"GC",
+    "params":"{\"cvd_pct\": 80, \"mp_ticks\": 1.0, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.5005,
+    "stress_pnl":80497.5,
+    "stress_wr":0.4225,
+    "stress_trades":5157
+  },
+  {
+    "strategy":"CVD_Acceleration",
+    "symbol":"GC",
+    "params":"{\"accel_std\": 2.0, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.5202,
+    "stress_pnl":27522.5,
+    "stress_wr":0.3898,
+    "stress_trades":3071
+  },
+  {
+    "strategy":"CVD_Acceleration",
+    "symbol":"GC",
+    "params":"{\"accel_std\": 2.5, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.4869,
+    "stress_pnl":24439.0,
+    "stress_wr":0.3888,
+    "stress_trades":2140
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.25, \"cvd_pct\": 60, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.4379,
+    "stress_pnl":50813.5,
+    "stress_wr":0.4103,
+    "stress_trades":2915
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.25, \"cvd_pct\": 60, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.4414,
+    "stress_pnl":46454.0,
+    "stress_wr":0.412,
+    "stress_trades":2808
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.25, \"cvd_pct\": 70, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.513,
+    "stress_pnl":62903.5,
+    "stress_wr":0.4137,
+    "stress_trades":2763
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.25, \"cvd_pct\": 70, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.4831,
+    "stress_pnl":48556.0,
+    "stress_wr":0.413,
+    "stress_trades":2666
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 60, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.4241,
+    "stress_pnl":43154.5,
+    "stress_wr":0.4038,
+    "stress_trades":3633
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 60, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.4966,
+    "stress_pnl":60521.0,
+    "stress_wr":0.4036,
+    "stress_trades":3474
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 70, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.5255,
+    "stress_pnl":52044.5,
+    "stress_wr":0.4058,
+    "stress_trades":3477
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 70, \"rr_ratio\": 2.0, \"hold_bars\": 12}",
+    "stress_dsr":0.5422,
+    "stress_pnl":61343.5,
+    "stress_wr":0.4032,
+    "stress_trades":3341
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 2, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.227,
+    "stress_pnl":23026.22,
+    "stress_wr":0.3978,
+    "stress_trades":6646
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 3, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.3903,
+    "stress_pnl":35778.33,
+    "stress_wr":0.4097,
+    "stress_trades":6470
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 5, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.3247,
+    "stress_pnl":25254.22,
+    "stress_wr":0.4128,
+    "stress_trades":5346
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.3, \"persist_bars\": 5, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.5446,
+    "stress_pnl":53416.22,
+    "stress_wr":0.4035,
+    "stress_trades":4788
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 2, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.1867,
+    "stress_pnl":16547.22,
+    "stress_wr":0.408,
+    "stress_trades":5902
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 2, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.271,
+    "stress_pnl":26083.22,
+    "stress_wr":0.4,
+    "stress_trades":5280
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 3, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.4829,
+    "stress_pnl":39956.83,
+    "stress_wr":0.4096,
+    "stress_trades":5173
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 3, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.5116,
+    "stress_pnl":62979.33,
+    "stress_wr":0.3987,
+    "stress_trades":4648
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 5, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.1205,
+    "stress_pnl":8772.22,
+    "stress_wr":0.4079,
+    "stress_trades":4222
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.4, \"persist_bars\": 5, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.489,
+    "stress_pnl":43356.22,
+    "stress_wr":0.4014,
+    "stress_trades":3794
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.5, \"persist_bars\": 2, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.4904,
+    "stress_pnl":50098.71,
+    "stress_wr":0.417,
+    "stress_trades":4796
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.5, \"persist_bars\": 2, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.497,
+    "stress_pnl":60864.71,
+    "stress_wr":0.408,
+    "stress_trades":4304
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.5, \"persist_bars\": 3, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.5276,
+    "stress_pnl":66616.92,
+    "stress_wr":0.409,
+    "stress_trades":4183
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.5, \"persist_bars\": 3, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.3764,
+    "stress_pnl":85077.42,
+    "stress_wr":0.4019,
+    "stress_trades":3762
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.5, \"persist_bars\": 5, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.5472,
+    "stress_pnl":48339.0,
+    "stress_wr":0.413,
+    "stress_trades":3404
+  },
+  {
+    "strategy":"Depth_Imbalance_Momentum",
+    "symbol":"GC",
+    "params":"{\"imbal_thr\": 0.5, \"persist_bars\": 5, \"rr_ratio\": 2.0, \"hold_bars\": 10}",
+    "stress_dsr":0.6388,
+    "stress_pnl":81844.0,
+    "stress_wr":0.4069,
+    "stress_trades":3062
+  }
+]

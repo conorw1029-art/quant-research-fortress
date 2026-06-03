@@ -1,0 +1,364 @@
+﻿======================================================================
+ FORTRESS L2 STRATEGY BACKTEST BATTERY
+ Symbols: ['GC']  Strategies: 16
+======================================================================
+[GC] Primary bars: 77,270 rows
+[GC] Quick mode: 28,374 bars from 2024
+[GC] 28,374 bars ready. L2 cols present: 17/17
+
+[GC] Running 16 strategy classes ...
+  OFI_Continuation                    GC  trades=1017  dsr=-0.012  pnl=$  -5,446
+  OFI_Continuation                    GC  trades=1017  dsr=-0.012  pnl=$ -15,012
+  OFI_Continuation                    GC  trades=1017  dsr=-0.012  pnl=$  28,546
+  OFI_Continuation                    GC  trades=1017  dsr=+0.802  pnl=$  21,611
+  OFI_Continuation                    GC  trades= 869  dsr=+0.664  pnl=$  10,081
+  OFI_Continuation                    GC  trades= 869  dsr=+0.587  pnl=$  11,866
+  OFI_Continuation                    GC  trades= 869  dsr=-0.012  pnl=$  42,170
+  OFI_Continuation                    GC  trades= 869  dsr=-0.012  pnl=$  43,369
+  OFI_Continuation                    GC  trades= 987  dsr=-0.012  pnl=$  -7,668
+  OFI_Continuation                    GC  trades= 987  dsr=-0.012  pnl=$  -6,960
+  OFI_Continuation                    GC  trades= 987  dsr=+0.216  pnl=$  24,657
+  OFI_Continuation                    GC  trades= 987  dsr=+0.522  pnl=$  25,672
+  OFI_Continuation                    GC  trades= 861  dsr=+0.921  pnl=$  13,568
+  OFI_Continuation                    GC  trades= 861  dsr=+0.807  pnl=$  19,432
+  OFI_Continuation                    GC  trades= 861  dsr=-0.012  pnl=$  44,967
+  OFI_Continuation                    GC  trades= 861  dsr=-0.012  pnl=$  52,545
+  OFI_Continuation                    GC  trades= 882  dsr=-0.012  pnl=$  -6,706
+  OFI_Continuation                    GC  trades= 882  dsr=-0.012  pnl=$ -10,486
+  OFI_Continuation                    GC  trades= 882  dsr=+0.617  pnl=$  24,658
+  OFI_Continuation                    GC  trades= 882  dsr=+0.796  pnl=$  19,487
+  OFI_Continuation                    GC  trades= 806  dsr=+0.866  pnl=$  10,588
+  OFI_Continuation                    GC  trades= 806  dsr=+0.734  pnl=$  13,078
+  OFI_Continuation                    GC  trades= 806  dsr=+1.027  pnl=$  36,307
+  OFI_Continuation                    GC  trades= 806  dsr=-0.013  pnl=$  40,736
+  OFI_Reversal                        GC  trades=9648  dsr=-0.008  pnl=$ 161,276
+  OFI_Reversal                        GC  trades=9648  dsr=-0.008  pnl=$ 149,392
+  OFI_Reversal                        GC  trades=9648  dsr=-0.008  pnl=$ 454,198
+  OFI_Reversal                        GC  trades=9648  dsr=-0.008  pnl=$ 478,648
+  OFI_Reversal                        GC  trades=9928  dsr=-0.008  pnl=$ 168,340
+  OFI_Reversal                        GC  trades=9928  dsr=-0.008  pnl=$ 160,707
+  OFI_Reversal                        GC  trades=9928  dsr=-0.008  pnl=$ 469,780
+  OFI_Reversal                        GC  trades=9928  dsr=-0.008  pnl=$ 496,603
+  OFI_Reversal                        GC  trades=8255  dsr=+0.299  pnl=$  71,486
+  OFI_Reversal                        GC  trades=8255  dsr=+0.314  pnl=$  57,194
+  OFI_Reversal                        GC  trades=8255  dsr=-0.008  pnl=$ 315,544
+  OFI_Reversal                        GC  trades=8255  dsr=-0.008  pnl=$ 330,662
+  OFI_Reversal                        GC  trades=8467  dsr=+0.267  pnl=$  75,806
+  OFI_Reversal                        GC  trades=8467  dsr=+0.314  pnl=$  62,744
+  OFI_Reversal                        GC  trades=8467  dsr=-0.008  pnl=$ 326,769
+  OFI_Reversal                        GC  trades=8467  dsr=-0.008  pnl=$ 342,962
+  OFI_Reversal                        GC  trades=5471  dsr=+0.040  pnl=$   4,527
+  OFI_Reversal                        GC  trades=5471  dsr=-0.009  pnl=$ -29,253
+  OFI_Reversal                        GC  trades=5471  dsr=-0.009  pnl=$ 157,768
+  OFI_Reversal                        GC  trades=5471  dsr=-0.009  pnl=$ 138,339
+  OFI_Reversal                        GC  trades=5593  dsr=+0.067  pnl=$   7,439
+  OFI_Reversal                        GC  trades=5593  dsr=-0.009  pnl=$ -25,702
+  OFI_Reversal                        GC  trades=5593  dsr=-0.009  pnl=$ 163,697
+  OFI_Reversal                        GC  trades=5593  dsr=-0.009  pnl=$ 144,389
+  OFI_Microprice                      GC  trades=12902  dsr=-0.008  pnl=$ 140,210
+  OFI_Microprice                      GC  trades=12902  dsr=+0.241  pnl=$ 130,618
+  OFI_Microprice                      GC  trades=12902  dsr=-0.008  pnl=$ 536,620
+  OFI_Microprice                      GC  trades=12902  dsr=-0.008  pnl=$ 576,522
+  OFI_Microprice                      GC  trades=10922  dsr=-0.008  pnl=$ 203,008
+  OFI_Microprice                      GC  trades=10922  dsr=-0.008  pnl=$ 220,558
+  OFI_Microprice                      GC  trades=10922  dsr=-0.008  pnl=$ 563,336
+  OFI_Microprice                      GC  trades=10922  dsr=-0.008  pnl=$ 622,179
+  OFI_Microprice                      GC  trades=10885  dsr=+0.327  pnl=$  89,893
+  OFI_Microprice                      GC  trades=10885  dsr=+0.344  pnl=$  96,582
+  OFI_Microprice                      GC  trades=10885  dsr=-0.008  pnl=$ 457,728
+  OFI_Microprice                      GC  trades=10885  dsr=-0.008  pnl=$ 500,676
+  OFI_Microprice                      GC  trades=9258  dsr=+0.089  pnl=$ 162,423
+  OFI_Microprice                      GC  trades=9258  dsr=-0.007  pnl=$ 176,156
+  OFI_Microprice                      GC  trades=9258  dsr=-0.008  pnl=$ 491,842
+  OFI_Microprice                      GC  trades=9258  dsr=-0.008  pnl=$ 531,582
+  OFI_Microprice                      GC  trades=8358  dsr=+0.393  pnl=$  61,228
+  OFI_Microprice                      GC  trades=8358  dsr=+0.377  pnl=$  71,319
+  OFI_Microprice                      GC  trades=8358  dsr=-0.009  pnl=$ 363,166
+  OFI_Microprice                      GC  trades=8358  dsr=-0.009  pnl=$ 405,583
+  OFI_Microprice                      GC  trades=7151  dsr=+0.466  pnl=$ 108,702
+  OFI_Microprice                      GC  trades=7151  dsr=+0.276  pnl=$ 119,897
+  OFI_Microprice                      GC  trades=7151  dsr=-0.009  pnl=$ 377,323
+  OFI_Microprice                      GC  trades=7151  dsr=-0.009  pnl=$ 410,344
+  Sweep_Continuation                  GC  trades=2316  dsr=+0.848  pnl=$  17,983
+  Sweep_Continuation                  GC  trades=2316  dsr=+0.298  pnl=$   7,136
+  Sweep_Continuation                  GC  trades=2316  dsr=-0.015  pnl=$  72,351
+  Sweep_Continuation                  GC  trades=2316  dsr=-0.015  pnl=$  66,250
+  Sweep_Continuation                  GC  trades= 706  dsr=-0.020  pnl=$  -1,916
+  Sweep_Continuation                  GC  trades= 706  dsr=-0.020  pnl=$ -13,968
+  Sweep_Continuation                  GC  trades= 706  dsr=+1.273  pnl=$   9,174
+  Sweep_Continuation                  GC  trades= 706  dsr=-0.020  pnl=$  -1,305
+  Sweep_Continuation                  GC  trades= 970  dsr=+0.737  pnl=$  11,186
+  Sweep_Continuation                  GC  trades= 970  dsr=+0.097  pnl=$   1,208
+  Sweep_Continuation                  GC  trades= 970  dsr=-0.019  pnl=$  29,025
+  Sweep_Continuation                  GC  trades= 970  dsr=+0.148  pnl=$  25,054
+  Sweep_Continuation                  GC  trades= 194  dsr=+0.754  pnl=$  -6,117
+  Sweep_Continuation                  GC  trades= 194  dsr=-0.032  pnl=$  -9,246
+  Sweep_Continuation                  GC  trades= 194  dsr=-0.032  pnl=$  -3,067
+  Sweep_Continuation                  GC  trades= 194  dsr=-0.032  pnl=$  -5,913
+  Sweep_Absorption_Reversal           GC  trades= 499  dsr=-0.023  pnl=$   8,078
+  Sweep_Absorption_Reversal           GC  trades= 499  dsr=-0.023  pnl=$   8,449
+  Sweep_Absorption_Reversal           GC  trades= 499  dsr=-0.023  pnl=$  11,879
+  Sweep_Absorption_Reversal           GC  trades= 499  dsr=-0.023  pnl=$  13,753
+  Sweep_Absorption_Reversal           GC  trades= 489  dsr=+0.302  pnl=$   2,304
+  Sweep_Absorption_Reversal           GC  trades= 489  dsr=+0.401  pnl=$   2,629
+  Sweep_Absorption_Reversal           GC  trades= 489  dsr=+0.963  pnl=$   3,886
+  Sweep_Absorption_Reversal           GC  trades= 489  dsr=+1.465  pnl=$   5,713
+  Sweep_Absorption_Reversal           GC  trades= 238  dsr=+1.208  pnl=$   2,355
+  Sweep_Absorption_Reversal           GC  trades= 238  dsr=-0.031  pnl=$   7,738
+  Sweep_Absorption_Reversal           GC  trades= 238  dsr=+1.535  pnl=$   3,216
+  Sweep_Absorption_Reversal           GC  trades= 238  dsr=+3.718  pnl=$   9,171
+  Sweep_Absorption_Reversal           GC  trades= 235  dsr=+1.064  pnl=$   2,132
+  Sweep_Absorption_Reversal           GC  trades= 235  dsr=-0.006  pnl=$   7,406
+  Sweep_Absorption_Reversal           GC  trades= 235  dsr=+1.337  pnl=$   2,895
+  Sweep_Absorption_Reversal           GC  trades= 235  dsr=+3.462  pnl=$   8,740
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=+0.567  pnl=$    -986
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=+1.088  pnl=$  -1,046
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=+0.309  pnl=$    -901
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=-0.063  pnl=$    -403
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=-0.063  pnl=$    -391
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=-0.063  pnl=$    -271
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=-0.063  pnl=$    -704
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=-0.063  pnl=$    -622
+  Session_HL_Sweep_Reversal           GC  trades=  22  dsr=-0.063  pnl=$    -502
+  Absorption_Reversal                 GC  trades=19812  dsr=-0.008  pnl=$ 189,839
+  Absorption_Reversal                 GC  trades=19812  dsr=-0.008  pnl=$ 219,851
+  Absorption_Reversal                 GC  trades=19812  dsr=-0.008  pnl=$ 251,308
+  Absorption_Reversal                 GC  trades=19812  dsr=-0.008  pnl=$ 698,430
+  Absorption_Reversal                 GC  trades=19812  dsr=-0.008  pnl=$ 765,656
+  Absorption_Reversal                 GC  trades=19812  dsr=-0.008  pnl=$ 797,744
+  Absorption_Reversal                 GC  trades=19588  dsr=-0.008  pnl=$ 304,112
+  Absorption_Reversal                 GC  trades=19588  dsr=-0.008  pnl=$ 352,113
+  Absorption_Reversal                 GC  trades=19588  dsr=-0.008  pnl=$ 391,440
+  Absorption_Reversal                 GC  trades=19588  dsr=-0.008  pnl=$ 804,692
+  Absorption_Reversal                 GC  trades=19588  dsr=-0.008  pnl=$ 900,078
+  Absorption_Reversal                 GC  trades=19588  dsr=-0.008  pnl=$ 955,778
+  Absorption_Reversal                 GC  trades=17178  dsr=-0.008  pnl=$ 188,216
+  Absorption_Reversal                 GC  trades=17178  dsr=-0.008  pnl=$ 212,843
+  Absorption_Reversal                 GC  trades=17178  dsr=-0.008  pnl=$ 218,218
+  Absorption_Reversal                 GC  trades=17178  dsr=-0.008  pnl=$ 626,396
+  Absorption_Reversal                 GC  trades=17178  dsr=-0.008  pnl=$ 680,189
+  Absorption_Reversal                 GC  trades=17178  dsr=-0.008  pnl=$ 688,899
+  Absorption_Reversal                 GC  trades=15196  dsr=-0.008  pnl=$ 241,165
+  Absorption_Reversal                 GC  trades=15196  dsr=-0.008  pnl=$ 307,926
+  Absorption_Reversal                 GC  trades=15196  dsr=-0.008  pnl=$ 323,313
+  Absorption_Reversal                 GC  trades=15196  dsr=-0.008  pnl=$ 642,031
+  Absorption_Reversal                 GC  trades=15196  dsr=-0.008  pnl=$ 750,252
+  Absorption_Reversal                 GC  trades=15196  dsr=-0.008  pnl=$ 774,119
+  Absorption_Reversal                 GC  trades=11182  dsr=-0.008  pnl=$ 131,548
+  Absorption_Reversal                 GC  trades=11182  dsr=-0.008  pnl=$ 169,276
+  Absorption_Reversal                 GC  trades=11182  dsr=-0.008  pnl=$ 141,089
+  Absorption_Reversal                 GC  trades=11182  dsr=-0.008  pnl=$ 414,178
+  Absorption_Reversal                 GC  trades=11182  dsr=-0.008  pnl=$ 491,891
+  Absorption_Reversal                 GC  trades=11182  dsr=-0.008  pnl=$ 453,309
+  Absorption_Reversal                 GC  trades=10530  dsr=-0.008  pnl=$ 227,864
+  Absorption_Reversal                 GC  trades=10530  dsr=-0.008  pnl=$ 277,699
+  Absorption_Reversal                 GC  trades=10530  dsr=-0.008  pnl=$ 269,704
+  Absorption_Reversal                 GC  trades=10530  dsr=-0.008  pnl=$ 511,118
+  Absorption_Reversal                 GC  trades=10530  dsr=-0.008  pnl=$ 592,571
+  Absorption_Reversal                 GC  trades=10530  dsr=-0.008  pnl=$ 587,992
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$  45,653
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$  46,923
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 106,194
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 112,679
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 147,645
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 170,644
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$  45,653
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$  46,923
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 106,194
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 112,679
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 147,645
+  CVD_Absorption                      GC  trades=2981  dsr=-0.011  pnl=$ 170,644
+  CVD_Absorption                      GC  trades=4156  dsr=+0.125  pnl=$  33,869
+  CVD_Absorption                      GC  trades=4156  dsr=-0.007  pnl=$  55,480
+  CVD_Absorption                      GC  trades=4156  dsr=-0.010  pnl=$  95,134
+  CVD_Absorption                      GC  trades=4156  dsr=-0.010  pnl=$ 139,031
+  CVD_Absorption                      GC  trades=4156  dsr=-0.011  pnl=$ 145,871
+  CVD_Absorption                      GC  trades=4156  dsr=-0.010  pnl=$ 209,274
+  CVD_Absorption                      GC  trades=4156  dsr=+0.125  pnl=$  33,869
+  CVD_Absorption                      GC  trades=4156  dsr=-0.007  pnl=$  55,480
+  CVD_Absorption                      GC  trades=4156  dsr=-0.010  pnl=$  95,134
+  CVD_Absorption                      GC  trades=4156  dsr=-0.010  pnl=$ 139,031
+  CVD_Absorption                      GC  trades=4156  dsr=-0.011  pnl=$ 145,871
+  CVD_Absorption                      GC  trades=4156  dsr=-0.010  pnl=$ 209,274
+  Repeated_Replenishment              GC  trades=4200  dsr=+0.280  pnl=$ 102,546
+  Repeated_Replenishment              GC  trades=4200  dsr=+0.124  pnl=$ 101,197
+  Repeated_Replenishment              GC  trades=4200  dsr=-0.009  pnl=$ 242,024
+  Repeated_Replenishment              GC  trades=4200  dsr=-0.009  pnl=$ 252,286
+  Repeated_Replenishment              GC  trades=3625  dsr=-0.010  pnl=$ 104,252
+  Repeated_Replenishment              GC  trades=3625  dsr=-0.010  pnl=$ 105,428
+  Repeated_Replenishment              GC  trades=3625  dsr=-0.010  pnl=$ 238,349
+  Repeated_Replenishment              GC  trades=3625  dsr=-0.010  pnl=$ 255,647
+  Repeated_Replenishment              GC  trades=3393  dsr=+0.165  pnl=$  96,759
+  Repeated_Replenishment              GC  trades=3393  dsr=-0.010  pnl=$ 101,934
+  Repeated_Replenishment              GC  trades=3393  dsr=-0.010  pnl=$ 213,482
+  Repeated_Replenishment              GC  trades=3393  dsr=-0.010  pnl=$ 233,069
+  Repeated_Replenishment              GC  trades=2951  dsr=+0.135  pnl=$  93,235
+  Repeated_Replenishment              GC  trades=2951  dsr=-0.010  pnl=$  96,860
+  Repeated_Replenishment              GC  trades=2951  dsr=-0.010  pnl=$ 203,900
+  Repeated_Replenishment              GC  trades=2951  dsr=-0.010  pnl=$ 221,674
+  Repeated_Replenishment              GC  trades=2768  dsr=-0.010  pnl=$  88,243
+  Repeated_Replenishment              GC  trades=2768  dsr=-0.010  pnl=$  90,302
+  Repeated_Replenishment              GC  trades=2768  dsr=-0.010  pnl=$ 184,421
+  Repeated_Replenishment              GC  trades=2768  dsr=-0.010  pnl=$ 197,336
+  Repeated_Replenishment              GC  trades=2374  dsr=-0.011  pnl=$  82,468
+  Repeated_Replenishment              GC  trades=2374  dsr=-0.011  pnl=$  86,950
+  Repeated_Replenishment              GC  trades=2374  dsr=-0.011  pnl=$ 176,386
+  Repeated_Replenishment              GC  trades=2374  dsr=-0.011  pnl=$ 192,851
+  CVD_Microprice                      GC  trades=11967  dsr=-0.009  pnl=$ 269,118
+  CVD_Microprice                      GC  trades=11967  dsr=-0.009  pnl=$ 298,946
+  CVD_Microprice                      GC  trades=11967  dsr=-0.009  pnl=$ 624,610
+  CVD_Microprice                      GC  trades=11967  dsr=-0.009  pnl=$ 746,810
+  CVD_Microprice                      GC  trades=11236  dsr=-0.009  pnl=$ 269,436
+  CVD_Microprice                      GC  trades=11236  dsr=-0.009  pnl=$ 299,132
+  CVD_Microprice                      GC  trades=11236  dsr=-0.009  pnl=$ 618,008
+  CVD_Microprice                      GC  trades=11236  dsr=-0.009  pnl=$ 738,039
+  CVD_Microprice                      GC  trades=9604  dsr=-0.009  pnl=$ 201,642
+  CVD_Microprice                      GC  trades=9604  dsr=-0.009  pnl=$ 237,227
+  CVD_Microprice                      GC  trades=9604  dsr=-0.009  pnl=$ 473,795
+  CVD_Microprice                      GC  trades=9604  dsr=-0.009  pnl=$ 592,242
+  CVD_Microprice                      GC  trades=9029  dsr=-0.009  pnl=$ 201,417
+  CVD_Microprice                      GC  trades=9029  dsr=-0.009  pnl=$ 236,496
+  CVD_Microprice                      GC  trades=9029  dsr=-0.009  pnl=$ 467,173
+  CVD_Microprice                      GC  trades=9029  dsr=-0.009  pnl=$ 583,673
+  CVD_Microprice                      GC  trades=6394  dsr=-0.009  pnl=$ 165,482
+  CVD_Microprice                      GC  trades=6394  dsr=-0.009  pnl=$ 213,396
+  CVD_Microprice                      GC  trades=6394  dsr=-0.009  pnl=$ 347,679
+  CVD_Microprice                      GC  trades=6394  dsr=-0.009  pnl=$ 459,056
+  CVD_Microprice                      GC  trades=6025  dsr=-0.009  pnl=$ 155,946
+  CVD_Microprice                      GC  trades=6025  dsr=-0.009  pnl=$ 202,640
+  CVD_Microprice                      GC  trades=6025  dsr=-0.009  pnl=$ 332,765
+  CVD_Microprice                      GC  trades=6025  dsr=-0.009  pnl=$ 441,086
+  CVD_Slope_Regime                    GC  trades=4425  dsr=-0.009  pnl=$ 100,958
+  CVD_Slope_Regime                    GC  trades=4425  dsr=-0.009  pnl=$  80,331
+  CVD_Slope_Regime                    GC  trades=4425  dsr=-0.009  pnl=$ 240,494
+  CVD_Slope_Regime                    GC  trades=4425  dsr=-0.009  pnl=$ 221,446
+  CVD_Slope_Regime                    GC  trades=2789  dsr=+0.439  pnl=$  52,780
+  CVD_Slope_Regime                    GC  trades=2789  dsr=+0.771  pnl=$  39,066
+  CVD_Slope_Regime                    GC  trades=2789  dsr=-0.010  pnl=$ 146,139
+  CVD_Slope_Regime                    GC  trades=2789  dsr=-0.010  pnl=$ 136,631
+  CVD_Slope_Regime                    GC  trades=1705  dsr=-0.011  pnl=$  56,001
+  CVD_Slope_Regime                    GC  trades=1705  dsr=-0.011  pnl=$  53,964
+  CVD_Slope_Regime                    GC  trades=1705  dsr=-0.011  pnl=$ 113,757
+  CVD_Slope_Regime                    GC  trades=1705  dsr=-0.011  pnl=$ 116,366
+  CVD_Acceleration                    GC  trades=3596  dsr=-0.010  pnl=$  59,342
+  CVD_Acceleration                    GC  trades=3596  dsr=+0.936  pnl=$  67,776
+  CVD_Acceleration                    GC  trades=3596  dsr=-0.010  pnl=$ 138,262
+  CVD_Acceleration                    GC  trades=3596  dsr=-0.010  pnl=$ 155,950
+  CVD_Acceleration                    GC  trades=2259  dsr=-0.011  pnl=$  49,802
+  CVD_Acceleration                    GC  trades=2259  dsr=-0.011  pnl=$  61,900
+  CVD_Acceleration                    GC  trades=2259  dsr=-0.011  pnl=$ 109,782
+  CVD_Acceleration                    GC  trades=2259  dsr=-0.011  pnl=$ 131,599
+  CVD_Acceleration                    GC  trades=1471  dsr=-0.011  pnl=$  44,102
+  CVD_Acceleration                    GC  trades=1471  dsr=-0.011  pnl=$  56,118
+  CVD_Acceleration                    GC  trades=1471  dsr=-0.011  pnl=$  79,546
+  CVD_Acceleration                    GC  trades=1471  dsr=-0.011  pnl=$  98,849
+  CVD_VWAP                            GC  trades=2655  dsr=-0.009  pnl=$ 105,120
+  CVD_VWAP                            GC  trades=2655  dsr=-0.009  pnl=$ 110,948
+  CVD_VWAP                            GC  trades=2655  dsr=-0.009  pnl=$ 213,449
+  CVD_VWAP                            GC  trades=2655  dsr=-0.009  pnl=$ 219,290
+  CVD_VWAP                            GC  trades=2439  dsr=+0.774  pnl=$  83,568
+  CVD_VWAP                            GC  trades=2439  dsr=+0.595  pnl=$  90,458
+  CVD_VWAP                            GC  trades=2439  dsr=-0.009  pnl=$ 176,995
+  CVD_VWAP                            GC  trades=2439  dsr=-0.009  pnl=$ 188,537
+  CVD_VWAP                            GC  trades=4050  dsr=-0.008  pnl=$  94,612
+  CVD_VWAP                            GC  trades=4050  dsr=-0.008  pnl=$ 107,946
+  CVD_VWAP                            GC  trades=4050  dsr=-0.008  pnl=$ 257,823
+  CVD_VWAP                            GC  trades=4050  dsr=-0.008  pnl=$ 276,556
+  CVD_VWAP                            GC  trades=3691  dsr=+0.773  pnl=$  79,292
+  CVD_VWAP                            GC  trades=3691  dsr=+0.658  pnl=$  94,666
+  CVD_VWAP                            GC  trades=3691  dsr=-0.008  pnl=$ 217,940
+  CVD_VWAP                            GC  trades=3691  dsr=-0.008  pnl=$ 245,346
+  Depth_Imbalance_Momentum            GC  trades=13107  dsr=-0.009  pnl=$ 516,162
+  Depth_Imbalance_Momentum            GC  trades=13107  dsr=-0.009  pnl=$ 638,440
+  Depth_Imbalance_Momentum            GC  trades=13107  dsr=-0.009  pnl=$ 967,315
+  Depth_Imbalance_Momentum            GC  trades=13107  dsr=-0.009  pnl=$1,167,954
+  Depth_Imbalance_Momentum            GC  trades=11964  dsr=-0.009  pnl=$ 473,487
+  Depth_Imbalance_Momentum            GC  trades=11964  dsr=-0.009  pnl=$ 620,712
+  Depth_Imbalance_Momentum            GC  trades=11964  dsr=-0.009  pnl=$ 890,886
+  Depth_Imbalance_Momentum            GC  trades=11964  dsr=-0.009  pnl=$1,120,243
+  Depth_Imbalance_Momentum            GC  trades=10490  dsr=-0.009  pnl=$ 421,059
+  Depth_Imbalance_Momentum            GC  trades=10490  dsr=-0.009  pnl=$ 564,563
+  Depth_Imbalance_Momentum            GC  trades=10490  dsr=-0.009  pnl=$ 795,520
+  Depth_Imbalance_Momentum            GC  trades=10490  dsr=-0.009  pnl=$1,009,131
+  Depth_Imbalance_Momentum            GC  trades=10795  dsr=-0.009  pnl=$ 436,635
+  Depth_Imbalance_Momentum            GC  trades=10795  dsr=-0.009  pnl=$ 544,529
+  Depth_Imbalance_Momentum            GC  trades=10795  dsr=-0.009  pnl=$ 804,912
+  Depth_Imbalance_Momentum            GC  trades=10795  dsr=-0.009  pnl=$ 977,218
+  Depth_Imbalance_Momentum            GC  trades=9827  dsr=-0.009  pnl=$ 399,984
+  Depth_Imbalance_Momentum            GC  trades=9827  dsr=-0.009  pnl=$ 521,512
+  Depth_Imbalance_Momentum            GC  trades=9827  dsr=-0.009  pnl=$ 736,648
+  Depth_Imbalance_Momentum            GC  trades=9827  dsr=-0.009  pnl=$ 923,612
+  Depth_Imbalance_Momentum            GC  trades=8525  dsr=-0.009  pnl=$ 342,153
+  Depth_Imbalance_Momentum            GC  trades=8525  dsr=-0.010  pnl=$ 452,432
+  Depth_Imbalance_Momentum            GC  trades=8525  dsr=-0.009  pnl=$ 642,826
+  Depth_Imbalance_Momentum            GC  trades=8525  dsr=-0.010  pnl=$ 811,384
+  Depth_Imbalance_Momentum            GC  trades=9029  dsr=-0.009  pnl=$ 437,522
+  Depth_Imbalance_Momentum            GC  trades=9029  dsr=-0.009  pnl=$ 530,120
+  Depth_Imbalance_Momentum            GC  trades=9029  dsr=-0.009  pnl=$ 778,399
+  Depth_Imbalance_Momentum            GC  trades=9029  dsr=-0.009  pnl=$ 933,269
+  Depth_Imbalance_Momentum            GC  trades=8186  dsr=-0.010  pnl=$ 408,903
+  Depth_Imbalance_Momentum            GC  trades=8186  dsr=-0.010  pnl=$ 521,643
+  Depth_Imbalance_Momentum            GC  trades=8186  dsr=-0.010  pnl=$ 714,937
+  Depth_Imbalance_Momentum            GC  trades=8186  dsr=-0.010  pnl=$ 884,044
+  Depth_Imbalance_Momentum            GC  trades=7070  dsr=-0.010  pnl=$ 342,691
+  Depth_Imbalance_Momentum            GC  trades=7070  dsr=-0.010  pnl=$ 440,858
+  Depth_Imbalance_Momentum            GC  trades=7070  dsr=-0.010  pnl=$ 608,872
+  Depth_Imbalance_Momentum            GC  trades=7070  dsr=-0.010  pnl=$ 764,919
+  Depth_Imbalance_MeanRev             GC  trades=1200  dsr=+2.303  pnl=$ -51,985
+  Depth_Imbalance_MeanRev             GC  trades=1200  dsr=-0.011  pnl=$ -51,525
+  Depth_Imbalance_MeanRev             GC  trades=1200  dsr=-0.011  pnl=$ -54,861
+  Depth_Imbalance_MeanRev             GC  trades=1200  dsr=-0.011  pnl=$ -12,234
+  Depth_Imbalance_MeanRev             GC  trades=1200  dsr=-0.011  pnl=$  -4,441
+  Depth_Imbalance_MeanRev             GC  trades=1200  dsr=-0.011  pnl=$  -9,112
+  Depth_Imbalance_MeanRev             GC  trades= 994  dsr=-0.012  pnl=$ -35,950
+  Depth_Imbalance_MeanRev             GC  trades= 994  dsr=-0.012  pnl=$ -35,210
+  Depth_Imbalance_MeanRev             GC  trades= 994  dsr=-0.012  pnl=$ -37,939
+  Depth_Imbalance_MeanRev             GC  trades= 994  dsr=+0.026  pnl=$   1,044
+  Depth_Imbalance_MeanRev             GC  trades= 994  dsr=+0.249  pnl=$   9,874
+  Depth_Imbalance_MeanRev             GC  trades= 994  dsr=+0.218  pnl=$   6,151
+  Depth_Imbalance_MeanRev             GC  trades= 786  dsr=+2.018  pnl=$ -45,830
+  Depth_Imbalance_MeanRev             GC  trades= 786  dsr=-0.012  pnl=$ -43,385
+  Depth_Imbalance_MeanRev             GC  trades= 786  dsr=-0.012  pnl=$ -44,129
+  Depth_Imbalance_MeanRev             GC  trades= 786  dsr=-0.012  pnl=$ -15,610
+  Depth_Imbalance_MeanRev             GC  trades= 786  dsr=-0.012  pnl=$  -2,988
+  Depth_Imbalance_MeanRev             GC  trades= 786  dsr=-0.012  pnl=$  -3,288
+  MultiTF_OFI                         GC  trades=18984  dsr=+0.647  pnl=$-204,420
+  MultiTF_OFI                         GC  trades=18984  dsr=-0.008  pnl=$-213,300
+  MultiTF_OFI                         GC  trades=18984  dsr=-0.008  pnl=$ 153,580
+  MultiTF_OFI                         GC  trades=18984  dsr=-0.008  pnl=$ 178,676
+  MultiTF_OFI                         GC  trades=18984  dsr=+0.647  pnl=$-204,420
+  MultiTF_OFI                         GC  trades=18984  dsr=-0.008  pnl=$-213,300
+  MultiTF_OFI                         GC  trades=18984  dsr=-0.008  pnl=$ 153,580
+  MultiTF_OFI                         GC  trades=18984  dsr=-0.008  pnl=$ 178,676
+  MultiTF_OFI                         GC  trades=18986  dsr=+0.734  pnl=$-207,105
+  MultiTF_OFI                         GC  trades=18986  dsr=-0.008  pnl=$-217,248
+  MultiTF_OFI                         GC  trades=18986  dsr=-0.008  pnl=$ 150,613
+  MultiTF_OFI                         GC  trades=18986  dsr=-0.008  pnl=$ 173,088
+  MultiTF_OFI                         GC  trades=18986  dsr=+0.734  pnl=$-207,105
+  MultiTF_OFI                         GC  trades=18986  dsr=-0.008  pnl=$-217,248
+  MultiTF_OFI                         GC  trades=18986  dsr=-0.008  pnl=$ 150,613
+  MultiTF_OFI                         GC  trades=18986  dsr=-0.008  pnl=$ 173,088
+
+[SAVED] C:\Users\conor\Desktop\quant-research\05_backtests\l2_results\l2_strategy_results.csv  (331 combos)
+[SURVIVORS] 44 passed initial filter → C:\Users\conor\Desktop\quant-research\05_backtests\l2_results\l2_survivors.json
+[STRESS] C:\Users\conor\Desktop\quant-research\05_backtests\l2_results\l2_stress_results.csv
+
+[HARDENED] 15 strategies survived stress test
+                 strategy symbol  stress_dsr  stress_pnl  stress_wr
+         OFI_Continuation     GC      0.3010     5932.00     0.4255
+         OFI_Continuation     GC      0.1247     2211.50     0.4774
+         OFI_Continuation     GC      0.3747     7018.00     0.4308
+         OFI_Continuation     GC      1.1727    20187.00     0.4491
+Sweep_Absorption_Reversal     GC      1.4265     4411.00     0.4454
+Sweep_Absorption_Reversal     GC      1.2815     4040.00     0.4426
+                 CVD_VWAP     GC      0.4991    34788.50     0.4563
+                 CVD_VWAP     GC      0.5241    41678.00     0.4551
+                 CVD_VWAP     GC      0.2170    20846.00     0.4546
+  Depth_Imbalance_MeanRev     GC      9.5093   -75985.25     0.4275
+  Depth_Imbalance_MeanRev     GC      6.8329   -61550.25     0.4338
+              MultiTF_OFI     GC     19.1327  -584100.00     0.4040
+              MultiTF_OFI     GC     19.1327  -584100.00     0.4040
+              MultiTF_OFI     GC     19.7132  -586825.00     0.4038
+              MultiTF_OFI     GC     19.7132  -586825.00     0.4038
+
+[DONE]

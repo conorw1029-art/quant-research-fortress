@@ -396,8 +396,10 @@ class RiskManager:
                         "account_halt": None,
                     })
 
-        # ── 2b. Legacy partial exit (2+ contract mode) ────────────────────
-        elif not trade.partial_done:
+        # ── 2b. Legacy partial exit (2+ contract mode only) ───────────────
+        # Partial exit splits 50% of the position — impossible with 1 contract.
+        # Guard ensures we never attempt fractional-contract exits.
+        elif not trade.partial_done and trade.contracts >= 2:
             partial_px = (trade.entry_px
                           + trade.direction * self.cfg.partial_exit_r * trade.stop_dist)
             partial_hit = (

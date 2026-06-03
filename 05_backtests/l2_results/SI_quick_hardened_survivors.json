@@ -1,0 +1,47 @@
+[
+  {
+    "strategy":"CVD_Microprice",
+    "symbol":"SI",
+    "params":"{\"cvd_pct\": 60, \"mp_ticks\": 1.0, \"rr_ratio\": 1.5, \"hold_bars\": 10}",
+    "stress_dsr":0.2073,
+    "stress_pnl":31843.0,
+    "stress_wr":0.4278,
+    "stress_trades":1891
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"SI",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 60, \"rr_ratio\": 1.5, \"hold_bars\": 8}",
+    "stress_dsr":0.1026,
+    "stress_pnl":16401.25,
+    "stress_wr":0.4248,
+    "stress_trades":2780
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"SI",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 60, \"rr_ratio\": 1.5, \"hold_bars\": 12}",
+    "stress_dsr":0.1375,
+    "stress_pnl":22133.75,
+    "stress_wr":0.4219,
+    "stress_trades":2780
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"SI",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 70, \"rr_ratio\": 1.5, \"hold_bars\": 8}",
+    "stress_dsr":0.1168,
+    "stress_pnl":17893.25,
+    "stress_wr":0.4214,
+    "stress_trades":2584
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"SI",
+    "params":"{\"vwap_band\": 0.5, \"cvd_pct\": 70, \"rr_ratio\": 1.5, \"hold_bars\": 12}",
+    "stress_dsr":0.2206,
+    "stress_pnl":34214.5,
+    "stress_wr":0.4218,
+    "stress_trades":2584
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "strategy":"OFI_Continuation",
+    "symbol":"GC",
+    "params":"{\"ofi_pct\": 95, \"roll_win\": 60, \"rr_ratio\": 2.0, \"hold_bars\": 5}",
+    "stress_dsr":0.1601,
+    "stress_pnl":3049.0,
+    "stress_wr":0.4229,
+    "stress_trades":882
+  },
+  {
+    "strategy":"Sweep_Absorption_Reversal",
+    "symbol":"GC",
+    "params":"{\"min_sweeps\": 3, \"absorption_thr\": 0.5, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.9004,
+    "stress_pnl":3340.0,
+    "stress_wr":0.4328,
+    "stress_trades":238
+  },
+  {
+    "strategy":"Sweep_Absorption_Reversal",
+    "symbol":"GC",
+    "params":"{\"min_sweeps\": 3, \"absorption_thr\": 0.8, \"rr_ratio\": 2.0, \"hold_bars\": 8}",
+    "stress_dsr":0.8178,
+    "stress_pnl":2982.5,
+    "stress_wr":0.4298,
+    "stress_trades":235
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.25, \"cvd_pct\": 70, \"rr_ratio\": 1.5, \"hold_bars\": 8}",
+    "stress_dsr":0.347,
+    "stress_pnl":23813.0,
+    "stress_wr":0.4547,
+    "stress_trades":2439
+  },
+  {
+    "strategy":"CVD_VWAP",
+    "symbol":"GC",
+    "params":"{\"vwap_band\": 0.25, \"cvd_pct\": 70, \"rr_ratio\": 1.5, \"hold_bars\": 12}",
+    "stress_dsr":0.3978,
+    "stress_pnl":30702.5,
+    "stress_wr":0.4535,
+    "stress_trades":2439
+  }
+]

@@ -1,0 +1,347 @@
+======================================================================
+ FORTRESS L2 STRATEGY BACKTEST BATTERY
+ Symbols: ['SI']  Strategies: 16
+======================================================================
+[SI] Primary bars: 37,920 rows
+[SI] Quick mode: 15,172 bars from 2024
+[SI] 15,172 bars ready. L2 cols present: 17/17
+
+[SI] Running 16 strategy classes ...
+  OFI_Continuation                    SI  trades= 509  dsr=+0.388  pnl=$  20,198
+  OFI_Continuation                    SI  trades= 509  dsr=+0.078  pnl=$  29,610
+  OFI_Continuation                    SI  trades= 509  dsr=+0.276  pnl=$  34,277
+  OFI_Continuation                    SI  trades= 509  dsr=-0.014  pnl=$  43,700
+  OFI_Continuation                    SI  trades= 420  dsr=-0.015  pnl=$  35,415
+  OFI_Continuation                    SI  trades= 420  dsr=-0.015  pnl=$  39,331
+  OFI_Continuation                    SI  trades= 420  dsr=-0.015  pnl=$  44,940
+  OFI_Continuation                    SI  trades= 420  dsr=-0.015  pnl=$  46,115
+  OFI_Continuation                    SI  trades= 508  dsr=+0.253  pnl=$   8,786
+  OFI_Continuation                    SI  trades= 508  dsr=+0.377  pnl=$  16,704
+  OFI_Continuation                    SI  trades= 508  dsr=+0.327  pnl=$  14,604
+  OFI_Continuation                    SI  trades= 508  dsr=+0.595  pnl=$  23,266
+  OFI_Continuation                    SI  trades= 418  dsr=-0.015  pnl=$  35,390
+  OFI_Continuation                    SI  trades= 418  dsr=-0.015  pnl=$  53,543
+  OFI_Continuation                    SI  trades= 418  dsr=-0.015  pnl=$  48,939
+  OFI_Continuation                    SI  trades= 418  dsr=-0.015  pnl=$  67,166
+  OFI_Continuation                    SI  trades= 437  dsr=-0.015  pnl=$  20,086
+  OFI_Continuation                    SI  trades= 437  dsr=-0.015  pnl=$  41,347
+  OFI_Continuation                    SI  trades= 437  dsr=-0.015  pnl=$  27,536
+  OFI_Continuation                    SI  trades= 437  dsr=-0.015  pnl=$  41,971
+  OFI_Continuation                    SI  trades= 359  dsr=-0.016  pnl=$  28,773
+  OFI_Continuation                    SI  trades= 359  dsr=-0.016  pnl=$  40,957
+  OFI_Continuation                    SI  trades= 359  dsr=-0.016  pnl=$  37,220
+  OFI_Continuation                    SI  trades= 359  dsr=-0.016  pnl=$  43,404
+  OFI_Reversal                        SI  trades=5006  dsr=-0.009  pnl=$ 119,347
+  OFI_Reversal                        SI  trades=5006  dsr=-0.009  pnl=$ 146,722
+  OFI_Reversal                        SI  trades=5006  dsr=-0.009  pnl=$ 492,648
+  OFI_Reversal                        SI  trades=5006  dsr=-0.009  pnl=$ 549,893
+  OFI_Reversal                        SI  trades=5110  dsr=-0.009  pnl=$ 110,320
+  OFI_Reversal                        SI  trades=5110  dsr=-0.009  pnl=$ 141,348
+  OFI_Reversal                        SI  trades=5110  dsr=-0.009  pnl=$ 478,018
+  OFI_Reversal                        SI  trades=5110  dsr=-0.009  pnl=$ 539,808
+  OFI_Reversal                        SI  trades=4011  dsr=-0.009  pnl=$ 149,444
+  OFI_Reversal                        SI  trades=4011  dsr=-0.009  pnl=$ 200,067
+  OFI_Reversal                        SI  trades=4011  dsr=-0.009  pnl=$ 457,876
+  OFI_Reversal                        SI  trades=4011  dsr=-0.009  pnl=$ 535,538
+  OFI_Reversal                        SI  trades=4097  dsr=-0.009  pnl=$ 139,610
+  OFI_Reversal                        SI  trades=4097  dsr=-0.009  pnl=$ 191,966
+  OFI_Reversal                        SI  trades=4097  dsr=-0.009  pnl=$ 441,716
+  OFI_Reversal                        SI  trades=4097  dsr=-0.009  pnl=$ 521,634
+  OFI_Reversal                        SI  trades=2492  dsr=-0.010  pnl=$  70,847
+  OFI_Reversal                        SI  trades=2492  dsr=-0.010  pnl=$ 119,455
+  OFI_Reversal                        SI  trades=2492  dsr=-0.010  pnl=$ 278,638
+  OFI_Reversal                        SI  trades=2492  dsr=-0.010  pnl=$ 350,648
+  OFI_Reversal                        SI  trades=2554  dsr=-0.010  pnl=$  61,122
+  OFI_Reversal                        SI  trades=2554  dsr=-0.010  pnl=$ 110,476
+  OFI_Reversal                        SI  trades=2554  dsr=-0.010  pnl=$ 261,217
+  OFI_Reversal                        SI  trades=2554  dsr=-0.010  pnl=$ 334,520
+  OFI_Microprice                      SI  trades=6567  dsr=-0.009  pnl=$ 383,400
+  OFI_Microprice                      SI  trades=6567  dsr=-0.009  pnl=$ 420,614
+  OFI_Microprice                      SI  trades=6567  dsr=-0.009  pnl=$ 896,748
+  OFI_Microprice                      SI  trades=6567  dsr=-0.009  pnl=$ 889,474
+  OFI_Microprice                      SI  trades=5463  dsr=-0.009  pnl=$ 470,773
+  OFI_Microprice                      SI  trades=5463  dsr=-0.009  pnl=$ 509,689
+  OFI_Microprice                      SI  trades=5463  dsr=-0.009  pnl=$ 985,829
+  OFI_Microprice                      SI  trades=5463  dsr=-0.009  pnl=$ 995,606
+  OFI_Microprice                      SI  trades=5365  dsr=-0.009  pnl=$ 260,035
+  OFI_Microprice                      SI  trades=5365  dsr=-0.009  pnl=$ 287,726
+  OFI_Microprice                      SI  trades=5365  dsr=-0.009  pnl=$ 720,785
+  OFI_Microprice                      SI  trades=5365  dsr=-0.009  pnl=$ 721,125
+  OFI_Microprice                      SI  trades=4470  dsr=-0.009  pnl=$ 362,731
+  OFI_Microprice                      SI  trades=4470  dsr=-0.009  pnl=$ 391,255
+  OFI_Microprice                      SI  trades=4470  dsr=-0.009  pnl=$ 809,375
+  OFI_Microprice                      SI  trades=4470  dsr=-0.009  pnl=$ 826,288
+  OFI_Microprice                      SI  trades=4168  dsr=+0.323  pnl=$ 168,820
+  OFI_Microprice                      SI  trades=4168  dsr=+0.267  pnl=$ 190,542
+  OFI_Microprice                      SI  trades=4168  dsr=-0.009  pnl=$ 547,222
+  OFI_Microprice                      SI  trades=4168  dsr=-0.009  pnl=$ 525,396
+  OFI_Microprice                      SI  trades=3502  dsr=-0.010  pnl=$ 316,912
+  OFI_Microprice                      SI  trades=3502  dsr=-0.010  pnl=$ 348,826
+  OFI_Microprice                      SI  trades=3502  dsr=-0.009  pnl=$ 704,188
+  OFI_Microprice                      SI  trades=3502  dsr=-0.010  pnl=$ 713,086
+  Sweep_Continuation                  SI  trades= 620  dsr=-0.705  pnl=$ -13,561
+  Sweep_Continuation                  SI  trades= 620  dsr=+0.455  pnl=$  16,452
+  Sweep_Continuation                  SI  trades= 620  dsr=+0.394  pnl=$   9,980
+  Sweep_Continuation                  SI  trades= 620  dsr=+0.748  pnl=$  43,618
+  Sweep_Continuation                  SI  trades= 144  dsr=+0.490  pnl=$   1,597
+  Sweep_Continuation                  SI  trades= 144  dsr=+1.250  pnl=$   5,660
+  Sweep_Continuation                  SI  trades= 144  dsr=+1.385  pnl=$   6,427
+  Sweep_Continuation                  SI  trades= 144  dsr=+0.828  pnl=$   7,790
+  Sweep_Continuation                  SI  trades= 235  dsr=+1.081  pnl=$   8,540
+  Sweep_Continuation                  SI  trades= 235  dsr=+1.009  pnl=$   9,154
+  Sweep_Continuation                  SI  trades= 235  dsr=+1.523  pnl=$  22,290
+  Sweep_Continuation                  SI  trades= 235  dsr=+0.556  pnl=$  23,112
+  Sweep_Continuation                  SI  trades=  54  dsr=+0.459  pnl=$     502
+  Sweep_Continuation                  SI  trades=  54  dsr=-0.761  pnl=$    -897
+  Sweep_Continuation                  SI  trades=  54  dsr=+1.887  pnl=$   1,944
+  Sweep_Continuation                  SI  trades=  54  dsr=-0.744  pnl=$  -1,023
+  Sweep_Absorption_Reversal           SI  trades= 169  dsr=-4.010  pnl=$ -11,434
+  Sweep_Absorption_Reversal           SI  trades= 169  dsr=-7.341  pnl=$ -18,988
+  Sweep_Absorption_Reversal           SI  trades= 169  dsr=-3.119  pnl=$  -8,983
+  Sweep_Absorption_Reversal           SI  trades= 169  dsr=-6.119  pnl=$ -16,253
+  Sweep_Absorption_Reversal           SI  trades= 168  dsr=-3.939  pnl=$ -11,235
+  Sweep_Absorption_Reversal           SI  trades= 168  dsr=-7.255  pnl=$ -18,788
+  Sweep_Absorption_Reversal           SI  trades= 168  dsr=-3.049  pnl=$  -8,784
+  Sweep_Absorption_Reversal           SI  trades= 168  dsr=-6.035  pnl=$ -16,054
+  Sweep_Absorption_Reversal           SI  trades=  70  dsr=-3.324  pnl=$  -3,471
+  Sweep_Absorption_Reversal           SI  trades=  70  dsr=-3.621  pnl=$  -3,448
+  Sweep_Absorption_Reversal           SI  trades=  70  dsr=-1.774  pnl=$  -1,950
+  Sweep_Absorption_Reversal           SI  trades=  70  dsr=-2.019  pnl=$  -2,030
+  Sweep_Absorption_Reversal           SI  trades=  69  dsr=-3.131  pnl=$  -3,272
+  Sweep_Absorption_Reversal           SI  trades=  69  dsr=-3.408  pnl=$  -3,248
+  Sweep_Absorption_Reversal           SI  trades=  69  dsr=-1.597  pnl=$  -1,750
+  Sweep_Absorption_Reversal           SI  trades=  69  dsr=-1.822  pnl=$  -1,830
+  Absorption_Reversal                 SI  trades=11017  dsr=-0.009  pnl=$ 254,348
+  Absorption_Reversal                 SI  trades=11017  dsr=-0.009  pnl=$ 303,702
+  Absorption_Reversal                 SI  trades=11017  dsr=-0.009  pnl=$ 348,231
+  Absorption_Reversal                 SI  trades=11017  dsr=-0.009  pnl=$ 879,288
+  Absorption_Reversal                 SI  trades=11017  dsr=-0.009  pnl=$ 888,754
+  Absorption_Reversal                 SI  trades=11017  dsr=-0.009  pnl=$ 943,634
+  Absorption_Reversal                 SI  trades=10992  dsr=+0.184  pnl=$ 144,312
+  Absorption_Reversal                 SI  trades=10992  dsr=+0.272  pnl=$ 121,295
+  Absorption_Reversal                 SI  trades=10992  dsr=+0.285  pnl=$ 168,561
+  Absorption_Reversal                 SI  trades=10992  dsr=-0.009  pnl=$ 798,341
+  Absorption_Reversal                 SI  trades=10992  dsr=-0.009  pnl=$ 758,676
+  Absorption_Reversal                 SI  trades=10992  dsr=-0.009  pnl=$ 818,101
+  Absorption_Reversal                 SI  trades=9557  dsr=-0.009  pnl=$ 299,606
+  Absorption_Reversal                 SI  trades=9557  dsr=-0.009  pnl=$ 283,640
+  Absorption_Reversal                 SI  trades=9557  dsr=-0.009  pnl=$ 332,338
+  Absorption_Reversal                 SI  trades=9557  dsr=-0.009  pnl=$ 883,586
+  Absorption_Reversal                 SI  trades=9557  dsr=-0.009  pnl=$ 847,531
+  Absorption_Reversal                 SI  trades=9557  dsr=-0.009  pnl=$ 905,414
+  Absorption_Reversal                 SI  trades=8593  dsr=-0.009  pnl=$ 213,920
+  Absorption_Reversal                 SI  trades=8593  dsr=-0.009  pnl=$ 237,630
+  Absorption_Reversal                 SI  trades=8593  dsr=-0.009  pnl=$ 304,605
+  Absorption_Reversal                 SI  trades=8593  dsr=-0.009  pnl=$ 745,099
+  Absorption_Reversal                 SI  trades=8593  dsr=-0.009  pnl=$ 765,389
+  Absorption_Reversal                 SI  trades=8593  dsr=-0.009  pnl=$ 862,644
+  Absorption_Reversal                 SI  trades=5994  dsr=+0.312  pnl=$  82,362
+  Absorption_Reversal                 SI  trades=5994  dsr=+0.364  pnl=$  87,663
+  Absorption_Reversal                 SI  trades=5994  dsr=+0.349  pnl=$ 135,226
+  Absorption_Reversal                 SI  trades=5994  dsr=-0.009  pnl=$ 443,550
+  Absorption_Reversal                 SI  trades=5994  dsr=-0.009  pnl=$ 418,930
+  Absorption_Reversal                 SI  trades=5994  dsr=-0.009  pnl=$ 468,517
+  Absorption_Reversal                 SI  trades=5669  dsr=-0.002  pnl=$ 109,487
+  Absorption_Reversal                 SI  trades=5669  dsr=+0.031  pnl=$ 137,201
+  Absorption_Reversal                 SI  trades=5669  dsr=-0.009  pnl=$ 175,182
+  Absorption_Reversal                 SI  trades=5669  dsr=-0.009  pnl=$ 502,282
+  Absorption_Reversal                 SI  trades=5669  dsr=-0.009  pnl=$ 515,157
+  Absorption_Reversal                 SI  trades=5669  dsr=-0.009  pnl=$ 574,922
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  40,118
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  50,416
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  74,653
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  85,073
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$ 129,633
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$ 153,139
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  40,118
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  50,416
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  74,653
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$  85,073
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$ 129,633
+  CVD_Absorption                      SI  trades=1206  dsr=-0.015  pnl=$ 153,139
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$  62,479
+  CVD_Absorption                      SI  trades=1618  dsr=-0.014  pnl=$  65,665
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 119,646
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 129,919
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 160,148
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 196,144
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$  62,479
+  CVD_Absorption                      SI  trades=1618  dsr=-0.014  pnl=$  65,665
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 119,646
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 129,919
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 160,148
+  CVD_Absorption                      SI  trades=1618  dsr=-0.013  pnl=$ 196,144
+  Repeated_Replenishment              SI  trades=2283  dsr=-0.011  pnl=$ 152,810
+  Repeated_Replenishment              SI  trades=2283  dsr=-0.011  pnl=$ 155,882
+  Repeated_Replenishment              SI  trades=2283  dsr=-0.011  pnl=$ 333,266
+  Repeated_Replenishment              SI  trades=2283  dsr=-0.011  pnl=$ 310,379
+  Repeated_Replenishment              SI  trades=1924  dsr=-0.012  pnl=$  73,850
+  Repeated_Replenishment              SI  trades=1924  dsr=-0.012  pnl=$  78,662
+  Repeated_Replenishment              SI  trades=1924  dsr=-0.012  pnl=$ 238,854
+  Repeated_Replenishment              SI  trades=1924  dsr=-0.012  pnl=$ 217,530
+  Repeated_Replenishment              SI  trades=1767  dsr=-0.011  pnl=$ 124,508
+  Repeated_Replenishment              SI  trades=1767  dsr=-0.011  pnl=$ 135,227
+  Repeated_Replenishment              SI  trades=1767  dsr=-0.011  pnl=$ 286,351
+  Repeated_Replenishment              SI  trades=1767  dsr=-0.012  pnl=$ 292,981
+  Repeated_Replenishment              SI  trades=1455  dsr=-0.012  pnl=$  87,692
+  Repeated_Replenishment              SI  trades=1455  dsr=-0.012  pnl=$  98,970
+  Repeated_Replenishment              SI  trades=1455  dsr=-0.012  pnl=$ 244,285
+  Repeated_Replenishment              SI  trades=1455  dsr=-0.012  pnl=$ 244,520
+  Repeated_Replenishment              SI  trades=1304  dsr=-0.012  pnl=$  80,931
+  Repeated_Replenishment              SI  trades=1304  dsr=-0.012  pnl=$  87,507
+  Repeated_Replenishment              SI  trades=1304  dsr=-0.012  pnl=$ 215,974
+  Repeated_Replenishment              SI  trades=1304  dsr=-0.012  pnl=$ 218,192
+  Repeated_Replenishment              SI  trades=1077  dsr=-0.013  pnl=$  54,734
+  Repeated_Replenishment              SI  trades=1077  dsr=-0.013  pnl=$  54,502
+  Repeated_Replenishment              SI  trades=1077  dsr=-0.013  pnl=$ 181,311
+  Repeated_Replenishment              SI  trades=1077  dsr=-0.013  pnl=$ 170,624
+  CVD_Microprice                      SI  trades=2614  dsr=+0.443  pnl=$  72,414
+  CVD_Microprice                      SI  trades=2614  dsr=+0.464  pnl=$ 119,186
+  CVD_Microprice                      SI  trades=2614  dsr=-0.011  pnl=$ 336,922
+  CVD_Microprice                      SI  trades=2614  dsr=-0.011  pnl=$ 331,662
+  CVD_Microprice                      SI  trades=1891  dsr=+0.560  pnl=$  77,564
+  CVD_Microprice                      SI  trades=1891  dsr=+0.491  pnl=$ 126,393
+  CVD_Microprice                      SI  trades=1891  dsr=-0.012  pnl=$ 299,216
+  CVD_Microprice                      SI  trades=1891  dsr=-0.012  pnl=$ 308,398
+  CVD_Microprice                      SI  trades=2029  dsr=+0.239  pnl=$  29,986
+  CVD_Microprice                      SI  trades=2029  dsr=+0.327  pnl=$  56,668
+  CVD_Microprice                      SI  trades=2029  dsr=-0.011  pnl=$ 219,182
+  CVD_Microprice                      SI  trades=2029  dsr=-0.011  pnl=$ 215,500
+  CVD_Microprice                      SI  trades=1463  dsr=+0.366  pnl=$  40,830
+  CVD_Microprice                      SI  trades=1463  dsr=+0.395  pnl=$  65,532
+  CVD_Microprice                      SI  trades=1463  dsr=-0.013  pnl=$ 197,382
+  CVD_Microprice                      SI  trades=1463  dsr=-0.013  pnl=$ 188,422
+  CVD_Microprice                      SI  trades=1340  dsr=-0.665  pnl=$ -63,411
+  CVD_Microprice                      SI  trades=1340  dsr=-0.328  pnl=$ -33,882
+  CVD_Microprice                      SI  trades=1340  dsr=+0.583  pnl=$  70,215
+  CVD_Microprice                      SI  trades=1340  dsr=+0.407  pnl=$ 103,570
+  CVD_Microprice                      SI  trades= 969  dsr=-0.660  pnl=$ -54,684
+  CVD_Microprice                      SI  trades= 969  dsr=-0.337  pnl=$ -30,440
+  CVD_Microprice                      SI  trades= 969  dsr=+0.510  pnl=$  47,912
+  CVD_Microprice                      SI  trades= 969  dsr=+0.465  pnl=$  74,252
+  CVD_Slope_Regime                    SI  trades=2193  dsr=+0.362  pnl=$  54,958
+  CVD_Slope_Regime                    SI  trades=2193  dsr=+0.333  pnl=$  36,224
+  CVD_Slope_Regime                    SI  trades=2193  dsr=-0.010  pnl=$ 179,737
+  CVD_Slope_Regime                    SI  trades=2193  dsr=-0.010  pnl=$ 171,350
+  CVD_Slope_Regime                    SI  trades=1338  dsr=-0.011  pnl=$  71,949
+  CVD_Slope_Regime                    SI  trades=1338  dsr=-0.011  pnl=$  91,914
+  CVD_Slope_Regime                    SI  trades=1338  dsr=-0.011  pnl=$ 177,589
+  CVD_Slope_Regime                    SI  trades=1338  dsr=-0.011  pnl=$ 228,029
+  CVD_Slope_Regime                    SI  trades= 805  dsr=-0.064  pnl=$  -2,038
+  CVD_Slope_Regime                    SI  trades= 805  dsr=-0.018  pnl=$    -199
+  CVD_Slope_Regime                    SI  trades= 805  dsr=+0.544  pnl=$  37,718
+  CVD_Slope_Regime                    SI  trades= 805  dsr=+0.354  pnl=$  43,418
+  CVD_Acceleration                    SI  trades=1902  dsr=-0.011  pnl=$  99,997
+  CVD_Acceleration                    SI  trades=1902  dsr=-0.011  pnl=$  56,692
+  CVD_Acceleration                    SI  trades=1902  dsr=-0.011  pnl=$ 213,681
+  CVD_Acceleration                    SI  trades=1902  dsr=-0.011  pnl=$ 143,258
+  CVD_Acceleration                    SI  trades=1164  dsr=-0.013  pnl=$  47,380
+  CVD_Acceleration                    SI  trades=1164  dsr=+0.098  pnl=$   6,662
+  CVD_Acceleration                    SI  trades=1164  dsr=-0.013  pnl=$ 122,232
+  CVD_Acceleration                    SI  trades=1164  dsr=-0.013  pnl=$  66,892
+  CVD_Acceleration                    SI  trades= 715  dsr=-0.739  pnl=$ -12,828
+  CVD_Acceleration                    SI  trades= 715  dsr=-2.057  pnl=$ -42,811
+  CVD_Acceleration                    SI  trades= 715  dsr=+0.069  pnl=$  31,600
+  CVD_Acceleration                    SI  trades= 715  dsr=+0.062  pnl=$   2,055
+  CVD_VWAP                            SI  trades=1953  dsr=+0.423  pnl=$  69,009
+  CVD_VWAP                            SI  trades=1953  dsr=+0.479  pnl=$  82,130
+  CVD_VWAP                            SI  trades=1953  dsr=-0.009  pnl=$ 219,146
+  CVD_VWAP                            SI  trades=1953  dsr=-0.009  pnl=$ 248,622
+  CVD_VWAP                            SI  trades=1824  dsr=+0.475  pnl=$  79,217
+  CVD_VWAP                            SI  trades=1824  dsr=+0.491  pnl=$  88,071
+  CVD_VWAP                            SI  trades=1824  dsr=-0.009  pnl=$ 209,154
+  CVD_VWAP                            SI  trades=1824  dsr=-0.009  pnl=$ 234,557
+  CVD_VWAP                            SI  trades=2780  dsr=+0.652  pnl=$ 155,401
+  CVD_VWAP                            SI  trades=2780  dsr=+0.657  pnl=$ 161,134
+  CVD_VWAP                            SI  trades=2780  dsr=-0.009  pnl=$ 343,895
+  CVD_VWAP                            SI  trades=2780  dsr=-0.009  pnl=$ 372,228
+  CVD_VWAP                            SI  trades=2584  dsr=+0.656  pnl=$ 147,093
+  CVD_VWAP                            SI  trades=2584  dsr=+0.623  pnl=$ 163,414
+  CVD_VWAP                            SI  trades=2584  dsr=-0.009  pnl=$ 307,842
+  CVD_VWAP                            SI  trades=2584  dsr=-0.009  pnl=$ 345,932
+  Depth_Imbalance_Momentum            SI  trades=6645  dsr=-0.009  pnl=$ 501,221
+  Depth_Imbalance_Momentum            SI  trades=6645  dsr=-0.009  pnl=$ 661,759
+  Depth_Imbalance_Momentum            SI  trades=6645  dsr=-0.009  pnl=$1,127,500
+  Depth_Imbalance_Momentum            SI  trades=6645  dsr=-0.009  pnl=$1,261,930
+  Depth_Imbalance_Momentum            SI  trades=5925  dsr=-0.009  pnl=$ 411,416
+  Depth_Imbalance_Momentum            SI  trades=5925  dsr=-0.009  pnl=$ 575,141
+  Depth_Imbalance_Momentum            SI  trades=5925  dsr=-0.009  pnl=$ 988,438
+  Depth_Imbalance_Momentum            SI  trades=5925  dsr=-0.009  pnl=$1,142,205
+  Depth_Imbalance_Momentum            SI  trades=5004  dsr=-0.010  pnl=$ 348,528
+  Depth_Imbalance_Momentum            SI  trades=5004  dsr=-0.010  pnl=$ 508,160
+  Depth_Imbalance_Momentum            SI  trades=5004  dsr=-0.010  pnl=$ 860,437
+  Depth_Imbalance_Momentum            SI  trades=5004  dsr=-0.010  pnl=$1,010,864
+  Depth_Imbalance_Momentum            SI  trades=5237  dsr=-0.009  pnl=$ 436,710
+  Depth_Imbalance_Momentum            SI  trades=5237  dsr=-0.009  pnl=$ 607,085
+  Depth_Imbalance_Momentum            SI  trades=5237  dsr=-0.009  pnl=$ 979,774
+  Depth_Imbalance_Momentum            SI  trades=5237  dsr=-0.009  pnl=$1,111,381
+  Depth_Imbalance_Momentum            SI  trades=4667  dsr=-0.010  pnl=$ 323,485
+  Depth_Imbalance_Momentum            SI  trades=4667  dsr=-0.010  pnl=$ 492,591
+  Depth_Imbalance_Momentum            SI  trades=4667  dsr=-0.010  pnl=$ 810,596
+  Depth_Imbalance_Momentum            SI  trades=4667  dsr=-0.010  pnl=$ 968,796
+  Depth_Imbalance_Momentum            SI  trades=3902  dsr=-0.011  pnl=$ 286,071
+  Depth_Imbalance_Momentum            SI  trades=3902  dsr=-0.011  pnl=$ 445,208
+  Depth_Imbalance_Momentum            SI  trades=3902  dsr=-0.011  pnl=$ 699,581
+  Depth_Imbalance_Momentum            SI  trades=3902  dsr=-0.011  pnl=$ 850,071
+  Depth_Imbalance_Momentum            SI  trades=4260  dsr=-0.010  pnl=$ 335,392
+  Depth_Imbalance_Momentum            SI  trades=4260  dsr=-0.010  pnl=$ 484,126
+  Depth_Imbalance_Momentum            SI  trades=4260  dsr=-0.010  pnl=$ 792,220
+  Depth_Imbalance_Momentum            SI  trades=4260  dsr=-0.010  pnl=$ 918,620
+  Depth_Imbalance_Momentum            SI  trades=3808  dsr=-0.010  pnl=$ 209,892
+  Depth_Imbalance_Momentum            SI  trades=3808  dsr=-0.010  pnl=$ 373,990
+  Depth_Imbalance_Momentum            SI  trades=3808  dsr=-0.010  pnl=$ 613,464
+  Depth_Imbalance_Momentum            SI  trades=3808  dsr=-0.010  pnl=$ 783,602
+  Depth_Imbalance_Momentum            SI  trades=3188  dsr=-0.011  pnl=$ 177,185
+  Depth_Imbalance_Momentum            SI  trades=3188  dsr=-0.011  pnl=$ 328,014
+  Depth_Imbalance_Momentum            SI  trades=3188  dsr=-0.011  pnl=$ 540,102
+  Depth_Imbalance_Momentum            SI  trades=3188  dsr=-0.011  pnl=$ 697,279
+  Depth_Imbalance_MeanRev             SI  trades= 656  dsr=-0.473  pnl=$ -24,854
+  Depth_Imbalance_MeanRev             SI  trades= 656  dsr=-0.327  pnl=$ -17,578
+  Depth_Imbalance_MeanRev             SI  trades= 656  dsr=-0.465  pnl=$ -24,868
+  Depth_Imbalance_MeanRev             SI  trades= 656  dsr=-0.013  pnl=$  55,670
+  Depth_Imbalance_MeanRev             SI  trades= 656  dsr=-0.013  pnl=$  60,140
+  Depth_Imbalance_MeanRev             SI  trades= 656  dsr=+0.084  pnl=$  30,896
+  Depth_Imbalance_MeanRev             SI  trades= 555  dsr=-0.499  pnl=$ -25,120
+  Depth_Imbalance_MeanRev             SI  trades= 555  dsr=-0.426  pnl=$ -21,463
+  Depth_Imbalance_MeanRev             SI  trades= 555  dsr=-0.585  pnl=$ -29,053
+  Depth_Imbalance_MeanRev             SI  trades= 555  dsr=-0.013  pnl=$  55,964
+  Depth_Imbalance_MeanRev             SI  trades= 555  dsr=-0.013  pnl=$  57,727
+  Depth_Imbalance_MeanRev             SI  trades= 555  dsr=-0.013  pnl=$  42,745
+  Depth_Imbalance_MeanRev             SI  trades= 474  dsr=+0.112  pnl=$   7,110
+  Depth_Imbalance_MeanRev             SI  trades= 474  dsr=+0.146  pnl=$   9,864
+  Depth_Imbalance_MeanRev             SI  trades= 474  dsr=+0.046  pnl=$   2,916
+  Depth_Imbalance_MeanRev             SI  trades= 474  dsr=-0.013  pnl=$  90,551
+  Depth_Imbalance_MeanRev             SI  trades= 474  dsr=-0.013  pnl=$  99,957
+  Depth_Imbalance_MeanRev             SI  trades= 474  dsr=-0.014  pnl=$  81,356
+  MultiTF_OFI                         SI  trades=7074  dsr=-0.009  pnl=$ 207,214
+  MultiTF_OFI                         SI  trades=7074  dsr=+0.010  pnl=$ 212,050
+  MultiTF_OFI                         SI  trades=7074  dsr=-0.009  pnl=$ 719,622
+  MultiTF_OFI                         SI  trades=7074  dsr=-0.009  pnl=$ 696,887
+  MultiTF_OFI                         SI  trades=5382  dsr=+0.263  pnl=$ 108,436
+  MultiTF_OFI                         SI  trades=5382  dsr=+0.224  pnl=$ 125,127
+  MultiTF_OFI                         SI  trades=5382  dsr=-0.009  pnl=$ 518,758
+  MultiTF_OFI                         SI  trades=5382  dsr=-0.009  pnl=$ 509,938
+  MultiTF_OFI                         SI  trades=6594  dsr=+0.296  pnl=$ 112,666
+  MultiTF_OFI                         SI  trades=6594  dsr=+0.095  pnl=$  40,880
+  MultiTF_OFI                         SI  trades=6594  dsr=-0.009  pnl=$ 521,364
+  MultiTF_OFI                         SI  trades=6594  dsr=-0.009  pnl=$ 430,507
+  MultiTF_OFI                         SI  trades=5078  dsr=-0.181  pnl=$ -45,510
+  MultiTF_OFI                         SI  trades=5078  dsr=-0.246  pnl=$ -82,412
+  MultiTF_OFI                         SI  trades=5078  dsr=-0.009  pnl=$ 249,792
+  MultiTF_OFI                         SI  trades=5078  dsr=+0.251  pnl=$ 193,272
+
+[SAVED] C:\Users\conor\Desktop\quant-research\05_backtests\l2_results\l2_strategy_results.csv  (322 combos)
+[SURVIVORS] 32 passed initial filter → C:\Users\conor\Desktop\quant-research\05_backtests\l2_results\l2_survivors.json
+[STRESS] C:\Users\conor\Desktop\quant-research\05_backtests\l2_results\l2_stress_results.csv
+
+[HARDENED] 7 strategies survived stress test
+          strategy symbol  stress_dsr  stress_pnl  stress_wr
+Sweep_Continuation     SI      0.9542    10540.00     0.3872
+Sweep_Continuation     SI      0.7927    11362.50     0.3830
+    CVD_Microprice     SI      0.2089    31843.00     0.4278
+          CVD_VWAP     SI      0.1028    16401.25     0.4248
+          CVD_VWAP     SI      0.1379    22133.75     0.4219
+          CVD_VWAP     SI      0.1171    17893.25     0.4214
+          CVD_VWAP     SI      0.2224    34214.50     0.4218
+
+[DONE]

@@ -375,10 +375,25 @@ def main():
     parser.add_argument("--rebuild", action="store_true", help="Rebuild L2 bar cache")
     parser.add_argument("--quick",   action="store_true", help="1-year sample only")
     parser.add_argument("--min-trades", type=int, default=20)
+    parser.add_argument("--filter-news", action="store_true",
+                        help="Blank out bars within 30 min of FOMC/NFP/CPI/GDP events")
+    parser.add_argument("--news-window", type=int, default=30,
+                        help="Minutes before/after event to block (default 30)")
     args = parser.parse_args()
 
     symbols = ["GC", "SI"] if args.symbol == "ALL" else [args.symbol]
     strategy_classes = _load_strategies()
+
+    # News filter setup
+    news_filter = None
+    if args.filter_news:
+        try:
+            from tick_news_filter import NewsFilter
+            news_filter = NewsFilter()
+            print(f"[NEWS FILTER] Active — blocking ±{args.news_window} min around events")
+            print(f"  {news_filter.summary()}")
+        except ImportError:
+            print("[NEWS FILTER] WARNING: tick_news_filter.py not found — running without filter")
 
     all_results: List[pd.DataFrame] = []
     all_stress:  List[pd.DataFrame] = []
@@ -392,6 +407,19 @@ def main():
         bars = _load_or_build_l2_bars(symbol, args.rebuild, args.quick)
         if bars.empty:
             continue
+
+        # Apply news filter: zero-out signals on bars near major events
+        if news_filter is not None:
+            news_mask = news_filter.build_filter_mask(bars.index, window_minutes=args.news_window)
+            n_blocked = news_mask.sum()
+            n_total = len(bars)
+            pct_blocked = 100 * n_blocked / n_total if n_total > 0 else 0
+            print(f"[{symbol}] News filter: {n_blocked:,} bars blocked ({pct_blocked:.1f}% of {n_total:,})")
+            # Mark news-blocked bars so strategies skip them
+            bars = bars.copy()
+            bars["_news_blocked"] = news_mask
+        else:
+            bars["_news_blocked"] = False
 
         print(f"\n[{symbol}] Running {len(strategy_classes)} strategy classes ...")
         results = _run_strategy_battery(bars, symbol, strategy_classes,
@@ -413,7 +441,8 @@ def main():
     # Use symbol-specific prefix so parallel/sequential runs don't overwrite each other
     sym_tag = "_".join(symbols) if len(symbols) > 1 else symbols[0]
     mode_tag = "_quick" if args.quick else ""
-    prefix   = f"{sym_tag}{mode_tag}"
+    news_tag = "_newsfiltered" if args.filter_news else ""
+    prefix   = f"{sym_tag}{mode_tag}{news_tag}"
 
     # Combine and save
     combined = pd.concat(all_results, ignore_index=True)
