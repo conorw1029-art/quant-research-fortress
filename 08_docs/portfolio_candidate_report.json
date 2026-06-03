@@ -1,0 +1,504 @@
+{
+  "date": "2026-06-03T13:32:55.514347",
+  "generated_at": "2026-06-03T13:32:55.514370",
+  "n_strategies_input": 66,
+  "n_strategies_eligible": 7,
+  "filters_applied": {
+    "min_trades": 200,
+    "max_dd_per_account": 1000.0,
+    "excluded": []
+  },
+  "strategies": [
+    {
+      "label": "OFI_Continuation_GC",
+      "strategy_key": "OFI_Continuation",
+      "symbol": "GC",
+      "params": {
+        "ofi_pct": 95,
+        "roll_win": 120,
+        "rr_ratio": 2.0,
+        "hold_bars": 10
+      },
+      "wf_sharpe": 4.453,
+      "n_trades_5yr": 2045,
+      "n_days": 244,
+      "total_pnl": -3489.49,
+      "sharpe": -0.9975,
+      "ann_vol": 3612.82,
+      "max_dd": 6665.92,
+      "daily_win_rate": 0.1066,
+      "monthly_win_rate": 0.2763,
+      "expected_monthly": -45.91,
+      "worst_day": -1012.06
+    },
+    {
+      "label": "Repeated_Replenishment_GC",
+      "strategy_key": "Repeated_Replenishment",
+      "symbol": "GC",
+      "params": {
+        "imbal_thr": 0.2,
+        "persist_bars": 5,
+        "cvd_negative": true,
+        "rr_ratio": 2.0,
+        "hold_bars": 8
+      },
+      "wf_sharpe": 4.4437,
+      "n_trades_5yr": 3612,
+      "n_days": 187,
+      "total_pnl": -6138.11,
+      "sharpe": -2.1071,
+      "ann_vol": 3925.65,
+      "max_dd": 7743.27,
+      "daily_win_rate": 0.139,
+      "monthly_win_rate": 0.1711,
+      "expected_monthly": -80.76,
+      "worst_day": -2318.26
+    },
+    {
+      "label": "CVD_Microprice_GC",
+      "strategy_key": "CVD_Microprice",
+      "symbol": "GC",
+      "params": {
+        "cvd_pct": 60,
+        "mp_ticks": 0.5,
+        "rr_ratio": 2.0,
+        "hold_bars": 10
+      },
+      "wf_sharpe": 4.6588,
+      "n_trades_5yr": 7542,
+      "n_days": 786,
+      "total_pnl": -34646.28,
+      "sharpe": -2.5962,
+      "ann_vol": 4278.52,
+      "max_dd": 34867.28,
+      "daily_win_rate": 0.0802,
+      "monthly_win_rate": 0.1169,
+      "expected_monthly": -449.95,
+      "worst_day": -3513.59
+    },
+    {
+      "label": "CVD_VWAP_GC",
+      "strategy_key": "CVD_VWAP",
+      "symbol": "GC",
+      "params": {
+        "vwap_band": 0.25,
+        "cvd_pct": 60,
+        "rr_ratio": 2.0,
+        "hold_bars": 8
+      },
+      "wf_sharpe": 3.4361,
+      "n_trades_5yr": 2915,
+      "n_days": 298,
+      "total_pnl": -3931.56,
+      "sharpe": -0.9587,
+      "ann_vol": 3467.91,
+      "max_dd": 6836.38,
+      "daily_win_rate": 0.1007,
+      "monthly_win_rate": 0.2727,
+      "expected_monthly": -51.06,
+      "worst_day": -2324.55
+    },
+    {
+      "label": "Depth_Imbalance_Momentum_GC",
+      "strategy_key": "Depth_Imbalance_Momentum",
+      "symbol": "GC",
+      "params": {
+        "imbal_thr": 0.5,
+        "persist_bars": 2,
+        "rr_ratio": 2.0,
+        "hold_bars": 10
+      },
+      "wf_sharpe": 4.0371,
+      "n_trades_5yr": 4304,
+      "n_days": 650,
+      "total_pnl": -12424.69,
+      "sharpe": -1.4473,
+      "ann_vol": 3328.14,
+      "max_dd": 15399.75,
+      "daily_win_rate": 0.0969,
+      "monthly_win_rate": 0.1818,
+      "expected_monthly": -161.36,
+      "worst_day": -3094.63
+    },
+    {
+      "label": "CVD_Microprice_SI",
+      "strategy_key": "CVD_Microprice",
+      "symbol": "SI",
+      "params": {
+        "cvd_pct": 60,
+        "mp_ticks": 1.0,
+        "rr_ratio": 2.0,
+        "hold_bars": 5
+      },
+      "wf_sharpe": 2.5215,
+      "n_trades_5yr": 1044,
+      "n_days": 157,
+      "total_pnl": 2195.32,
+      "sharpe": 0.5671,
+      "ann_vol": 6213.55,
+      "max_dd": 2203.96,
+      "daily_win_rate": 0.0446,
+      "monthly_win_rate": 0.0685,
+      "expected_monthly": 30.07,
+      "worst_day": -1119.0
+    },
+    {
+      "label": "Depth_Imbalance_Momentum_SI",
+      "strategy_key": "Depth_Imbalance_Momentum",
+      "symbol": "SI",
+      "params": {
+        "imbal_thr": 0.4,
+        "persist_bars": 2,
+        "rr_ratio": 2.0,
+        "hold_bars": 5
+      },
+      "wf_sharpe": 3.6469,
+      "n_trades_5yr": 2696,
+      "n_days": 382,
+      "total_pnl": -12902.95,
+      "sharpe": -2.2396,
+      "ann_vol": 3800.66,
+      "max_dd": 13285.62,
+      "daily_win_rate": 0.0419,
+      "monthly_win_rate": 0.0933,
+      "expected_monthly": -172.04,
+      "worst_day": -2573.86
+    }
+  ],
+  "correlation_matrix": {
+    "OFI_Continuation_GC": {
+      "OFI_Continuation_GC": 1.0,
+      "Repeated_Replenishment_GC": -0.5181,
+      "CVD_Microprice_GC": -0.3761,
+      "CVD_VWAP_GC": -0.1248,
+      "Depth_Imbalance_Momentum_GC": -0.1501,
+      "CVD_Microprice_SI": -0.0968,
+      "Depth_Imbalance_Momentum_SI": -0.0484
+    },
+    "Repeated_Replenishment_GC": {
+      "OFI_Continuation_GC": -0.5181,
+      "Repeated_Replenishment_GC": 1.0,
+      "CVD_Microprice_GC": 0.4054,
+      "CVD_VWAP_GC": 0.109,
+      "Depth_Imbalance_Momentum_GC": -0.0709,
+      "CVD_Microprice_SI": 0.1568,
+      "Depth_Imbalance_Momentum_SI": 0.0675
+    },
+    "CVD_Microprice_GC": {
+      "OFI_Continuation_GC": -0.3761,
+      "Repeated_Replenishment_GC": 0.4054,
+      "CVD_Microprice_GC": 1.0,
+      "CVD_VWAP_GC": 0.2353,
+      "Depth_Imbalance_Momentum_GC": 0.0896,
+      "CVD_Microprice_SI": 0.1082,
+      "Depth_Imbalance_Momentum_SI": 0.1813
+    },
+    "CVD_VWAP_GC": {
+      "OFI_Continuation_GC": -0.1248,
+      "Repeated_Replenishment_GC": 0.109,
+      "CVD_Microprice_GC": 0.2353,
+      "CVD_VWAP_GC": 1.0,
+      "Depth_Imbalance_Momentum_GC": -0.1733,
+      "CVD_Microprice_SI": 0.1407,
+      "Depth_Imbalance_Momentum_SI": 0.1307
+    },
+    "Depth_Imbalance_Momentum_GC": {
+      "OFI_Continuation_GC": -0.1501,
+      "Repeated_Replenishment_GC": -0.0709,
+      "CVD_Microprice_GC": 0.0896,
+      "CVD_VWAP_GC": -0.1733,
+      "Depth_Imbalance_Momentum_GC": 1.0,
+      "CVD_Microprice_SI": -0.0999,
+      "Depth_Imbalance_Momentum_SI": 0.0569
+    },
+    "CVD_Microprice_SI": {
+      "OFI_Continuation_GC": -0.0968,
+      "Repeated_Replenishment_GC": 0.1568,
+      "CVD_Microprice_GC": 0.1082,
+      "CVD_VWAP_GC": 0.1407,
+      "Depth_Imbalance_Momentum_GC": -0.0999,
+      "CVD_Microprice_SI": 1.0,
+      "Depth_Imbalance_Momentum_SI": -0.1063
+    },
+    "Depth_Imbalance_Momentum_SI": {
+      "OFI_Continuation_GC": -0.0484,
+      "Repeated_Replenishment_GC": 0.0675,
+      "CVD_Microprice_GC": 0.1813,
+      "CVD_VWAP_GC": 0.1307,
+      "Depth_Imbalance_Momentum_GC": 0.0569,
+      "CVD_Microprice_SI": -0.1063,
+      "Depth_Imbalance_Momentum_SI": 1.0
+    }
+  },
+  "drawdown_overlap_matrix": {
+    "OFI_Continuation_GC": {
+      "OFI_Continuation_GC": 1.0,
+      "Repeated_Replenishment_GC": 0.99,
+      "CVD_Microprice_GC": 0.99,
+      "CVD_VWAP_GC": 0.9593,
+      "Depth_Imbalance_Momentum_GC": 0.99,
+      "CVD_Microprice_SI": 0.798,
+      "Depth_Imbalance_Momentum_SI": 0.9418
+    },
+    "Repeated_Replenishment_GC": {
+      "OFI_Continuation_GC": 0.99,
+      "Repeated_Replenishment_GC": 1.0,
+      "CVD_Microprice_GC": 0.99,
+      "CVD_VWAP_GC": 0.9593,
+      "Depth_Imbalance_Momentum_GC": 0.9925,
+      "CVD_Microprice_SI": 0.798,
+      "Depth_Imbalance_Momentum_SI": 0.9418
+    },
+    "CVD_Microprice_GC": {
+      "OFI_Continuation_GC": 0.99,
+      "Repeated_Replenishment_GC": 0.99,
+      "CVD_Microprice_GC": 1.0,
+      "CVD_VWAP_GC": 0.9593,
+      "Depth_Imbalance_Momentum_GC": 0.99,
+      "CVD_Microprice_SI": 0.798,
+      "Depth_Imbalance_Momentum_SI": 0.9418
+    },
+    "CVD_VWAP_GC": {
+      "OFI_Continuation_GC": 0.9593,
+      "Repeated_Replenishment_GC": 0.9593,
+      "CVD_Microprice_GC": 0.9593,
+      "CVD_VWAP_GC": 1.0,
+      "Depth_Imbalance_Momentum_GC": 0.9593,
+      "CVD_Microprice_SI": 0.798,
+      "Depth_Imbalance_Momentum_SI": 0.9418
+    },
+    "Depth_Imbalance_Momentum_GC": {
+      "OFI_Continuation_GC": 0.99,
+      "Repeated_Replenishment_GC": 0.9925,
+      "CVD_Microprice_GC": 0.99,
+      "CVD_VWAP_GC": 0.9593,
+      "Depth_Imbalance_Momentum_GC": 1.0,
+      "CVD_Microprice_SI": 0.798,
+      "Depth_Imbalance_Momentum_SI": 0.9418
+    },
+    "CVD_Microprice_SI": {
+      "OFI_Continuation_GC": 0.798,
+      "Repeated_Replenishment_GC": 0.798,
+      "CVD_Microprice_GC": 0.798,
+      "CVD_VWAP_GC": 0.798,
+      "Depth_Imbalance_Momentum_GC": 0.798,
+      "CVD_Microprice_SI": 1.0,
+      "Depth_Imbalance_Momentum_SI": 0.798
+    },
+    "Depth_Imbalance_Momentum_SI": {
+      "OFI_Continuation_GC": 0.9418,
+      "Repeated_Replenishment_GC": 0.9418,
+      "CVD_Microprice_GC": 0.9418,
+      "CVD_VWAP_GC": 0.9418,
+      "Depth_Imbalance_Momentum_GC": 0.9418,
+      "CVD_Microprice_SI": 0.798,
+      "Depth_Imbalance_Momentum_SI": 1.0
+    }
+  },
+  "monthly_pnl_estimates": {
+    "OFI_Continuation_GC": -45.91,
+    "Repeated_Replenishment_GC": -80.76,
+    "CVD_Microprice_GC": -449.95,
+    "CVD_VWAP_GC": -51.06,
+    "Depth_Imbalance_Momentum_GC": -161.36,
+    "CVD_Microprice_SI": 30.07,
+    "Depth_Imbalance_Momentum_SI": -172.04
+  },
+  "portfolio_constructions": {
+    "equal_weight": {
+      "weights": {
+        "OFI_Continuation_GC": 0.14285714285714285,
+        "Repeated_Replenishment_GC": 0.14285714285714285,
+        "CVD_Microprice_GC": 0.14285714285714285,
+        "CVD_VWAP_GC": 0.14285714285714285,
+        "Depth_Imbalance_Momentum_GC": 0.14285714285714285,
+        "CVD_Microprice_SI": 0.14285714285714285,
+        "Depth_Imbalance_Momentum_SI": 0.14285714285714285
+      },
+      "sharpe": -2.3704,
+      "max_dd": 10194.04,
+      "expected_monthly": -132.35,
+      "sharpe_improvement_over_best_individual": -2.9375
+    },
+    "risk_parity": {
+      "weights": {
+        "OFI_Continuation_GC": 0.1557,
+        "Repeated_Replenishment_GC": 0.1433,
+        "CVD_Microprice_GC": 0.1314,
+        "CVD_VWAP_GC": 0.1622,
+        "Depth_Imbalance_Momentum_GC": 0.169,
+        "CVD_Microprice_SI": 0.0905,
+        "Depth_Imbalance_Momentum_SI": 0.148
+      },
+      "sharpe": -2.5054,
+      "max_dd": 10476.42,
+      "expected_monthly": -135.37,
+      "sharpe_improvement_over_best_individual": -3.0725
+    },
+    "max_dd_constrained": {
+      "weights": {
+        "OFI_Continuation_GC": 0.15,
+        "Repeated_Replenishment_GC": 0.1291,
+        "CVD_Microprice_GC": 0.0287,
+        "CVD_VWAP_GC": 0.1463,
+        "Depth_Imbalance_Momentum_GC": 0.0649,
+        "CVD_Microprice_SI": 0.4537,
+        "Depth_Imbalance_Momentum_SI": 0.0753
+      },
+      "sharpe": -0.6876,
+      "max_dd": 4816.1,
+      "expected_monthly": -47.63,
+      "sharpe_improvement_over_best_individual": -1.2547
+    },
+    "top_n_wf_sharpe": {
+      "weights": {
+        "CVD_Microprice_GC": 0.16666666666666666,
+        "OFI_Continuation_GC": 0.16666666666666666,
+        "Repeated_Replenishment_GC": 0.16666666666666666,
+        "Depth_Imbalance_Momentum_GC": 0.16666666666666666,
+        "Depth_Imbalance_Momentum_SI": 0.16666666666666666,
+        "CVD_VWAP_GC": 0.16666666666666666
+      },
+      "sharpe": -2.6537,
+      "max_dd": 12311.15,
+      "expected_monthly": -159.16,
+      "sharpe_improvement_over_best_individual": -3.2208
+    },
+    "min_correlation": {
+      "weights": {
+        "OFI_Continuation_GC": 0.16666666666666666,
+        "Repeated_Replenishment_GC": 0.16666666666666666,
+        "Depth_Imbalance_Momentum_GC": 0.16666666666666666,
+        "CVD_VWAP_GC": 0.16666666666666666,
+        "CVD_Microprice_SI": 0.16666666666666666,
+        "Depth_Imbalance_Momentum_SI": 0.16666666666666666
+      },
+      "sharpe": -1.7725,
+      "max_dd": 6513.04,
+      "expected_monthly": -79.42,
+      "sharpe_improvement_over_best_individual": -2.3396
+    }
+  },
+  "recommended_portfolio": {
+    "method": "min_correlation",
+    "n_strategies": 6,
+    "strategies": [
+      {
+        "label": "OFI_Continuation_GC",
+        "strategy_key": "OFI_Continuation",
+        "symbol": "GC",
+        "weight": 0.1667,
+        "expected_monthly_pnl": -7.65,
+        "max_dd_contribution": 1110.99,
+        "individual_max_dd": 6665.92,
+        "sharpe": -0.9975,
+        "wf_sharpe": 4.453,
+        "monthly_win_rate": 0.2763,
+        "n_trades_5yr": 2045,
+        "avg_correlation": 0.219,
+        "correlation_rank": 5
+      },
+      {
+        "label": "Repeated_Replenishment_GC",
+        "strategy_key": "Repeated_Replenishment",
+        "symbol": "GC",
+        "weight": 0.1667,
+        "expected_monthly_pnl": -13.46,
+        "max_dd_contribution": 1290.55,
+        "individual_max_dd": 7743.27,
+        "sharpe": -2.1071,
+        "wf_sharpe": 4.4437,
+        "monthly_win_rate": 0.1711,
+        "n_trades_5yr": 3612,
+        "avg_correlation": 0.2213,
+        "correlation_rank": 6
+      },
+      {
+        "label": "CVD_VWAP_GC",
+        "strategy_key": "CVD_VWAP",
+        "symbol": "GC",
+        "weight": 0.1667,
+        "expected_monthly_pnl": -8.51,
+        "max_dd_contribution": 1139.4,
+        "individual_max_dd": 6836.38,
+        "sharpe": -0.9587,
+        "wf_sharpe": 3.4361,
+        "monthly_win_rate": 0.2727,
+        "n_trades_5yr": 2915,
+        "avg_correlation": 0.1523,
+        "correlation_rank": 4
+      },
+      {
+        "label": "Depth_Imbalance_Momentum_GC",
+        "strategy_key": "Depth_Imbalance_Momentum",
+        "symbol": "GC",
+        "weight": 0.1667,
+        "expected_monthly_pnl": -26.89,
+        "max_dd_contribution": 2566.62,
+        "individual_max_dd": 15399.75,
+        "sharpe": -1.4473,
+        "wf_sharpe": 4.0371,
+        "monthly_win_rate": 0.1818,
+        "n_trades_5yr": 4304,
+        "avg_correlation": 0.1068,
+        "correlation_rank": 2
+      },
+      {
+        "label": "CVD_Microprice_SI",
+        "strategy_key": "CVD_Microprice",
+        "symbol": "SI",
+        "weight": 0.1667,
+        "expected_monthly_pnl": 5.01,
+        "max_dd_contribution": 367.33,
+        "individual_max_dd": 2203.96,
+        "sharpe": 0.5671,
+        "wf_sharpe": 2.5215,
+        "monthly_win_rate": 0.0685,
+        "n_trades_5yr": 1044,
+        "avg_correlation": 0.1181,
+        "correlation_rank": 3
+      },
+      {
+        "label": "Depth_Imbalance_Momentum_SI",
+        "strategy_key": "Depth_Imbalance_Momentum",
+        "symbol": "SI",
+        "weight": 0.1667,
+        "expected_monthly_pnl": -28.67,
+        "max_dd_contribution": 2214.27,
+        "individual_max_dd": 13285.62,
+        "sharpe": -2.2396,
+        "wf_sharpe": 3.6469,
+        "monthly_win_rate": 0.0933,
+        "n_trades_5yr": 2696,
+        "avg_correlation": 0.0985,
+        "correlation_rank": 1
+      }
+    ],
+    "weights": {
+      "OFI_Continuation_GC": 0.16666666666666666,
+      "Repeated_Replenishment_GC": 0.16666666666666666,
+      "Depth_Imbalance_Momentum_GC": 0.16666666666666666,
+      "CVD_VWAP_GC": 0.16666666666666666,
+      "CVD_Microprice_SI": 0.16666666666666666,
+      "Depth_Imbalance_Momentum_SI": 0.16666666666666666
+    },
+    "combined_expected_monthly": -80.18,
+    "combined_max_dd_estimate": 6082.4
+  },
+  "warnings": [
+    "LOW_MONTHLY_WIN_RATE: OFI_Continuation_GC monthly_wr=27.6%",
+    "LARGE_DRAWDOWN: OFI_Continuation_GC max_dd=$6,666",
+    "LOW_MONTHLY_WIN_RATE: Repeated_Replenishment_GC monthly_wr=17.1%",
+    "LARGE_DRAWDOWN: Repeated_Replenishment_GC max_dd=$7,743",
+    "LOW_MONTHLY_WIN_RATE: CVD_Microprice_GC monthly_wr=11.7%",
+    "LARGE_DRAWDOWN: CVD_Microprice_GC max_dd=$34,867",
+    "LOW_MONTHLY_WIN_RATE: CVD_VWAP_GC monthly_wr=27.3%",
+    "LARGE_DRAWDOWN: CVD_VWAP_GC max_dd=$6,836",
+    "LOW_MONTHLY_WIN_RATE: Depth_Imbalance_Momentum_GC monthly_wr=18.2%",
+    "LARGE_DRAWDOWN: Depth_Imbalance_Momentum_GC max_dd=$15,400",
+    "LOW_MONTHLY_WIN_RATE: CVD_Microprice_SI monthly_wr=6.9%",
+    "LARGE_DRAWDOWN: CVD_Microprice_SI max_dd=$2,204",
+    "LOW_MONTHLY_WIN_RATE: Depth_Imbalance_Momentum_SI monthly_wr=9.3%",
+    "LARGE_DRAWDOWN: Depth_Imbalance_Momentum_SI max_dd=$13,286"
+  ]
+}
