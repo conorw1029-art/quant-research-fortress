@@ -120,9 +120,15 @@ def _load_allowlist() -> dict:
 
 
 def _load_portfolio() -> list:
+    """Parse PORTFOLIO from source without importing the executor."""
+    import re, ast
     try:
-        import tick_live_executor as ex
-        return ex.PORTFOLIO
+        src = (CODE_DIR / "tick_live_executor.py").read_text(encoding="utf-8")
+        m = re.search(r"^PORTFOLIO\s*=\s*(\[.+?^\])", src, re.MULTILINE | re.DOTALL)
+        if not m:
+            return []
+        block = re.sub(r"#[^\n]*", "", m.group(1))  # strip inline comments
+        return list(ast.literal_eval(block))
     except Exception:
         return []
 
@@ -193,11 +199,29 @@ def _aggregate_signals(records: list[dict]) -> tuple[dict, list, list]:
     return dict(per_strat), list(reversed(recent[-60:])), equity_curve
 
 
+_FOMC_FALLBACK = [
+    "2026-06-10", "2026-07-29", "2026-09-16",
+    "2026-10-28", "2026-12-09",
+]
+
 def _fomc_countdown() -> dict:
+    """Parse FOMC dates from source without importing tick_strategies_v9."""
+    import re
+    today = datetime.now(timezone.utc).date()
     try:
-        from tick_strategies_v9 import _FOMC_ANNOUNCEMENT_SET
-        today  = datetime.now(timezone.utc).date()
-        future = [date(y, m, d) for y, m, d in _FOMC_ANNOUNCEMENT_SET if date(y, m, d) >= today]
+        src = (CODE_DIR / "tick_strategies_v9.py").read_text(encoding="utf-8", errors="replace")
+        m = re.search(r"_FOMC_ANNOUNCEMENT_DATES\s*=\s*pd\.to_datetime\(\[(.+?)\]\)", src, re.DOTALL)
+        if m:
+            dates_str = re.findall(r'"(\d{4}-\d{2}-\d{2})"', m.group(1))
+            future = [date.fromisoformat(d) for d in dates_str if date.fromisoformat(d) >= today]
+            if future:
+                nxt = min(future)
+                return {"date": str(nxt), "days": (nxt - today).days}
+    except Exception:
+        pass
+    # Fallback to hardcoded upcoming dates
+    try:
+        future = [date.fromisoformat(d) for d in _FOMC_FALLBACK if date.fromisoformat(d) >= today]
         if future:
             nxt = min(future)
             return {"date": str(nxt), "days": (nxt - today).days}
@@ -207,17 +231,28 @@ def _fomc_countdown() -> dict:
 
 
 def _expiry_status() -> list:
+    """Parse TV_CONTRACT_MAP and _CONTRACT_EXPIRY from source without importing."""
+    import re, ast
     try:
-        from tick_live_executor import TV_CONTRACT_MAP, _CONTRACT_EXPIRY
+        src = (CODE_DIR / "tick_live_executor.py").read_text(encoding="utf-8")
+
+        m_map = re.search(r"^TV_CONTRACT_MAP\s*=\s*(\{.+?\})", src, re.MULTILINE | re.DOTALL)
+        m_exp = re.search(r"^_CONTRACT_EXPIRY\s*=\s*(\{.+?\})", src, re.MULTILINE | re.DOTALL)
+        if not m_map or not m_exp:
+            return []
+
+        tv_contract_map = ast.literal_eval(re.sub(r"#[^\n]*", "", m_map.group(1)))
+        contract_expiry = ast.literal_eval(re.sub(r"#[^\n]*", "", m_exp.group(1)))
+
         today, seen, result = datetime.now(timezone.utc).date(), set(), []
-        for tv_sym in set(TV_CONTRACT_MAP.values()):
+        for tv_sym in set(tv_contract_map.values()):
             if tv_sym in seen:
                 continue
-            exp = _CONTRACT_EXPIRY.get(tv_sym)
+            exp = contract_expiry.get(tv_sym)
             if not exp:
                 continue
             exp_date = datetime.strptime(exp, "%Y-%m-%d").date()
-            days     = (exp_date - today).days
+            days = (exp_date - today).days
             seen.add(tv_sym)
             result.append({"sym": tv_sym, "expiry": exp, "days": days,
                            "urgent": days <= 7, "warning": days <= 21})
@@ -446,7 +481,7 @@ if __name__ == "__main__":
 
     url = f"http://{args.host}:{args.port}"
     print(f"\n  {'='*50}")
-    print(f"  FORTRESS DASHBOARD → {url}")
+    print(f"  FORTRESS DASHBOARD  {url}")
     print(f"  {'='*50}")
     print(f"  AI Terminal: set ANTHROPIC_API_KEY env var")
     print(f"  Press Ctrl+C to stop\n")
