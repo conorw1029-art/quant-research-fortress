@@ -1136,7 +1136,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                           sm=None,
                           coordinator=None,
                           broker_net_positions=None,
-                          broker=None) -> list[dict]:
+                          broker=None,
+                          tg=None) -> list[dict]:
     """
     Run one check pass across all portfolio strategies.
     Returns list of alert dicts for any new signal entries.
@@ -1419,6 +1420,13 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 if alert.get("key_level_context"):
                     print(f"  Key levels: {alert['key_level_context']}")
                 print(f"{'!'*60}")
+
+            # ── Telegram signal alert ──────────────────────────────────────
+            if tg and tg.enabled:
+                try:
+                    tg.send_signal(alert, mode, contracts)
+                except Exception:
+                    pass
 
             # ── Auto-execute on Tradovate ──────────────────────────────────
             tv_sym = TV_CONTRACT_MAP.get(traded_sym, traded_sym)
@@ -1754,6 +1762,14 @@ Examples:
         except Exception as e:
             print(f"  [News monitor init failed: {e}]")
 
+    # ── Telegram notifier ─────────────────────────────────────────────────────
+    tg = None
+    try:
+        from src.notifications.telegram_notifier import TelegramNotifier
+        tg = TelegramNotifier()
+    except Exception as e:
+        print(f"  [Telegram] Init error: {e}")
+
     # ── Filter portfolio ──────────────────────────────────────────────────────
     global PORTFOLIO
     if args.strategy is not None:
@@ -1821,6 +1837,9 @@ Examples:
     # ── Print mode banner ─────────────────────────────────────────────────────
     print("\n" + _mode_banner(mode, tv_client, PORTFOLIO, RISK_CFG,
                                allowlist=allowlist, coordinator=coordinator))
+
+    if tg and tg.enabled:
+        tg.send_startup(mode, len(PORTFOLIO))
 
     alert_path  = Path(args.alert_file) if args.alert_file else None
     tracker     = PositionTracker()
@@ -1983,7 +2002,8 @@ Examples:
                                       sm=sm,
                                       coordinator=coordinator,
                                       broker_net_positions=_broker_net_pos,
-                                      broker=broker)
+                                      broker=broker,
+                                      tg=tg)
 
         if alerts:
             print(f"\n  >>> {len(alerts)} alert(s) fired <<<")
