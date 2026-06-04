@@ -215,6 +215,8 @@ MODE_DRY_RUN = "DRY_RUN"   # Default. No orders placed. Alerts only.
 MODE_DEMO    = "DEMO"       # Orders to Tradovate DEMO. Requires --demo-auto-trade.
 MODE_LIVE    = "LIVE"       # Orders to LIVE account. Requires --live-auto-trade
                              # AND env var FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND.
+MODE_MOCK    = "MOCK"       # In-process simulation broker (zero network).
+MODE_NT      = "NT_SIM"     # NinjaTrader 8 ATI file-based broker (sim account).
 
 LIVE_ENABLE_ENV   = "FORTRESS_LIVE_ENABLE"
 LIVE_ENABLE_VALUE = "YES_I_UNDERSTAND"
@@ -1133,7 +1135,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                           news_bias: dict | None = None,
                           sm=None,
                           coordinator=None,
-                          broker_net_positions=None) -> list[dict]:
+                          broker_net_positions=None,
+                          broker=None) -> list[dict]:
     """
     Run one check pass across all portfolio strategies.
     Returns list of alert dicts for any new signal entries.
@@ -1442,6 +1445,21 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 except Exception as e:
                     print(f"  [DRY_RUN] Bracket validation error: {e}")
 
+            elif broker and mode in (MODE_MOCK, MODE_NT):
+                try:
+                    result = broker.place_bracket_order(
+                        symbol=traded_sym,
+                        side=action.upper(),
+                        qty=contracts,
+                        entry_price=entry_p,
+                        stop_price=alert["stop_px"],
+                        target_price=alert["target_px"],
+                    )
+                    print(f"  [{mode}] Bracket placed: id={result.bracket_id}  "
+                          f"stop={alert['stop_px']}  target={alert['target_px']}")
+                except Exception as e:
+                    print(f"  [{mode}] BRACKET FAILED: {e}  (alert logged, manual entry required)")
+
             elif tv_client and mode in (MODE_DEMO, MODE_LIVE):
                 is_demo = (mode == MODE_DEMO)
                 try:
@@ -1601,6 +1619,12 @@ Examples:
                         help="Place orders on LIVE account (requires FORTRESS_LIVE_ENABLE env var)")
     parser.add_argument("--close-weekend",   action="store_true",
                         help="Auto-flatten all Tradovate positions Friday 21:45 UTC")
+    parser.add_argument("--mock", action="store_true",
+                        help="Use MockBroker (zero network, pure in-process simulation)")
+    parser.add_argument("--ninjatrader", "--nt", action="store_true",
+                        help="Use NinjaTrader 8 ATI file-based broker (sim or live)")
+    parser.add_argument("--nt-account", default="Sim101",
+                        help="NinjaTrader account name (default: Sim101)")
 
     # ── Credentials (read from env vars by default) ───────────────────────────
     parser.add_argument("--username", default=os.environ.get("TRADOVATE_USERNAME", ""),
@@ -1634,6 +1658,10 @@ Examples:
         mode = MODE_LIVE
     elif args.demo_auto_trade:
         mode = MODE_DEMO
+    elif args.mock:
+        mode = MODE_MOCK
+    elif args.ninjatrader:
+        mode = MODE_NT
     else:
         mode = MODE_DRY_RUN
 
@@ -1685,6 +1713,37 @@ Examples:
         )
         if not tv_client.authenticate():
             print(f"ERROR: Tradovate authentication failed ({mode})")
+            sys.exit(1)
+
+    # ── Initialise MockBroker ─────────────────────────────────────────────────
+    broker = None
+    if mode == MODE_MOCK:
+        try:
+            from src.broker.mock_broker import MockBroker
+            from src.broker.base import BrokerMode
+            broker = MockBroker(mode=BrokerMode.DRY_RUN)
+            broker.connect()
+            print(f"[MockBroker] Connected — pure in-process simulation, no network calls.")
+        except Exception as e:
+            print(f"ERROR: Could not initialise MockBroker: {e}")
+            sys.exit(1)
+
+    # ── Initialise NinjaTrader ATI broker ─────────────────────────────────────
+    elif mode == MODE_NT:
+        try:
+            from src.broker.ninjatrader_adapter import NinjaTraderAdapter
+            from src.broker.base import BrokerMode
+            broker = NinjaTraderAdapter(
+                mode=BrokerMode.DEMO,
+                config={"nt_account": args.nt_account},
+            )
+            if not broker.connect():
+                print(f"ERROR: NinjaTrader ATI not available — is NT8 running with ATI enabled?")
+                print(f"  Tools -> Options -> Automated Trading -> Enable ATI")
+                sys.exit(1)
+            print(f"[NT8] Connected — account={args.nt_account}, mode=ATI_SIM")
+        except Exception as e:
+            print(f"ERROR: Could not initialise NinjaTraderAdapter: {e}")
             sys.exit(1)
 
     # ── News monitor ──────────────────────────────────────────────────────────
@@ -1923,7 +1982,8 @@ Examples:
                                       news_bias=current_bias,
                                       sm=sm,
                                       coordinator=coordinator,
-                                      broker_net_positions=_broker_net_pos)
+                                      broker_net_positions=_broker_net_pos,
+                                      broker=broker)
 
         if alerts:
             print(f"\n  >>> {len(alerts)} alert(s) fired <<<")
