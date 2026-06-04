@@ -2018,16 +2018,77 @@ Examples:
         print(f"  Signal log: {_signal_log_path()}")
         return alerts
 
+    # ── Live bar reader (NinjaTrader JSONL -> parquet) ────────────────────────
+    _live_reader_available = False
+    try:
+        from tick_live_bar_reader import append_live_bars, get_stale_feeds
+        _live_reader_available = True
+        print("  [LiveReader] NinjaTrader bar reader ready.")
+    except ImportError:
+        pass
+
     if args.poll > 0:
         print(f"\n  Polling every {args.poll}s — Ctrl+C or create KILL_SWITCH.txt to stop")
         pass_num = 0
+        _last_recon_pass = 0  # for periodic reconciliation every 10 passes
         try:
             while True:
                 pass_num += 1
-                one_pass(pass_num)
+
+                # ── Pull fresh NinjaTrader bars before each strategy check ──
+                if _live_reader_available:
+                    try:
+                        added = append_live_bars(verbose=False)
+                        if added:
+                            total = sum(added.values())
+                            print(f"  [LiveReader] +{total} new bar(s) from NinjaTrader")
+                        stale = get_stale_feeds()
+                        if stale:
+                            msg = f"WARNING: Stale NT8 feeds: {stale}"
+                            print(f"  {msg}")
+                            if tg and tg.enabled:
+                                tg.send_text(msg)
+                    except Exception as _lre:
+                        print(f"  [LiveReader] error: {_lre}")
+
+                # ── Periodic broker reconciliation (every 10 passes) ────────
+                if (sm and _RECONCILIATION_AVAILABLE
+                        and pass_num - _last_recon_pass >= 10):
+                    try:
+                        local_state = {
+                            "positions":    sm.load_positions(),
+                            "brackets":     sm.load_active_brackets(),
+                            "last_updated": datetime.now(timezone.utc).isoformat(),
+                        }
+                        broker_state = {"reachable": True, "positions": {}, "orders": {}}
+                        recon = _reconcile_state_fn(local_state, broker_state)
+                        _log_reconciliation(recon, f"pass_{pass_num}")
+                        if not recon["ok"]:
+                            print(f"  [Reconcile] {recon['severity']}: {recon['reason']}")
+                            if tg and tg.enabled:
+                                tg.send_text(f"RECONCILE {recon['severity']}: {recon['reason']}")
+                        _last_recon_pass = pass_num
+                    except Exception as _re:
+                        print(f"  [Reconcile] error: {_re}")
+
+                # ── Main strategy pass — catch all exceptions to keep running
+                try:
+                    one_pass(pass_num)
+                except KeyboardInterrupt:
+                    raise
+                except Exception as _pass_err:
+                    import traceback
+                    print(f"\n  [PASS ERROR] pass #{pass_num} crashed: {_pass_err}")
+                    traceback.print_exc()
+                    print("  Continuing to next pass...")
+                    if tg and tg.enabled:
+                        tg.send_text(f"EXECUTOR ERROR (pass #{pass_num}): {_pass_err}\nContinuing...")
+
                 time.sleep(args.poll)
         except KeyboardInterrupt:
             print("\n  Stopped by user.")
+            if tg and tg.enabled:
+                tg.send_kill_switch()
     else:
         one_pass(1)
 
