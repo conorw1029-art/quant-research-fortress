@@ -649,19 +649,19 @@ MICRO_SPECS = {
 }
 
 # Tradovate-ready contract symbols — UPDATE EACH QUARTERLY ROLLOVER (June → Sep → Dec → Mar)
-# ROLLED 2026-06-03: M5 (Jun, expires Jun 20-27) → U5 (Sep, expires Sep 19-26)
+# ROLLED 2026-06-15: U5 notation corrected to CME standard U6 (Sep 2026, expires Sep 19-26)
 TV_CONTRACT_MAP = {
-    "MGC": "MGCU5",   # micro gold
-    "MES": "MESU5",   # micro S&P
-    "MNQ": "MNQU5",   # micro NQ
-    "SIL": "SILU5",   # micro silver (Tradovate base symbol)
-    "SI":  "SILU5",   # micro silver (strategy base symbol → same contract)
-    "MCL": "MCLU5",   # micro crude oil
-    "CL":  "MCLU5",   # crude oil strategy → micro contract
-    "GC":  "GCU5",    # full gold (fallback)
-    "ES":  "ESU5",    # full ES  (fallback)
-    "NQ":  "NQU5",    # full NQ  (fallback)
-    "CL_FULL": "CLU5", # full crude (not used in live — MCL only)
+    "MGC": "MGCU6",   # micro gold Sep 2026
+    "MES": "MESU6",   # micro S&P Sep 2026
+    "MNQ": "MNQU6",   # micro NQ Sep 2026
+    "SIL": "SILU6",   # micro silver Sep 2026 (Tradovate base symbol)
+    "SI":  "SILU6",   # micro silver (strategy base symbol → same contract)
+    "MCL": "MCLU6",   # micro crude oil Sep 2026
+    "CL":  "MCLU6",   # crude oil strategy → micro contract
+    "GC":  "GCU6",    # full gold Sep 2026 (fallback)
+    "ES":  "ESU6",    # full ES Sep 2026 (fallback)
+    "NQ":  "NQU6",    # full NQ Sep 2026 (fallback)
+    "CL_FULL": "CLU6", # full crude (not used in live — MCL only)
 }
 
 
@@ -844,16 +844,16 @@ class PositionTracker:
 # Update these dates each time the front-month contract changes.
 # Quarterly: Mar (H), Jun (M), Sep (U), Dec (Z).
 _CONTRACT_EXPIRY = {
-    "MESM5": "2026-06-20",
-    "MGCM5": "2026-06-27",
-    "MNQM5": "2026-06-20",
-    "SILM5": "2026-06-27",
-    "MCLM5": "2026-06-20",  # micro crude oil — expires with ES/NQ cycle
-    "MESU5": "2026-09-19",
-    "MGCU5": "2026-09-26",
-    "MNQU5": "2026-09-19",
-    "SILU5": "2026-09-26",
-    "MCLU5": "2026-09-19",  # micro crude oil next quarter
+    "MESM6": "2026-06-20",
+    "MGCM6": "2026-06-27",
+    "MNQM6": "2026-06-20",
+    "SILM6": "2026-06-27",
+    "MCLM6": "2026-06-20",
+    "MESU6": "2026-09-19",
+    "MGCU6": "2026-09-26",
+    "MNQU6": "2026-09-19",
+    "SILU6": "2026-09-26",
+    "MCLU6": "2026-09-19",
 }
 
 def _contract_rollover_warning() -> list[str]:
