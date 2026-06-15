@@ -257,24 +257,26 @@ namespace NinjaTrader.NinjaScript.Indicators
         #region ExtractBaseSymbol
         private static string ExtractBaseSymbol(string rawName)
         {
-            // "MGC 09-26" -> "GC"
-            // "MGCU5"     -> "GC"
-            // "MESU5"     -> "ES"
+            // "MGC 09-26" -> "GC"   "MNQ 09-26" -> "NQ"
+            // "MGCU5"     -> "GC"   "MESU5"     -> "ES"
             // "SIL 09-26" -> "SI"
             string name = rawName.Split(' ')[0].ToUpper();
 
-            // Strip trailing month code + year digits (e.g. "U5", "M26")
+            // Strip trailing month code ONLY when year digits follow it (e.g. "U5", "M26").
+            // Without this guard, "MNQ" strips "Q" (a valid month code) and becomes "MN".
             const string months = "FGHJKMNQUVXZ";
             int i = name.Length - 1;
-            while (i > 0 && char.IsDigit(name[i])) i--;
-            if (i > 0 && months.IndexOf(name[i]) >= 0)
-                name = name.Substring(0, i);
+            if (i > 0 && char.IsDigit(name[i]))
+            {
+                while (i > 0 && char.IsDigit(name[i])) i--;
+                if (i > 0 && months.IndexOf(name[i]) >= 0)
+                    name = name.Substring(0, i);
+            }
 
             // Micro prefix: MGC->GC, MES->ES, MNQ->NQ, MCL->CL
             if (name.Length > 2 && name[0] == 'M')
             {
                 string rest = name.Substring(1);
-                // SIL special case
                 if (rest == "SIL" || rest == "IL") return "SI";
                 return rest;
             }
@@ -298,27 +300,3 @@ namespace NinjaTrader.NinjaScript.Indicators
         #endregion
     }
 }
-
-#region NinjaScript generated code
-namespace NinjaTrader.NinjaScript.Indicators
-{
-    public partial class Indicator : NinjaTrader.Gui.NinjaScript.IndicatorRenderBase
-    {
-        private FortressBarWriter[] cacheFortressBarWriter;
-        public FortressBarWriter FortressBarWriter(string outputDir)
-        {
-            return FortressBarWriter(Input, outputDir);
-        }
-
-        public FortressBarWriter FortressBarWriter(ISeries<double> input, string outputDir)
-        {
-            if (cacheFortressBarWriter != null)
-                for (int idx = 0; idx < cacheFortressBarWriter.Length; idx++)
-                    if (cacheFortressBarWriter[idx] != null && cacheFortressBarWriter[idx].OutputDir == outputDir
-                        && cacheFortressBarWriter[idx].EqualsInput(input))
-                        return cacheFortressBarWriter[idx];
-            return CacheIndicator<FortressBarWriter>(new FortressBarWriter(){ OutputDir = outputDir }, input, ref cacheFortressBarWriter);
-        }
-    }
-}
-#endregion

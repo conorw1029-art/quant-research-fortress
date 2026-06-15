@@ -95,6 +95,13 @@ def append_live_bars(live_dir: Path = LIVE_DIR, bar_dir: Path = BAR_DIR,
             if verbose:
                 print(f"  [LiveReader] {symbol} {bar_min}m: +{n} bars -> {parquet_path.name}")
 
+        # FortressBarWriter always includes L2 columns (obi_5, microprice, cvd_delta).
+        # Also write to the l2 parquet so V10 strategies get live updates.
+        l2_path = bar_dir / f"{symbol}_bars_l2_{bar_min}m.parquet"
+        n2 = _merge_jsonl_into_parquet(jsonl_path, l2_path, symbol, verbose=verbose)
+        if n2 > 0 and verbose:
+            print(f"  [LiveReader] {symbol} {bar_min}m L2: +{n2} bars -> {l2_path.name}")
+
     return appended
 
 
