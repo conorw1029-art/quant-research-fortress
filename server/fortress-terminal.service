@@ -1,0 +1,16 @@
+[Unit]
+Description=Fortress Web Terminal (iPad browser SSH at port 3000)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/wetty --port 3000 --host 0.0.0.0 --base / --ssh-host localhost --ssh-user root --ssh-port 22
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

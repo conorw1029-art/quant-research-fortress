@@ -1,0 +1,18 @@
+[Unit]
+Description=Fortress Tradovate Live Feed (real-time L2 data, all 4 markets)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fortress
+WorkingDirectory=/opt/fortress/04_codebase
+EnvironmentFile=/opt/fortress/.env
+ExecStart=/opt/fortress/venv/bin/python -X utf8 tick_tradovate_live_feed.py --verbose
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

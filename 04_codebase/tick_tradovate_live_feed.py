@@ -66,12 +66,13 @@ DEMO_REST = "https://demo.tradovateapi.com/v1"
 MD_WS_URL = "wss://md.tradovateapi.com/v1/websocket"
 
 # Sep 2026 front-month contracts → base symbol for output files
-# Update when contracts roll (next roll ~Sep 19-26 2026)
+# Update when contracts roll (next roll ~Sep 17-19 2026)
+# Verify exact tickers in Tradovate UI: Accounts → Market Data → Futures
 ALL_CONTRACTS = {
-    "MGCU5": "GC",   # Micro Gold
-    "SILU5": "SI",   # Micro Silver
-    "MESU5": "ES",   # Micro S&P 500
-    "MNQU5": "NQ",   # Micro Nasdaq
+    "MGCU6": "GC",   # Micro Gold Sep 2026
+    "SIU6":  "SI",   # Silver Sep 2026 (full-size; verify symbol in Tradovate)
+    "MESU6": "ES",   # Micro E-mini S&P 500 Sep 2026
+    "MNQU6": "NQ",   # Micro E-mini Nasdaq Sep 2026
 }
 
 
