@@ -14,11 +14,11 @@ Conor — quantitative trader running funded prop firm accounts.
 
 ## The System
 
-44 strategies across 4 markets (GC=Gold, SI=Silver, ES=S&P, NQ=Nasdaq).
+43 strategies across 4 markets (GC=Gold, SI=Silver, ES=S&P, NQ=Nasdaq).
 - V1-V9: OHLCV + CVD strategies (39 total)
 - V10 IDs 40-44: L2 microstructure strategies (need DOM data)
-- 27 of 44 currently active; 17 are DISABLED_FOR_LIVE (worst-day risk > $1k)
-- All running in --mock mode (signals only, no real orders) until manual approval
+- All 43 active in executor (status: REVIEW_REQUIRED or better)
+- Running in --mock mode (signals only, no real orders) until Tradovate auth confirmed
 
 Strategy allowlist: `04_codebase/live_strategy_allowlist.yaml`
 Strategy code: `04_codebase/tick_strategies*.py`
@@ -36,14 +36,16 @@ Executor: `04_codebase/tick_live_executor.py`
 - Dashboard: http://46.225.110.190:5050
 - Web Terminal (shell in browser): http://46.225.110.190:3000 — login: root / Fortress2026!
 
-## 5 Systemd Services (all auto-restart, survive reboots)
+## 7 Systemd Services (auto-restart, survive reboots)
 
 ```
-fortress-yfinance   — downloads GC/SI/ES/NQ OHLCV every 5 min (15-min delayed)
-fortress-executor   — runs 44 strategies, sends Telegram signals
-fortress-barreader  — watches live/ dir for NT8/Tradovate JSONL, appends to parquet
-fortress-dashboard  — Flask web UI at port 5050
-fortress-terminal   — wetty web terminal at port 3000
+fortress-yfinance    — downloads GC/SI/ES/NQ OHLCV every 5 min (15-min delayed)
+fortress-executor    — runs 43 strategies, sends Telegram signals (--mock mode)
+fortress-barreader   — watches live/ dir for NT8/Tradovate JSONL, appends to parquet
+fortress-dashboard   — Flask web UI at port 5050
+fortress-terminal    — wetty web terminal at port 3000
+fortress-monitor     — hourly Telegram AI health reports (tick_ai_monitor.py)
+fortress-tradovate   — real-time L2 WebSocket feed [STOPPED/DISABLED - rate limited]
 ```
 
 **Service commands:**
@@ -52,18 +54,28 @@ systemctl status fortress-executor          # check status
 journalctl -u fortress-executor -f          # live signal stream
 journalctl -u fortress-yfinance -f          # data feed log
 systemctl restart fortress-executor         # restart
-systemctl restart fortress-yfinance fortress-executor fortress-dashboard  # restart all
+systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor
 ```
 
-**Tradovate live feed (NOT YET RUNNING — waiting for credentials):**
-```
-fortress-tradovate  — real-time L2 WebSocket feed (service installed, disabled)
-```
-To activate: edit `/opt/fortress/.env` → add TV_USERNAME and TV_PASSWORD → then:
+## Go-Live Sequence (Tradovate rate limit clears ~17:00 UTC 2026-06-15)
+
+Credentials are CONFIRMED CORRECT (hit 5/hr rate limit, not auth failure).
+They are stored in `/opt/fortress/.env` already.
+
 ```bash
-systemctl start fortress-tradovate
+# Step 1: Start real-time L2 feed
 systemctl enable fortress-tradovate
+systemctl start fortress-tradovate
+journalctl -u fortress-tradovate -f
+# Wait for: [Feed] Authenticated (user=..., LIVE)
+
+# Step 2: Switch executor to live orders (executor service file already has --live-auto-trade)
+systemctl restart fortress-executor
+journalctl -u fortress-executor -f
+# Look for: ** LIVE MODE **
 ```
+
+If captcha prompt appears: user logs into trader.tradovate.com in browser first, then retry Step 1.
 
 ## Data Pipeline
 
@@ -82,6 +94,9 @@ systemctl enable fortress-tradovate
 [Dashboard]  tick_dashboard_server.py --host 0.0.0.0 --port 5050
   reads parquets + state files  →  live web UI
 
+[Monitor]  tick_ai_monitor.py --loop --interval 3600
+  checks services + data freshness + signals  →  Telegram every hour
+
 [State files]
   06_live_trading/state/  — positions, account_state, daily_pnl, heartbeat
   06_live_trading/logs/   — signals_YYYYMMDD.jsonl
@@ -90,83 +105,69 @@ systemctl enable fortress-tradovate
 ## Key File Locations on Server
 
 ```
-/opt/fortress/04_codebase/tick_live_executor.py      — main strategy runner
-/opt/fortress/04_codebase/tick_live_bar_reader.py    — JSONL → parquet
-/opt/fortress/04_codebase/tick_yfinance_updater.py   — free data feed
-/opt/fortress/04_codebase/tick_tradovate_live_feed.py — real-time feed (needs creds)
-/opt/fortress/04_codebase/tick_dashboard_server.py   — web dashboard
-/opt/fortress/04_codebase/tick_nt8_syncer.py         — Windows→server JSONL syncer
-/opt/fortress/01_data/tick_bars/                     — parquet data files
-/opt/fortress/01_data/tick_bars/live/                — live JSONL files
-/opt/fortress/06_live_trading/state/                 — runtime state
-/opt/fortress/.env                                   — credentials (TV_USERNAME etc)
-/opt/fortress/requirements.txt                       — pip deps
+/opt/fortress/04_codebase/tick_live_executor.py       — main strategy runner
+/opt/fortress/04_codebase/tick_live_bar_reader.py     — JSONL → parquet
+/opt/fortress/04_codebase/tick_yfinance_updater.py    — free data feed
+/opt/fortress/04_codebase/tick_tradovate_live_feed.py — real-time L2 feed
+/opt/fortress/04_codebase/tick_dashboard_server.py    — web dashboard
+/opt/fortress/04_codebase/tick_ai_monitor.py          — hourly health reports
+/opt/fortress/04_codebase/tick_nt8_syncer.py          — Windows→server JSONL syncer
+/opt/fortress/01_data/tick_bars/                      — parquet data files
+/opt/fortress/01_data/tick_bars/live/                 — live JSONL files
+/opt/fortress/06_live_trading/state/                  — runtime state
+/opt/fortress/.env                                    — credentials (never committed to git)
+/opt/fortress/requirements.txt                        — pip deps
 ```
 
 ## Contracts (Sep 2026, roll ~Sep 17-19)
 
 ```
 MGCU6 → GC (Micro Gold)
-SIU6  → SI (Silver — verify exact symbol in Tradovate UI)
+SILU6 → SI (Micro Silver)
 MESU6 → ES (Micro E-mini S&P 500)
 MNQU6 → NQ (Micro E-mini Nasdaq)
+GCU6  → GC (Full Gold)
+SIU6  → SI (Full Silver)
+ESU6  → ES (Full S&P)
+NQU6  → NQ (Full Nasdaq)
 ```
 
-## Current Blockers (as of 2026-06-15)
+## GitHub Repo
 
-1. **Real-time data**: yfinance gives 15-min delayed OHLCV. To go real-time:
-   - Edit `/opt/fortress/.env` → set `TV_USERNAME` and `TV_PASSWORD` (Tradovate login)
-   - `systemctl start fortress-tradovate && systemctl enable fortress-tradovate`
-   - L2 strategies (40-44) become active once JSONL data flows
+https://github.com/conorw1029-art/quant-research-fortress.git
 
-2. **L2 strategies 40-44**: Show "no data" because they need tick_tradovate_live_feed.py running
-
-3. **Mock mode**: Executor runs `--mock` (signals only). To go live:
-   - Change `ExecStart` in `/etc/systemd/system/fortress-executor.service` (remove `--mock`)
-   - Only do this when ready and funded accounts are confirmed
-
-## NinjaTrader / Windows Setup
-
-When NT8 is running on Windows:
-- Add FortressBarWriter.cs indicator to GC and SI charts (1-minute timeframe)
-- Run `start_fortress.bat` — Window 4 (NT8 Syncer) SFTPs JSONL files to server
-- NT8 data supplements Tradovate data for GC/SI L2
-
-## GitHub
-
-Repo: https://github.com/conorw1029-art/quant-research-fortress.git
-The server is NOT a git clone (deployed via tarball). To update server code:
+The server is NOT a git clone (deployed via tarball/SFTP). To update server after a local code change:
 1. Edit files locally, commit, push
-2. Then SFTP the changed files to server, or rebuild the tarball
+2. SFTP the changed files to server via paramiko or scp
 
 ## How to Continue from Any Device
 
-**From iPad browser:**
+**From iPad browser (no SSH app needed):**
 1. Go to http://46.225.110.190:3000 (web terminal)
 2. Login: root / Fortress2026!
 3. Type: `cd /opt/fortress && claude`
-4. Claude Code starts with full context from this file
+4. Claude Code starts with full context from this CLAUDE.md file
 
-**From Termius / SSH app:**
+**From Termius SSH app:**
 - Host: 46.225.110.190, user: root, password: Fortress2026!
 
-**From Windows (this machine):**
+**From Windows (development machine):**
 - Open Claude Code in the quant-research directory
-- SSH key is at C:\Users\Conor\.ssh\fortress_deploy
+- SSH key: C:\Users\Conor\.ssh\fortress_deploy
 
 ## What Claude Should Do When Starting on the Server
 
 1. Read this file (done automatically)
-2. Run: `systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal`
+2. Run: `systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor fortress-tradovate`
 3. Run: `journalctl -u fortress-executor --no-pager -n 20` to see recent signals
-4. Check: `cat /opt/fortress/.env` to see if TV_USERNAME is set
-5. Report status to user
+4. Run: `journalctl -u fortress-tradovate --no-pager -n 10` to check feed status
+5. Report status and current blockers to user
 
 ## Quick Diagnostics
 
 ```bash
 # All services OK?
-systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal
+systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor
 
 # Recent signals
 journalctl -u fortress-executor --no-pager -n 30
@@ -178,5 +179,18 @@ ls -la /opt/fortress/01_data/tick_bars/*.parquet
 ls -la /opt/fortress/01_data/tick_bars/live/
 
 # Credentials set?
-grep TV_USERNAME /opt/fortress/.env
+grep -E "TV_USERNAME|TRADOVATE_USERNAME" /opt/fortress/.env
+
+# Tradovate feed logs
+journalctl -u fortress-tradovate --no-pager -n 30
 ```
+
+## Current Status (as of 2026-06-15)
+
+- 5 of 7 services ACTIVE (yfinance, executor, barreader, dashboard, terminal, monitor)
+- fortress-tradovate STOPPED (rate limited, re-enable after 17:00 UTC 2026-06-15)
+- Executor in --mock mode (no real orders)
+- All 43 strategies monitoring
+- Tradovate credentials confirmed correct
+- Data: 15-min delayed OHLCV (will become real-time once tradovate feed restarts)
+- ANTHROPIC_API_KEY not yet set in .env (AI health summaries use plain text fallback)

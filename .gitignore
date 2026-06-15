@@ -18,9 +18,10 @@ __pycache__/
 05_backtests/archived/
 05_backtests/logs/
 
-# ── Live trading logs (runtime output, not source) ────────────────────────────
+# ── Live trading logs and runtime state (not source) ─────────────────────────
 06_live_trading/logs/
 06_live_trading/performance/
+06_live_trading/state/
 
 .env
 *.key
