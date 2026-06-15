@@ -1,0 +1,18 @@
+[Unit]
+Description=Fortress AI Health Monitor (hourly Telegram reports)
+After=network-online.target fortress-executor.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fortress
+WorkingDirectory=/opt/fortress/04_codebase
+EnvironmentFile=/opt/fortress/.env
+ExecStart=/opt/fortress/venv/bin/python -X utf8 tick_ai_monitor.py --loop --interval 3600
+Restart=always
+RestartSec=60
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
