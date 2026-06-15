@@ -1,0 +1,18 @@
+[Unit]
+Description=Fortress Trade Copier (leader→follower Tradovate accounts)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fortress
+WorkingDirectory=/opt/fortress/04_codebase
+EnvironmentFile=/opt/fortress/.env
+ExecStart=/opt/fortress/venv/bin/python -u tick_trade_copier.py
+Restart=always
+RestartSec=15
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
