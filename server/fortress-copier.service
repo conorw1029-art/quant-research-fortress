@@ -10,7 +10,7 @@ WorkingDirectory=/opt/fortress/04_codebase
 EnvironmentFile=/opt/fortress/.env
 ExecStart=/opt/fortress/venv/bin/python -u tick_trade_copier.py
 Restart=always
-RestartSec=15
+RestartSec=300
 StandardOutput=journal
 StandardError=journal
 

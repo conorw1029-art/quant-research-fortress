@@ -132,14 +132,14 @@ class TradeCopier:
         for f in self.followers:
             f.authenticate()
         if not self.leader.ok:
-            print("[Copier] FATAL: leader auth failed — cannot copy without leader access")
+            print("[Copier] Leader auth failed — will retry (check credentials / rate limit)")
             return False
-        ready = [f.name for f in self.followers if f.ok]
+        ready  = [f.name for f in self.followers if f.ok]
         failed = [f.name for f in self.followers if not f.ok]
         print(f"[Copier] Followers ready: {ready}")
         if failed:
-            print(f"[Copier] Followers FAILED: {failed}")
-        return True
+            print(f"[Copier] Followers FAILED (skipped): {failed}")
+        return True  # leader OK is enough to proceed; failed followers just get skipped
 
     # ── Fill detection ─────────────────────────────────────────────────────────
 
@@ -268,8 +268,11 @@ class TradeCopier:
         print(f"[Copier] Leader: {self.leader.name}")
         print(f"[Copier] Followers: {[f.name for f in self.followers]}")
 
-        if not self.authenticate_all():
-            sys.exit(1)
+        while not self.authenticate_all():
+            wait = 600  # 10 minutes between auth retries (avoids rate limit spiral)
+            print(f"[Copier] Auth failed — retrying in {wait}s (Tradovate rate limit is 5/hr)")
+            _telegram(f"FORTRESS COPIER: auth failed, retrying in {wait//60} min")
+            time.sleep(wait)
 
         # Seed seen fills so we don't replay old history on startup
         self._seed_seen_fills()
