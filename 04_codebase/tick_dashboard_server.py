@@ -63,6 +63,61 @@ def _read_json(path: Path, default=None) -> dict:
         return default if default is not None else {}
 
 
+def _parse_signal_line(line: str) -> dict | None:
+    """Parse one JSONL line, tolerating NaN/Infinity written by numpy/pandas."""
+    line = line.strip()
+    if not line:
+        return None
+    # Replace bare NaN/Infinity (invalid JSON) with null before parsing
+    import re as _re
+    line = _re.sub(r':\s*NaN\b',      ': null', line)
+    line = _re.sub(r':\s*Infinity\b', ': null', line)
+    line = _re.sub(r':\s*-Infinity\b', ': null', line)
+    try:
+        return json.loads(line)
+    except Exception:
+        return None
+
+
+def _normalize_record(r: dict) -> dict:
+    """Map executor's native signal format to the fields _aggregate_signals expects."""
+    # Time: executor writes 'timestamp', dashboard reads 'alert_time' / 'bar_time'
+    if "alert_time" not in r and "bar_time" not in r:
+        r["alert_time"] = r.get("timestamp", "")
+
+    # Action: derive from event_type / signal / reason
+    if "action" not in r:
+        event_type = r.get("event_type", "")
+        signal_val = r.get("signal")
+        accepted   = r.get("accepted", False)
+        reason     = r.get("reason", "").lower()
+
+        if event_type == "exit":
+            if reason == "stop":
+                r["action"] = "STOP"
+            elif reason == "target":
+                r["action"] = "TARGET"
+            elif reason in ("timeout", "time"):
+                r["action"] = "TIMEOUT"
+            else:
+                r["action"] = "EXIT"
+        elif signal_val is not None:
+            if accepted:
+                r["action"] = "BUY" if signal_val == 1 else "SELL"
+            else:
+                r["action"] = "__REJECTED__"
+        elif event_type in ("coordinator_decision",):
+            r["action"] = "__SKIP__"
+        else:
+            r["action"] = event_type.upper() if event_type else ""
+
+    # Price aliases: executor uses 'entry' for entry price
+    if "entry_px" not in r and "entry" in r:
+        r["entry_px"] = r["entry"]
+
+    return r
+
+
 def _read_signal_logs(n_days: int = 7) -> list[dict]:
     records = []
     for d in range(n_days):
@@ -70,13 +125,9 @@ def _read_signal_logs(n_days: int = 7) -> list[dict]:
         p  = LOG_DIR / f"signals_{dt.strftime('%Y%m%d')}.jsonl"
         if p.exists():
             for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    records.append(json.loads(line))
-                except Exception:
-                    pass
+                r = _parse_signal_line(line)
+                if r:
+                    records.append(_normalize_record(r))
     return records
 
 
@@ -151,6 +202,8 @@ def _aggregate_signals(records: list[dict]) -> tuple[dict, list, list]:
     for r in sorted(records, key=lambda x: x.get("alert_time", ""), reverse=False):
         sid    = r.get("strategy_id", 0)
         action = r.get("action", r.get("type", ""))
+        if action in ("__REJECTED__", "__SKIP__", ""):
+            continue
         pnl    = r.get("pnl", r.get("dollar_pnl"))
         ts     = r.get("alert_time", r.get("bar_time", ""))
         is_td  = ts[:10] == today if ts else False
