@@ -8,7 +8,9 @@ Type=simple
 User=fortress
 WorkingDirectory=/opt/fortress/04_codebase
 EnvironmentFile=/opt/fortress/.env
-ExecStart=/opt/fortress/venv/bin/python -X utf8 tick_live_executor.py --mock --poll 60
+# DRY_RUN (signals + Telegram, no broker orders) — default until Tradovate API keys provisioned
+# Switch to live: replace the line below with --live-auto-trade --poll 60
+ExecStart=/opt/fortress/venv/bin/python -X utf8 tick_live_executor.py --poll 60
 Restart=always
 RestartSec=60
 StandardOutput=journal

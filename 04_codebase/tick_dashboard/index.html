@@ -742,6 +742,7 @@ td{padding:5px 8px;vertical-align:middle}
   <div class="header-right">
     <div class="session-badge session-closed" id="hdr-session">CLOSED</div>
     <div class="utc-clock" id="utc-clock">00:00:00 UTC</div>
+    <button id="btn-kill-switch" onclick="toggleKillSwitch()" title="Emergency stop / resume trading" style="margin-left:12px;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:700;font-size:12px;background:#ff3d71;color:#fff;letter-spacing:0.05em">STOP</button>
   </div>
 </div>
 
@@ -988,9 +989,12 @@ td{padding:5px 8px;vertical-align:middle}
 /* ═══════════════════════════════════════════════════════════════════════
    CONSTANTS & STATE
 ═══════════════════════════════════════════════════════════════════════ */
-const API_STREAM   = '/api/stream';
-const API_CHAT     = '/api/chat';
-const API_SNAPSHOT = '/api/snapshot';
+const API_STREAM      = '/api/stream';
+const API_CHAT        = '/api/chat';
+const API_SNAPSHOT    = '/api/snapshot';
+const API_KILL_STATUS = '/api/kill-switch';
+const API_HALT        = '/api/halt';
+const API_RESUME      = '/api/resume';
 
 let _data       = null;
 let _sse        = null;
@@ -1991,7 +1995,41 @@ function renderDemoState() {
   ]);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   KILL SWITCH
+═══════════════════════════════════════════════════════════════════════ */
+let _ksActive = false;
+
+async function syncKillSwitchStatus() {
+  try {
+    const r = await fetch(API_KILL_STATUS);
+    const d = await r.json();
+    _ksActive = (d.status === 'STOP');
+    const btn = document.getElementById('btn-kill-switch');
+    if (btn) {
+      btn.textContent  = _ksActive ? 'RESUME' : 'STOP';
+      btn.style.background = _ksActive ? '#00d68f' : '#ff3d71';
+    }
+  } catch {}
+}
+
+async function toggleKillSwitch() {
+  const url = _ksActive ? API_RESUME : API_HALT;
+  const label = _ksActive ? 'resume' : 'STOP ALL TRADING';
+  if (!_ksActive && !confirm('EMERGENCY STOP — halt all new trades immediately?')) return;
+  try {
+    const r = await fetch(url, { method: 'POST' });
+    const d = await r.json();
+    if (d.ok) await syncKillSwitchStatus();
+    else alert('Kill switch error: ' + (d.error || 'unknown'));
+  } catch(e) {
+    alert('Kill switch request failed: ' + e.message);
+  }
+}
+
 boot();
+syncKillSwitchStatus();
+setInterval(syncKillSwitchStatus, 10000);
 </script>
 </body>
 </html>

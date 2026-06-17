@@ -437,6 +437,21 @@ def _updater():
         time.sleep(3)
 
 
+# ── Kill switch path (must match executor's ROOT / KILL_SWITCH.txt) ───────────
+KILL_SWITCH_PATH = ROOT / "KILL_SWITCH.txt"
+
+
+def _ks_status() -> str:
+    try:
+        for line in KILL_SWITCH_PATH.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                return line.upper()
+    except FileNotFoundError:
+        pass
+    return "RUN"
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
@@ -460,6 +475,29 @@ def api_stream():
             time.sleep(3)
     return Response(generate(), content_type="text/event-stream",
                     headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.route("/api/kill-switch")
+def api_kill_switch_status():
+    return jsonify({"status": _ks_status()})
+
+
+@app.route("/api/halt", methods=["POST"])
+def api_halt():
+    try:
+        KILL_SWITCH_PATH.write_text("STOP\n", encoding="utf-8")
+        return jsonify({"ok": True, "status": "STOP"})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/resume", methods=["POST"])
+def api_resume():
+    try:
+        KILL_SWITCH_PATH.write_text("RUN\n", encoding="utf-8")
+        return jsonify({"ok": True, "status": "RUN"})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 @app.route("/api/chat", methods=["POST"])

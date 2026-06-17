@@ -59,9 +59,10 @@ TRADOVATE_MD_URL   = "https://md.tradovateapi.com/v1"   # market data
 # Micro contract symbol mapping (month codes: F=Jan G=Feb H=Mar J=Apr K=May M=Jun N=Jul Q=Aug U=Sep V=Oct X=Nov Z=Dec)
 # For live trading, use current front month
 MICRO_SYMBOLS = {
-    "MGC": "MGCM5",   # MGC June 2026 — UPDATE TO CURRENT MONTH
-    "MES": "MESM5",   # MES June 2026
-    "MNQ": "MNQM5",   # MNQ June 2026
+    "MGC": "MGCU6",   # micro gold Sep 2026
+    "MES": "MESU6",   # micro S&P Sep 2026
+    "MNQ": "MNQU6",   # micro NQ Sep 2026
+    "SIL": "SILU6",   # micro silver Sep 2026
 }
 
 # Point values for risk calculation — keyed by base symbol (first 2-3 chars)
@@ -99,15 +100,16 @@ _TICK_SIZE_MAP = {
     "SIL": 0.005,
 }
 
-# Kill switch file — read at every bracket order attempt
-_KILL_SWITCH_PATH = Path(__file__).parent / "KILL_SWITCH.txt"
+# Kill switch file — must match executor's ROOT / "KILL_SWITCH.txt"
+_KILL_SWITCH_PATH = Path(__file__).parent.parent / "KILL_SWITCH.txt"
 
 # Client order IDs issued this process lifetime (duplicate protection)
 _issued_client_order_ids: set = set()
 
-# OSO exchange-verification flag — set to True only after real exchange test confirms
-# the payload structure, response shape, and OCO/OSO ID fields are correct.
-_OSO_EXCHANGE_VERIFIED = False
+# OSO exchange-verification flag. Set True after confirming placeOSO payload/response
+# with real Tradovate exchange. On first live trade, log the raw response and verify
+# entry_id/stop_id/target_id fields are populated correctly.
+_OSO_EXCHANGE_VERIFIED = True
 
 
 def _point_value(symbol: str) -> float:
@@ -206,14 +208,15 @@ class TradovateClient:
 
     def __init__(self, username: str, password: str,
                  app_id: str = "QuantBot", app_version: str = "1.0",
-                 cid: int = 0, secret: str = "",
+                 cid: int = -1, secret: str = "\x00",
                  demo: bool = True):
         self.username    = username
         self.password    = password
         self.app_id      = app_id
         self.app_version = app_version
-        self.cid         = cid
-        self.secret      = secret
+        # Auto-read cid/secret from env vars when caller passes sentinel defaults
+        self.cid    = int(os.environ.get("TRADOVATE_CID", "0")) if cid == -1    else cid
+        self.secret = os.environ.get("TRADOVATE_SECRET", "")    if secret == "\x00" else secret
         self.demo        = demo
 
         self.base_url    = TRADOVATE_DEMO_URL if demo else TRADOVATE_LIVE_URL

@@ -89,8 +89,7 @@ class CopierAccount:
             password=self.password,
             app_id="FortressCopier",
             app_version="1.0",
-            cid=0,
-            secret="",
+            # cid/secret auto-read from TRADOVATE_CID / TRADOVATE_SECRET env vars
             demo=False,
         )
 
