@@ -48,8 +48,8 @@ fortress-barreader   — ACTIVE — watches live/ dir for NT8/Tradovate JSONL, a
 fortress-dashboard   — ACTIVE — Flask web UI at port 5050 (signal/P&L display fixed and verified this session)
 fortress-terminal    — ACTIVE — wetty web terminal at port 3000
 fortress-monitor     — ACTIVE — hourly Telegram AI health reports (tick_ai_monitor.py)
-fortress-tradovate   — STOPPED + DISABLED — real-time L2 WebSocket feed. BLOCKED on Tradovate auth lockout (see below). Do not start until lockout is confirmed cleared.
-fortress-copier      — STOPPED + DISABLED — trade copier (leader→follower). Same auth lockout blocker.
+fortress-tradovate   — STOPPED + DISABLED — real-time L2 WebSocket feed. BLOCKED on missing Tradovate API keys (see below). Do not start until real cid/sec are in .env.
+fortress-copier      — STOPPED + DISABLED — trade copier (leader→follower). Same missing-API-key blocker.
 ```
 
 **Service commands:**
@@ -61,27 +61,30 @@ systemctl restart fortress-executor         # restart
 systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor fortress-tradovate fortress-copier
 ```
 
-## ⚠️ CRITICAL OPEN ISSUE: Tradovate auth lockout (as of 2026-06-16)
+## ⚠️ CRITICAL OPEN ISSUE: Tradovate API was never provisioned (root cause found 2026-06-16)
 
-All 4 Tradovate-linked accounts (TakeProfit/leader, Lucid, Tradeify, Apex) are failing authentication with:
+All 4 Tradovate-linked accounts (TakeProfit/leader, Lucid, Tradeify, Apex) fail authentication with:
 ```
 {'errorText': 'Incorrect username or password. Please try again, noting that passwords are case-sensitive.'}
 ```
-This is **not** the original rate-limit response (`'p-captcha': True, 'p-message': 'Rate limit exceeded: more than 5 requests per hour'`), which is what we saw earlier. The credentials in `/opt/fortress/.env` are verified byte-for-byte correct (including the Lucid credentials that were previously confirmed working via a rate-limit response, proving they got that far through auth before).
+**This is not a lockout, CAPTCHA, or rate-limit issue, and it is not a credential typo.** Root cause confirmed 2026-06-16:
 
-**Timeline:**
-1. An earlier bug in `tick_trade_copier.py` caused a crash-loop that hammered the Tradovate auth endpoint every ~15s across all 4 accounts when credentials were being set up. This is fixed (see "Trade Copier" section below) but the damage may already be done.
-2. Hours later, all 4 accounts — including ones with correct credentials — started returning genuine "incorrect password" instead of rate-limit responses. This pattern (real auth rejection that doesn't clear with time, after a burst of failed/rate-limited attempts) is consistent with Tradovate's anti-bot system soft-locking the account or source IP and requiring a browser-based CAPTCHA/security challenge to clear, rather than a real password problem.
-3. This has now persisted across a date change (well past any 1-hour rate-limit reset), confirming it is not just rate-limiting.
+1. Username/password for all 4 accounts were re-verified byte-for-byte against what the user originally provided (read `.env` via SFTP, compared `repr()` of every value, checked for hidden chars / CRLF corruption) — **all 8 values match exactly**. Credentials are not the problem.
+2. The user independently confirmed clean, no-CAPTCHA, no-rejection manual browser logins for **all 4 accounts** on the same day the API kept failing. This ruled out an account-level lock or IP-based soft-lock theory (the earlier hypothesis in this doc, now superseded).
+3. Per Tradovate's own docs/forum (see sources below), `POST /auth/accesstokenrequest` requires a `cid` (client ID) + `sec` (secret) pair that must be generated per-account via **Settings → API Access / Generate API Key** on the Tradovate web platform — a registered-application credential, separate from the login password. Some accounts also require a distinct **API password**, different from the normal login password.
+4. `/opt/fortress/.env` has been sending `cid=0` and `sec=""` for all 4 accounts — placeholders, never replaced with real Tradovate-issued values. **This is the root cause.** It explains every symptom: browser login is clean (doesn't use cid/sec), API auth fails identically across all 4 accounts regardless of password correctness (none of the 4 have ever generated a real API key), and it never "cleared" over time because there was never anything time-based to clear.
 
-**Current state:** `fortress-tradovate` and `fortress-copier` are both **stopped and disabled** to avoid making the lockout worse. Do NOT attempt further automated Tradovate logins from the server until the user has confirmed via browser what's actually happening.
+Sources: [Tradovate API Access Requirements — Subscription, CID, SEC](https://danetrades.com/help-center/accounts-connections/tradovate-api-requirements-and-subscription/), [Accesstokenrequest Access denied — Tradovate Forum](https://community.tradovate.com/t/accesstokenrequest-access-denied-does-api-key-generation-take-time-to-kick-in/8874), [API password? — Tradovate Forum](https://community.tradovate.com/t/api-password/5161)
 
-**What the user needs to do:** log into each of the 4 accounts manually via browser (trader.tradovate.com or whichever portal each broker/white-label directs to) and report back:
-- Does it log in cleanly?
-- Does a CAPTCHA / "verify it's you" / security challenge appear?
-- Does it outright reject the password (i.e., is a password actually wrong/changed)?
+**What the user needs to do, per account (TakeProfit, Lucid, Tradeify, Apex):**
+1. Log into that account on the Tradovate web platform → gear/Settings icon → "API Access" / "Generate API Key."
+2. Generate (or retrieve, if one already exists) the `cid` + `sec` pair for that account.
+3. Check whether the platform also requires/offers a separate **API password** distinct from the login password — if so, set one.
+4. Hand over `cid` / `sec` (and API password if applicable) for each account so `.env` can be updated via SFTP.
 
-Once the user confirms the lockout is cleared (or provides corrected credentials), re-enable with:
+This can be done one account at a time — start with the leader (TakeProfit) since the copier needs that one first. **Do NOT run further automated Tradovate auth attempts from the server until at least one account has a real cid/sec** — retrying with cid=0/sec="" will just keep failing the same way and adds no new information.
+
+Once real cid/sec are in `.env`, re-enable with:
 ```bash
 systemctl enable fortress-tradovate && systemctl start fortress-tradovate
 journalctl -u fortress-tradovate -f
@@ -90,7 +93,7 @@ journalctl -u fortress-tradovate -f
 systemctl enable fortress-copier && systemctl start fortress-copier   # COPIER_DRY_RUN=true — logs only, no real orders
 ```
 
-Separately, TakeProfit Trader's credentials (`ConorWalsh1` / `G7841O4782K2454tv=`) were rejected even before this lockout appeared, and the user has confirmed they are typed exactly as given — this may be a second, independent issue (e.g. TakeProfit could use a branded/white-label Tradovate login endpoint rather than `live.tradovateapi.com`). Revisit once the broader lockout is resolved.
+Separately, TakeProfit Trader's credentials (`ConorWalsh1` / `G7841O4782K2454tv=`) were rejected even before this was diagnosed — almost certainly the same cid/sec root cause, not a separate issue. Re-test once TakeProfit has a real API key.
 
 ## Trade Copier (custom-built, replaces TradeCopia)
 
@@ -249,21 +252,21 @@ grep -E "TV_USERNAME|TRADOVATE_USERNAME|COPIER_LEADER_NAME" /opt/fortress/.env
 - **paramiko SSH key**: the deploy key is Ed25519. Use `paramiko.Ed25519Key.from_private_key_file(...)`, not `RSAKey` — RSAKey throws a cryptic `unpack requires a buffer of 4 bytes`.
 - **Never write `.env` (or anything with `$` in it) via an SSH heredoc** (`ssh.exec_command('cat > file << EOF ...')`). Python string escaping + bash heredoc quoting compounds and corrupts special characters like `$`. Always write config files via **SFTP** (`sftp.open(path, 'w').write(content)`) — no shell involved, no double-escaping risk.
 - **systemd `EnvironmentFile=` does NOT expand `$`** — that was a red herring; the real corruption source was the heredoc issue above.
-- **Tradovate rate limit is 5 requests/hour per account**, and looks like repeated failures can escalate into a longer-lived soft-lock requiring a browser CAPTCHA to clear (see open issue above). Never let a service crash-loop against this endpoint — always use a long backoff (600s+) and make follower-only failures non-fatal.
+- **Tradovate rate limit is 5 requests/hour per account** — never let a service crash-loop against the auth endpoint; always use a long backoff (600s+) and make follower-only failures non-fatal.
+- **Tradovate REST API requires a real `cid`/`sec` per account**, generated via Settings → API Access on the web platform — `cid=0`/`sec=""` placeholders will fail with the same generic "incorrect username or password" error as a real credential mistake, even though browser login works fine. Don't mistake this for a lockout (see critical issue above) — confirmed root cause 2026-06-16 after ruling out IP-block/CAPTCHA-lock theories.
 - **Windows console + arrows**: printing `→` or similar unicode via plain `print()` in PowerShell/cmd raises `UnicodeEncodeError` on cp1252. Cosmetic only — encode with `errors='replace'` or avoid the character in diagnostic scripts.
 
 ## Pending / Next Steps
 
-1. **Resolve Tradovate auth lockout** (all 4 accounts) — needs user to manually test login via browser per account, per instructions above. This blocks both the real-time L2 feed and the trade copier.
-2. **TakeProfit Trader** auth was failing even before the broader lockout, with confirmed-correct credentials — investigate whether it uses a different/branded Tradovate login endpoint once the broader lockout is sorted.
+1. **Get real Tradovate API keys** (all 4 accounts) — user needs to generate `cid`/`sec` per account via Settings → API Access on the Tradovate web platform (see critical issue above) and hand them over to replace the `cid=0`/`sec=""` placeholders in `.env`. This blocks both the real-time L2 feed and the trade copier. Start with TakeProfit (leader) since the copier needs that one first.
+2. **TakeProfit Trader** auth failure is almost certainly the same cid/sec root cause, not a separate issue — re-test once it has a real API key.
 3. Once leader auth is restored: start `fortress-copier` in dry-run, verify via logs/Telegram that it correctly mirrors fills, before ever setting `COPIER_DRY_RUN=false` (requires explicit user go-ahead — no real copying yet).
 4. L2 strategies (IDs 40-44) remain blocked on no DOM/L2 data until `fortress-tradovate` is back.
-5. Consider whether `TV_SECRET`/`TRADOVATE_SECRET` being empty (`sec=""`) matters — wasn't the cause of the original rate-limit-confirmed auth, probably not the cause of the current lockout either, but worth re-checking if the lockout doesn't resolve after a clean browser login.
 
 ## Current Status (as of 2026-06-16)
 
 - 6 of 8 services ACTIVE: yfinance, executor, barreader, dashboard, terminal, monitor
-- `fortress-tradovate` and `fortress-copier` STOPPED + DISABLED — Tradovate auth lockout, see critical issue above
+- `fortress-tradovate` and `fortress-copier` STOPPED + DISABLED — waiting on real Tradovate API keys (cid/sec), see critical issue above. Root cause confirmed today: not a lockout, the API was simply never provisioned for any of the 4 accounts.
 - Executor in --mock mode (no real orders) — by explicit user instruction, do not change without fresh approval
 - All 43 strategies monitoring, 0 halted, 0 disabled
 - Dashboard signal/P&L visibility bug fixed and verified live (see Dashboard section)
