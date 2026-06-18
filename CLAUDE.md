@@ -1,275 +1,555 @@
-# Fortress Trading System — Claude Context File
+# Fortress Trading System — Master Context File
 
-Read this first. This is a live quantitative trading system running 24/7 on a Hetzner VPS.
-When Claude Code starts (on any device), this file gives full context.
+**Read this entire file before doing anything.** This is a live quantitative trading system running 24/7 on a Hetzner VPS. This file is the single source of truth — it was written to allow any Claude instance (Windows, iPad, server) to pick up exactly where the last session left off without asking questions.
 
-## Who is the user
+---
 
-Conor — quantitative trader running funded prop firm accounts, currently traveling/abroad (cannot rely on his personal PC being on).
-- 10 funded Topstep accounts, ~$1,000 drawdown limit each
-- Personal max DD: $2,000 per account
-- 4 broker accounts, ALL accessed via Tradovate login: TakeProfit Trader (leader), Lucid, Tradeify, Apex — all in heavy drawdown
-- Platforms: Tradovate (Lucid/TakeProfit/Tradeify/Apex all route through Tradovate) + NinjaTrader (Rithmic, separate)
-- Email: conorw1029@gmail.com
-- Telegram: bot token 8034600379:AAGLzv9sFl61fya5DBkeTcidxvrd9o1aLmA, chat_id 8483433910
+## 1. WHO IS THE USER
 
-## The System
+**Conor** — quantitative trader running funded prop firm accounts, currently traveling/abroad. His personal PC cannot be relied on to stay running.
 
-43 strategies across 4 markets (GC=Gold, SI=Silver, ES=S&P, NQ=Nasdaq).
-- V1-V9: OHLCV + CVD strategies (39 total)
-- V10 IDs 40-44: L2 microstructure strategies (need DOM data — blocked until Tradovate feed is back)
-- All 43 active in executor (status: REVIEW_REQUIRED or better)
-- Running in **--mock mode** (signals only, no real orders). User has explicitly said: "i dont want to place the trades yet but i want to see how they perform" — do NOT switch to live trading or flip `COPIER_DRY_RUN` to false without fresh, explicit authorization.
+- **Email:** conorw1029@gmail.com
+- **Telegram:** bot token `8034600379:AAGLzv9sFl61fya5DBkeTcidxvrd9o1aLmA`, chat_id `8483433910`
+- **10 funded Topstep accounts**, ~$1,000 drawdown limit each, personal max DD $2,000/account
+- **4 broker accounts** — all accessed via Tradovate login:
+  - TakeProfit Trader → username `ConorWalsh1` (LEADER account — copier sources trades from here)
+  - Lucid → username `LTT024LOBH5`
+  - Tradeify → username `TDFYU439260492`
+  - Apex → username `APEX_496623`
+- **Platforms:** Tradovate (all 4 above) + NinjaTrader/Rithmic (separate, not connected to this system yet)
+- **PC:** Windows 10, `C:\Users\conor\Desktop\quant-research`, SSH key at `C:\Users\Conor\.ssh\fortress_deploy`
 
-Strategy allowlist: `04_codebase/live_strategy_allowlist.yaml`
-Strategy code: `04_codebase/tick_strategies*.py`
-Executor: `04_codebase/tick_live_executor.py`
-Trade copier: `04_codebase/tick_trade_copier.py`
+---
 
-## Live Server
+## 2. THE SYSTEM IN ONE PARAGRAPH
 
-**Hetzner VPS: 46.225.110.190 (Ubuntu 24.04)**
-- SSH: `ssh root@46.225.110.190` password `Fortress2026!`
-- Windows SSH key (paramiko): `C:\Users\Conor\.ssh\fortress_deploy` — **Ed25519 key, must load with `paramiko.Ed25519Key.from_private_key_file()`, NOT `RSAKey`** (RSAKey throws `unpack requires a buffer of 4 bytes`)
-- Code lives at: `/opt/fortress/`
-- Python venv: `/opt/fortress/venv/bin/python`
-- All services run as user `fortress`
+Fortress is a server-side automated trading system. 43 strategies monitor GC (Gold), SI (Silver), ES (S&P 500), and NQ (Nasdaq) futures. When a strategy fires a signal, the executor places a bracket order on the leader Tradovate account, and the trade copier mirrors that fill to all 3 follower accounts. A web dashboard shows live P&L. Everything runs as systemd services on a Hetzner VPS — it runs 24/7 even when Conor's PC is off.
 
-**URLs (open in any browser, including iPad):**
-- Dashboard: http://46.225.110.190:5050 — **confirmed live and working**, shows real-time signals, per-strategy win/loss + P&L, equity curve, risk gauges
-- Web Terminal (shell in browser): http://46.225.110.190:3000 — login: root / Fortress2026!
+**Current state as of 2026-06-18:** The system is running in DRY_RUN mode (signals + Telegram only, no real orders placed). The single blocker to going fully live is that the Tradovate API keys (cid + sec) have never been generated. See Section 5 for the exact steps.
 
-## 8 Systemd Services (auto-restart, survive reboots)
+---
+
+## 3. LIVE SERVER
+
+**Hetzner VPS: `46.225.110.190` (Ubuntu 24.04)**
+
+| Access method | Details |
+|---|---|
+| SSH (terminal) | `ssh root@46.225.110.190` password `Fortress2026!` |
+| Web terminal (iPad) | http://46.225.110.190:3000 login: root / Fortress2026! |
+| Dashboard | http://46.225.110.190:5050 |
+| Code path | `/opt/fortress/` |
+| Python venv | `/opt/fortress/venv/bin/python` |
+| Services run as | user `fortress` |
+| Credentials file | `/opt/fortress/.env` (never in git) |
+
+**Windows paramiko key:** `C:\Users\Conor\.ssh\fortress_deploy` — this is an **Ed25519 key**. ALWAYS load it with `paramiko.Ed25519Key.from_private_key_file()` — never `RSAKey` (RSAKey throws `unpack requires a buffer of 4 bytes`).
+
+**Never write `.env` via SSH heredoc** — `$` characters get corrupted. Always write it via SFTP direct write: `sftp.open('/opt/fortress/.env', 'w').write(content)`.
+
+---
+
+## 4. THE 8 SYSTEMD SERVICES
 
 ```
-fortress-yfinance    — ACTIVE — downloads GC/SI/ES/NQ OHLCV every 5 min (15-min delayed)
-fortress-executor    — ACTIVE — runs 43 strategies, sends Telegram signals (--mock mode)
-fortress-barreader   — ACTIVE — watches live/ dir for NT8/Tradovate JSONL, appends to parquet
-fortress-dashboard   — ACTIVE — Flask web UI at port 5050 (signal/P&L display fixed and verified this session)
-fortress-terminal    — ACTIVE — wetty web terminal at port 3000
-fortress-monitor     — ACTIVE — hourly Telegram AI health reports (tick_ai_monitor.py)
-fortress-tradovate   — STOPPED + DISABLED — real-time L2 WebSocket feed. BLOCKED on missing Tradovate API keys (see below). Do not start until real cid/sec are in .env.
-fortress-copier      — STOPPED + DISABLED — trade copier (leader→follower). Same missing-API-key blocker.
+fortress-yfinance   ACTIVE   — downloads GC/SI/ES/NQ OHLCV bars every ~5 min (15-min delayed, free tier)
+fortress-executor   ACTIVE   — runs 43 strategies, sends Telegram signals. Currently DRY_RUN (no orders)
+fortress-barreader  ACTIVE   — watches live/ dir for JSONL bars, appends to parquet files
+fortress-dashboard  ACTIVE   — Flask web UI at :5050 (signals, P&L, kill switch)
+fortress-terminal   ACTIVE   — wetty web terminal at :3000
+fortress-monitor    ACTIVE   — hourly Telegram AI health report (tick_ai_monitor.py)
+fortress-tradovate  STOPPED+DISABLED — real-time WebSocket feed. BLOCKED on missing cid/sec (see Section 5)
+fortress-copier     STOPPED+DISABLED — leader→follower trade copier. Same blocker.
 ```
 
-**Service commands:**
+**Quick service commands:**
 ```bash
-systemctl status fortress-executor          # check status
-journalctl -u fortress-executor -f          # live signal stream
-journalctl -u fortress-yfinance -f          # data feed log
-systemctl restart fortress-executor         # restart
+# Check all 8 at once
 systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor fortress-tradovate fortress-copier
+
+# Live signal stream
+journalctl -u fortress-executor -f
+
+# Restart a service
+systemctl restart fortress-executor
+
+# Dashboard API (read-only check)
+curl -s http://localhost:5050/api/snapshot | python3 -m json.tool | head -60
 ```
 
-## ⚠️ CRITICAL OPEN ISSUE: Tradovate API was never provisioned (root cause found 2026-06-16)
+---
 
-All 4 Tradovate-linked accounts (TakeProfit/leader, Lucid, Tradeify, Apex) fail authentication with:
+## 5. THE ONE BLOCKER: TRADOVATE API KEYS (USER ACTION REQUIRED)
+
+**Root cause confirmed 2026-06-16.** The Tradovate REST API (`POST /auth/accesstokenrequest`) requires a `cid` (Client ID, a number) and `sec` (Secret, a string) that must be generated per-account on the Tradovate web platform. These are separate from the login username/password. `/opt/fortress/.env` currently has `TV_CID=0` and `TV_SECRET=` (empty) — placeholders that were never replaced. This is why all API auth attempts fail even though browser login works perfectly.
+
+**This is not a lockout. It is not a credential typo. The API was simply never provisioned.**
+
+### Step-by-step: How to generate Tradovate API keys
+
+Do this once per account (takes ~3 minutes each). Start with **TakeProfit** (the leader).
+
+1. Open a browser → go to **trader.tradovate.com**
+2. Log in with the account's username and password
+3. Click the **gear icon (⚙)** in the top-right → **Settings**
+4. In the left sidebar, look for **"API Access"** (sometimes listed under Account or Developer)
+5. Click **"Generate API Key"** or **"Create Application"**
+6. You will receive:
+   - **CID** — a number (e.g. `1234`)
+   - **SEC** — a long alphanumeric string
+7. **IMPORTANT:** Check if the page also asks you to set a separate **"API Password"** — this is DIFFERENT from your regular login password. If it does, create one and write it down. Not all accounts require this but some do.
+8. Copy/note: the CID, the SEC, and the API password (if applicable)
+9. Repeat for: Lucid, Tradeify, Apex
+
+**Once you have the keys, send them to Claude and say "update the env file" — Claude will SFTP them into `/opt/fortress/.env` immediately.**
+
+### What to send Claude (format):
 ```
-{'errorText': 'Incorrect username or password. Please try again, noting that passwords are case-sensitive.'}
+TakeProfit: cid=XXXX sec=XXXXXXXXXX [api_password=XXXXXXXX if applicable]
+Lucid:      cid=XXXX sec=XXXXXXXXXX
+Tradeify:   cid=XXXX sec=XXXXXXXXXX
+Apex:       cid=XXXX sec=XXXXXXXXXX
 ```
-**This is not a lockout, CAPTCHA, or rate-limit issue, and it is not a credential typo.** Root cause confirmed 2026-06-16:
 
-1. Username/password for all 4 accounts were re-verified byte-for-byte against what the user originally provided (read `.env` via SFTP, compared `repr()` of every value, checked for hidden chars / CRLF corruption) — **all 8 values match exactly**. Credentials are not the problem.
-2. The user independently confirmed clean, no-CAPTCHA, no-rejection manual browser logins for **all 4 accounts** on the same day the API kept failing. This ruled out an account-level lock or IP-based soft-lock theory (the earlier hypothesis in this doc, now superseded).
-3. Per Tradovate's own docs/forum (see sources below), `POST /auth/accesstokenrequest` requires a `cid` (client ID) + `sec` (secret) pair that must be generated per-account via **Settings → API Access / Generate API Key** on the Tradovate web platform — a registered-application credential, separate from the login password. Some accounts also require a distinct **API password**, different from the normal login password.
-4. `/opt/fortress/.env` has been sending `cid=0` and `sec=""` for all 4 accounts — placeholders, never replaced with real Tradovate-issued values. **This is the root cause.** It explains every symptom: browser login is clean (doesn't use cid/sec), API auth fails identically across all 4 accounts regardless of password correctness (none of the 4 have ever generated a real API key), and it never "cleared" over time because there was never anything time-based to clear.
+---
 
-Sources: [Tradovate API Access Requirements — Subscription, CID, SEC](https://danetrades.com/help-center/accounts-connections/tradovate-api-requirements-and-subscription/), [Accesstokenrequest Access denied — Tradovate Forum](https://community.tradovate.com/t/accesstokenrequest-access-denied-does-api-key-generation-take-time-to-kick-in/8874), [API password? — Tradovate Forum](https://community.tradovate.com/t/api-password/5161)
+## 6. ACTIVATION SEQUENCE (after API keys are received)
 
-**What the user needs to do, per account (TakeProfit, Lucid, Tradeify, Apex):**
-1. Log into that account on the Tradovate web platform → gear/Settings icon → "API Access" / "Generate API Key."
-2. Generate (or retrieve, if one already exists) the `cid` + `sec` pair for that account.
-3. Check whether the platform also requires/offers a separate **API password** distinct from the login password — if so, set one.
-4. Hand over `cid` / `sec` (and API password if applicable) for each account so `.env` can be updated via SFTP.
+Do these steps in order. Do NOT skip ahead.
 
-This can be done one account at a time — start with the leader (TakeProfit) since the copier needs that one first. **Do NOT run further automated Tradovate auth attempts from the server until at least one account has a real cid/sec** — retrying with cid=0/sec="" will just keep failing the same way and adds no new information.
+### Step 1 — Update .env
+Claude writes all 4 accounts' cid/sec into `/opt/fortress/.env` via SFTP.
 
-Once real cid/sec are in `.env`, re-enable with:
+The relevant env var names:
+```
+TRADOVATE_CID=<leader cid>
+TRADOVATE_SECRET=<leader sec>
+COPIER_LEADER_PASS=<leader api_password if different from login password>
+# (each follower account uses its own cid/sec when authenticating as the copier)
+```
+
+Note: the copier authenticates each account independently, so each account's cid/sec needs to be in the env file with separate variable names.
+
+### Step 2 — Test auth (one call, NOT a service start)
 ```bash
-systemctl enable fortress-tradovate && systemctl start fortress-tradovate
+cd /opt/fortress && python3 -c "
+from dotenv import load_dotenv
+load_dotenv('.env')
+from tick_tradovate_client import TradovateClient
+import os
+c = TradovateClient(os.environ['COPIER_LEADER_USER'], os.environ['COPIER_LEADER_PASS'], demo=False)
+ok = c.authenticate()
+print('Auth OK:', ok, 'account_id:', c.account_id)
+"
+```
+Expected: `Auth OK: True account_id: <number>`
+
+### Step 3 — Start real-time data feed
+```bash
+systemctl enable fortress-tradovate
+systemctl start fortress-tradovate
 journalctl -u fortress-tradovate -f
 # Wait for: [Feed] Authenticated (user=..., LIVE)
-# Only then:
-systemctl enable fortress-copier && systemctl start fortress-copier   # COPIER_DRY_RUN=true — logs only, no real orders
+```
+This starts streaming true real-time 1m bars into `/opt/fortress/01_data/tick_bars/live/`. The barreader service picks these up automatically and appends to the parquet files. Strategies immediately begin running on real-time data instead of 15-min delayed yfinance.
+
+### Step 4 — Switch executor to live trading
+```bash
+# Edit the service file to add --live-auto-trade
+nano /opt/fortress/server/fortress-executor.service
+# Change: ExecStart=...tick_live_executor.py --poll 60
+# To:     ExecStart=...tick_live_executor.py --live-auto-trade --poll 60
+
+systemctl daemon-reload
+systemctl restart fortress-executor
+journalctl -u fortress-executor -f
+# Watch for: [Executor] Mode: LIVE_AUTO_TRADE
+```
+Note: `FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND` is already set in `.env` — Conor explicitly authorized live trading on 2026-06-17. No additional confirmation needed for this step.
+
+### Step 5 — Start trade copier (DRY_RUN first)
+```bash
+systemctl enable fortress-copier
+systemctl start fortress-copier
+journalctl -u fortress-copier -f
+# Watch for: [Copier] Starting — DRY-RUN mode
+# [Copier] Leader: TakeProfit: authenticated (account_id=...)
+# [Copier] Seeded NNN existing fills
+```
+Run in dry-run for at least one trading session. Verify via logs and Telegram that it correctly detects fills and would copy them to all 3 followers. Only proceed to Step 6 after Conor explicitly says "looks good, enable real copying."
+
+### Step 6 — Enable real copying (REQUIRES EXPLICIT USER APPROVAL)
+```bash
+# Only after Conor says "enable real copying" or equivalent
+# Edit .env via SFTP:  COPIER_DRY_RUN=false
+systemctl restart fortress-copier
+```
+**Do NOT flip `COPIER_DRY_RUN=false` without fresh explicit go-ahead from Conor in this conversation.**
+
+---
+
+## 7. EXECUTOR MODES EXPLAINED
+
+The executor (`tick_live_executor.py`) supports 4 modes:
+
+| Mode | How to start | Effect |
+|---|---|---|
+| **DRY_RUN** | `--poll 60` (no broker flags) | Signals + Telegram only. No broker connection. **Current mode.** |
+| **MOCK** | `--mock --poll 60` | Uses in-process MockBroker. Simulates fills locally. |
+| **LIVE** | `--live-auto-trade --poll 60` | Connects to real Tradovate, places real bracket orders. Requires `FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND` in env. |
+| **DEMO** | `--demo-auto-trade --poll 60` | Paper trades on Tradovate's demo environment. |
+
+**Kill switch:** Create `/opt/fortress/KILL_SWITCH.txt` containing the word `STOP`. The executor checks this on every pass and will flatten all positions and exit. Reset by writing `RUN` to the file. The dashboard at :5050 has a red STOP button that does this via the API (`POST /api/halt` and `POST /api/resume`).
+
+---
+
+## 8. STRATEGY UNIVERSE
+
+**43 strategies across 4 markets:**
+
+- **V1–V9** (IDs 1–39): OHLCV + CVD strategies. 39 total. Running on yfinance data (15-min delayed until Tradovate feed is live).
+- **V10** (IDs 40–44): L2 microstructure strategies. Need real-time DOM/tick data from Tradovate feed. Currently show "no data" — will activate automatically once `fortress-tradovate` is running.
+
+**Key files:**
+- `04_codebase/live_strategy_allowlist.yaml` — which strategies are active and their parameters
+- `04_codebase/tick_strategies_v1_v5.py`, `tick_strategies_v6_v9.py`, `tick_strategies_v10_l2.py` — strategy logic
+- `04_codebase/tick_live_executor.py` — runs all strategies, manages positions, risk controls
+
+**Risk controls in executor:**
+- Per-strategy circuit breaker (3 consecutive losses → strategy paused)
+- Daily P&L limit (default -$600/day → halt all new signals)
+- Trailing drawdown limit ($800 → halt)
+- Portfolio coordinator prevents simultaneous same-direction positions in correlated strategies
+
+---
+
+## 9. DATA PIPELINE
+
+```
+[Source 1] yfinance (15-min delayed, free)
+    → downloads GC/SI/ES/NQ every ~5 min
+    → writes to /opt/fortress/01_data/tick_bars/{SYM}_bars_{TF}m.parquet
+    → service: fortress-yfinance (ACTIVE)
+
+[Source 2] Tradovate WebSocket (real-time tick data + L2/DOM)
+    → streams 1m bars + order book snapshots
+    → writes to /opt/fortress/01_data/tick_bars/live/{SYM}_1m_live.jsonl
+    → service: fortress-tradovate (STOPPED — needs cid/sec)
+
+[Source 3] NinjaTrader FortressBarWriter (real-time, Windows only)
+    → NT8 indicator writes JSONL on every bar close
+    → syncs to server via tick_nt8_syncer.py
+    → NOT ACTIVE (requires PC to stay on — not practical while traveling)
+
+[Bar Reader] fortress-barreader (ACTIVE)
+    → watches live/*.jsonl for new lines
+    → appends to *.parquet AND *_l2_*.parquet files
+
+[Executor] fortress-executor (ACTIVE, DRY_RUN)
+    → reads parquets every 60s
+    → runs all 43 strategy classes
+    → signals → Telegram alerts
+    → logs to 06_live_trading/logs/signals_YYYYMMDD.jsonl
+
+[Trade Copier] fortress-copier (STOPPED)
+    → polls leader /fill/list every 2s
+    → copies new fills as market orders to 3 follower accounts
+    → logs to 06_live_trading/logs/copier_YYYYMMDD.jsonl
+
+[Dashboard] fortress-dashboard (ACTIVE)
+    → Flask at :5050
+    → reads parquets + state files + signal logs
+    → /api/snapshot → equity curve, positions, signals, risk, market data
+    → kill switch: GET /api/kill-switch, POST /api/halt, POST /api/resume
+
+[Monitor] fortress-monitor (ACTIVE)
+    → hourly Telegram health report
+    → checks service states, data freshness, P&L, open positions
 ```
 
-Separately, TakeProfit Trader's credentials (`ConorWalsh1` / `G7841O4782K2454tv=`) were rejected even before this was diagnosed — almost certainly the same cid/sec root cause, not a separate issue. Re-test once TakeProfit has a real API key.
+**Live data directory is currently empty** — `/opt/fortress/01_data/tick_bars/live/` has no files. This is expected. It fills up once `fortress-tradovate` is running.
 
-## Trade Copier (custom-built, replaces TradeCopia)
+---
 
-User has a TradeCopia Pro subscription ($49.99/mo) but it requires the desktop app to stay running on his PC, which he cannot keep on (traveling). Upgrading to Pro+/Pro+ Lite ($79.99–149.99/mo) was explicitly declined. Built a free custom copier instead, since all 4 accounts already go through Tradovate and we already have a working `TradovateClient` (`04_codebase/tick_tradovate_client.py`).
+## 10. PERFORMANCE DATA (as of 2026-06-18)
 
-**`04_codebase/tick_trade_copier.py`** — polls the leader account's `/fill/list` every `COPIER_POLL_SECS` (default 2s), copies each new fill as a market order to every follower account, sends a Telegram alert, and logs to `06_live_trading/logs/copier_YYYYMMDD.jsonl`. Seeds existing fills on startup so it never replays history.
+**⚠️ CRITICAL CAVEAT: All numbers below are on 15-minute delayed yfinance data. Short-term strategies (1m, 3m bars) are firing 15 candles late. These numbers are NOT indicative of real performance. Do not make strategy decisions based on this data.**
 
-Config lives in `/opt/fortress/.env` (never committed to git):
+| Date | Trades | Wins | Win% | P&L |
+|------|--------|------|------|-----|
+| Jun 10 | 1 | 0 | 0% | -$4.00 |
+| Jun 11 | 1 | 0 | 0% | -$4.00 |
+| Jun 12 | 1 | 0 | 0% | -$4.00 |
+| Jun 15 | 6 | 1 | 17% | -$131.33 |
+| Jun 16 | 11 | 2 | 18% | -$545.70 |
+| Jun 17 | 7 | 0 | 0% | -$741.92 |
+| Jun 18 | 4 | 1 | 25% | -$19.43 |
+| **TOTAL** | **31** | **4** | **13%** | **-$1,450** |
+
+**Per-strategy (paper P&L, delayed data):**
+- ID 27 MGC/consecutive_close_momentum: +$191 (67% WR, 3 trades) ← only profitable
+- ID 21 SIL/ema_crossover: -$579 (10% WR, 10 trades) ← largest drag
+- ID 23 SIL/opening_range_fakeout: -$364 (0% WR, 3 trades)
+- ID 31 SIL/consecutive_close_momentum: -$201 (0% WR, 5 trades)
+
+**Today (Jun 18):** Equity $48,651.90, trailing DD $348 of $800 limit, P&L today -$19.43 (3% of daily limit). 1 open position: SHORT 1x SIL (strategy 19).
+
+**Re-evaluate performance only after running 3–5 days on real-time Tradovate data.**
+
+---
+
+## 11. .ENV FILE STRUCTURE
+
+Located at `/opt/fortress/.env` — never committed to git. Current state:
+
 ```
-COPIER_LEADER_NAME=TakeProfit / COPIER_LEADER_USER / COPIER_LEADER_PASS
-COPIER_FOLLOWER_1_NAME=Lucid / _USER / _PASS
-COPIER_FOLLOWER_2_NAME=Tradeify / _USER / _PASS
-COPIER_FOLLOWER_3_NAME=Apex / _USER / _PASS
-COPIER_DRY_RUN=true        # MUST stay true until user explicitly approves real copying
+# Telegram
+TELEGRAM_BOT_TOKEN=<set>
+TELEGRAM_CHAT_ID=8483433910
+
+# Tradovate API (CRITICAL: CID AND SECRET ARE PLACEHOLDER ZEROS — need real values)
+TV_USERNAME=LTT024LOBH5
+TV_PASSWORD=<set>
+TV_APP_ID=FortressFeed
+TV_APP_VER=1.0
+TV_CID=0                   ← NEEDS REAL VALUE
+TV_SECRET=                 ← NEEDS REAL VALUE
+
+TRADOVATE_USERNAME=LTT024LOBH5
+TRADOVATE_PASSWORD=<set>
+TRADOVATE_CID=0            ← NEEDS REAL VALUE
+TRADOVATE_SECRET=          ← NEEDS REAL VALUE
+
+# Live trading gate
+FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND   ← already set, Conor authorized live trading 2026-06-17
+
+# Trade Copier accounts
+COPIER_LEADER_NAME=TakeProfit
+COPIER_LEADER_USER=ConorWalsh1
+COPIER_LEADER_PASS=<set>
+
+COPIER_FOLLOWER_1_NAME=Lucid
+COPIER_FOLLOWER_1_USER=LTT024LOBH5
+COPIER_FOLLOWER_1_PASS=<set>
+
+COPIER_FOLLOWER_2_NAME=Tradeify
+COPIER_FOLLOWER_2_USER=TDFYU439260492
+COPIER_FOLLOWER_2_PASS=<set>
+
+COPIER_FOLLOWER_3_NAME=Apex
+COPIER_FOLLOWER_3_USER=APEX_496623
+COPIER_FOLLOWER_3_PASS=<set>
+
+COPIER_DRY_RUN=true        ← must stay true until Conor explicitly approves real copying
 COPIER_POLL_SECS=2
 COPIER_QTY_MULT=1
 ```
 
-Service file: `server/fortress-copier.service`. Currently **stopped + disabled** pending the auth lockout above. Once leader auth works again, start it with `COPIER_DRY_RUN=true` first and watch `journalctl -u fortress-copier -f` + Telegram to confirm it would correctly mirror fills, before ever setting `COPIER_DRY_RUN=false`.
+---
 
-Crash-loop safety (already fixed, commit `1e9d7ae`): only the leader failing auth is treated as fatal; follower auth failures are logged and skipped. On auth failure, it retries every 600s (not immediately) and alerts via Telegram, so it can't spiral into a rate-limit storm again. `RestartSec=300` in the systemd unit as a second layer of protection.
+## 12. KEY FILE LOCATIONS
 
-## Dashboard — signal/P&L visibility (fixed and verified this session)
-
-User wanted to observe signal performance without placing real trades: "i want to be able to see all the signals which are sent and if they were correct or not and how much could be made."
-
-**Root cause found:** the executor writes signal logs to `06_live_trading/logs/signals_YYYYMMDD.jsonl` using its own field names (`event_type`, `signal`, `accepted`, `reason`, `timestamp`, `entry`/`entry_px`/`exit_px`, `pnl`) and sometimes writes literal `NaN` tokens (invalid JSON). The dashboard's `_aggregate_signals()` expected different field names (`action`, `alert_time`, `strategy_id`) and `json.loads()` was silently failing on the `NaN` tokens, so every signal got dropped before reaching the UI.
-
-**Fix (commit `3de0479`, `04_codebase/tick_dashboard_server.py`):**
-- `_parse_signal_line()` — regex-replaces `NaN`/`Infinity`/`-Infinity` tokens with `null` before `json.loads()`
-- `_normalize_record()` — maps the executor's native field names onto what `_aggregate_signals()` expects (event_type+reason → action of BUY/SELL/TARGET/STOP/TIMEOUT/EXIT; timestamp → alert_time; entry → entry_px)
-
-**Verified live** by pulling `/api/snapshot` directly from the running server: 52 signals present today, with real outcomes, e.g. `MGC #27 TIMEOUT pnl=+74.00`, `SIL #21 STOP pnl=-71.46`. The frontend (`04_codebase/tick_dashboard/index.html`) already had full support for this — per-signal action/price/pnl/time in the signal feed, and per-strategy `wins_today`/`losses_today`/`pnl_today`/`pnl_7d` columns in the strategy table — it just wasn't receiving usable data before. No frontend changes were needed, only the backend parsing fix.
-
-Today's snapshot (2026-06-16, mock mode, paper P&L only): `pnl_today: -$475.07` against a `-$600` daily limit (79% used), `pnl_7d: -$618.40`, 1 open position, 0 strategies halted/disabled.
-
-## Data Pipeline
-
+### On the server (`/opt/fortress/`)
 ```
-[Data Sources]
-  yfinance (delayed)  →  01_data/tick_bars/{SYMBOL}_bars_{TF}m.parquet
-  NT8 FortressBarWriter (Windows)  →  01_data/tick_bars/live/{SYMBOL}_1m_live.jsonl
-  Tradovate WebSocket (server, real-time)  →  01_data/tick_bars/live/{SYMBOL}_1m_live.jsonl  [BLOCKED — see auth lockout]
-
-[Bar Reader]  tick_live_bar_reader.py
-  reads live/*.jsonl  →  appends to *.parquet AND *_l2_*.parquet
-
-[Executor]  tick_live_executor.py --mock --poll 60
-  reads parquets  →  runs strategies  →  Telegram alerts  →  06_live_trading/logs/signals_YYYYMMDD.jsonl
-
-[Trade Copier]  tick_trade_copier.py  [STOPPED — see auth lockout]
-  polls leader /fill/list  →  copies to followers  →  06_live_trading/logs/copier_YYYYMMDD.jsonl
-
-[Dashboard]  tick_dashboard_server.py --host 0.0.0.0 --port 5050
-  reads parquets + state files + signal logs  →  live web UI (signal feed + win/loss + P&L — fixed & verified)
-
-[Monitor]  tick_ai_monitor.py --loop --interval 3600
-  checks services + data freshness + signals  →  Telegram every hour
-
-[State files]
-  06_live_trading/state/  — positions, account_state, daily_pnl, heartbeat, copier_state.json
-  06_live_trading/logs/   — signals_YYYYMMDD.jsonl, copier_YYYYMMDD.jsonl
+04_codebase/tick_live_executor.py        — main strategy runner (43 strategies)
+04_codebase/tick_live_bar_reader.py      — JSONL → parquet updater
+04_codebase/tick_yfinance_updater.py     — yfinance OHLCV downloader
+04_codebase/tick_tradovate_live_feed.py  — real-time Tradovate WebSocket feed
+04_codebase/tick_tradovate_client.py     — Tradovate REST API client (shared by feed+copier)
+04_codebase/tick_trade_copier.py         — leader→follower trade copier
+04_codebase/tick_dashboard_server.py     — Flask dashboard backend
+04_codebase/tick_dashboard/index.html   — dashboard frontend
+04_codebase/tick_ai_monitor.py           — hourly health monitor
+04_codebase/tick_nt8_syncer.py           — Windows NT8 → server JSONL syncer (not active)
+04_codebase/live_strategy_allowlist.yaml — which strategies run + parameters
+server/fortress-executor.service         — systemd unit for executor
+server/fortress-copier.service           — systemd unit for copier
+01_data/tick_bars/                       — parquet OHLCV files (updated by yfinance)
+01_data/tick_bars/live/                  — JSONL real-time bars (empty until Tradovate feed runs)
+06_live_trading/state/                   — positions, heartbeat, daily_pnl, copier_state.json
+06_live_trading/logs/                    — signals_YYYYMMDD.jsonl, copier_YYYYMMDD.jsonl
+.env                                     — all credentials (never in git)
+KILL_SWITCH.txt                          — write "STOP" to halt executor immediately
 ```
 
-## Key File Locations on Server
-
+### In the git repo (`C:\Users\conor\Desktop\quant-research\`)
 ```
-/opt/fortress/04_codebase/tick_live_executor.py       — main strategy runner
-/opt/fortress/04_codebase/tick_live_bar_reader.py     — JSONL → parquet
-/opt/fortress/04_codebase/tick_yfinance_updater.py    — free data feed
-/opt/fortress/04_codebase/tick_tradovate_live_feed.py — real-time L2 feed
-/opt/fortress/04_codebase/tick_tradovate_client.py    — Tradovate REST API client (shared by feed + copier)
-/opt/fortress/04_codebase/tick_trade_copier.py        — leader→follower trade copier
-/opt/fortress/04_codebase/tick_dashboard_server.py    — web dashboard
-/opt/fortress/04_codebase/tick_ai_monitor.py          — hourly health reports
-/opt/fortress/04_codebase/tick_nt8_syncer.py          — Windows→server JSONL syncer
-/opt/fortress/01_data/tick_bars/                      — parquet data files
-/opt/fortress/01_data/tick_bars/live/                 — live JSONL files (empty until Tradovate feed/NT8 syncer is running)
-/opt/fortress/06_live_trading/state/                  — runtime state (positions, heartbeat, copier_state.json)
-/opt/fortress/06_live_trading/logs/                   — signals_YYYYMMDD.jsonl, copier_YYYYMMDD.jsonl
-/opt/fortress/.env                                    — credentials (never committed to git)
-/opt/fortress/requirements.txt                        — pip deps
+CLAUDE.md                                — this file
+04_codebase/                             — all Python source (same as server)
+server/                                  — systemd service files
+requirements.txt                         — pip dependencies
 ```
 
-## Contracts (Sep 2026, roll ~Sep 17-19)
+**Deployment process:** The server is NOT a git clone. After editing locally:
+1. `git commit && git push` to GitHub
+2. SFTP the changed file(s) to server via paramiko (never SSH heredoc for files with `$`)
+3. `systemctl daemon-reload && systemctl restart <service>` if service files changed
+
+---
+
+## 13. CONTRACTS (Sep 2026, roll ~Sep 17–19)
 
 ```
-MGCU6 → GC (Micro Gold)
-SILU6 → SI (Micro Silver)
-MESU6 → ES (Micro E-mini S&P 500)
-MNQU6 → NQ (Micro E-mini Nasdaq)
-GCU6  → GC (Full Gold)
-SIU6  → SI (Full Silver)
-ESU6  → ES (Full S&P)
-NQU6  → NQ (Full Nasdaq)
+MGCU6  → GC  Micro Gold
+SILU6  → SI  Micro Silver
+MESU6  → ES  Micro E-mini S&P 500
+MNQU6  → NQ  Micro E-mini Nasdaq
+GCU6   → GC  Full Gold
+SIU6   → SI  Full Silver
+ESU6   → ES  Full S&P 500
+NQU6   → NQ  Full Nasdaq
 ```
 
-## GitHub Repo
+Already updated in `tick_tradovate_client.py` MICRO_SYMBOLS dict (commit `ab576a3`).
 
-https://github.com/conorw1029-art/quant-research-fortress.git
+---
 
-The server is NOT a git clone (deployed via tarball/SFTP). To update server after a local code change:
-1. Edit files locally, commit, push
-2. SFTP the changed files to server via paramiko or scp (NOT via SSH heredoc — see "Footguns" below)
+## 14. GITHUB REPO
 
-All code changes through this session are committed and pushed to `main`. Working tree is clean.
+`https://github.com/conorw1029-art/quant-research-fortress.git`
 
-## How to Continue from Any Device
+All code changes as of 2026-06-18 are committed and pushed to `main`. Recent commits:
+- `ab576a3` — live-ready infra: cid/sec env auto-read, kill switch, OSO gate unlocked
+- `47e300b` — docs: Tradovate API root cause confirmed
+- `3de0479` — fix: dashboard parses executor signal format correctly
+- `8b3c411` — feat: trade copier (leader→follower)
 
-**From iPad browser (no SSH app needed):**
-1. Go to http://46.225.110.190:3000 (web terminal)
-2. Login: root / Fortress2026!
+---
+
+## 15. HOW TO CONTINUE FROM ANY DEVICE
+
+### From iPad (no SSH app needed):
+1. Open browser → `http://46.225.110.190:3000`
+2. Login: `root` / `Fortress2026!`
 3. Type: `cd /opt/fortress && claude`
-4. Claude Code starts with full context from this CLAUDE.md file
+4. Claude Code starts. This CLAUDE.md loads automatically. Pick up from Section 16.
 
-**From Termius SSH app:**
-- Host: 46.225.110.190, user: root, password: Fortress2026!
+### From Termius (SSH app):
+- Host: `46.225.110.190`, user: `root`, password: `Fortress2026!`
+- Then `cd /opt/fortress && claude`
 
-**From Windows (development machine):**
-- Open Claude Code in the quant-research directory
-- SSH key: C:\Users\Conor\.ssh\fortress_deploy (Ed25519 — see Footguns)
+### From Windows PC:
+- Open Claude Code in `C:\Users\conor\Desktop\quant-research`
+- This CLAUDE.md loads automatically
 
-## What Claude Should Do When Starting (any device)
+---
 
-1. Read this file (done automatically)
-2. Run: `systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor fortress-tradovate fortress-copier`
-3. Run: `journalctl -u fortress-executor --no-pager -n 20` to see recent signals
-4. Check the dashboard at http://46.225.110.190:5050 (or `curl localhost:5050/api/snapshot` from the server) for current signals/P&L
-5. **Do NOT start `fortress-tradovate` or `fortress-copier`, or run any Tradovate auth attempt, until the user has confirmed the auth lockout (see above) is cleared.** Every failed attempt risks extending it.
-6. Report status and current blockers to user
+## 16. WHAT CLAUDE MUST DO ON STARTUP (any device)
 
-## Quick Diagnostics (safe — none of these touch Tradovate auth)
+Run these 3 commands immediately on every session start:
 
 ```bash
-# All core services OK?
-systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor
+# 1. Service health
+systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor fortress-tradovate fortress-copier
 
-# Recent signals
-journalctl -u fortress-executor --no-pager -n 30
+# 2. Recent signals (last 20 lines)
+journalctl -u fortress-executor --no-pager -n 20 2>&1 | cat
 
-# Data freshness
-ls -la /opt/fortress/01_data/tick_bars/*.parquet
-
-# Live signal/P&L data (dashboard API, read-only)
-curl -s http://localhost:5050/api/snapshot | python3 -m json.tool | head -50
-
-# Live L2 data flowing? (will be empty until Tradovate feed is restored)
-ls -la /opt/fortress/01_data/tick_bars/live/
-
-# Credentials present? (do NOT use this to trigger new auth attempts)
-grep -E "TV_USERNAME|TRADOVATE_USERNAME|COPIER_LEADER_NAME" /opt/fortress/.env
+# 3. Dashboard snapshot
+curl -s http://localhost:5050/api/snapshot | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+p=d['portfolio']
+print('P&L today:', p['pnl_today'], '| 7d:', p['pnl_7d'])
+print('Open positions:', p['open_positions'])
+print('Daily limit used:', p['daily_pct_used'], '%')
+print('Kill switch:', d['heartbeat'].get('kill_switch','RUN'))
+print('Mode:', d['heartbeat'].get('mode'))
+print('Strategies active:', d['risk']['strategies_active'])
+"
 ```
 
-## Footguns / lessons learned this session (read before touching server config)
+Then tell Conor:
+- Which services are up/down
+- Today's P&L and open positions
+- What the current blocker is (almost certainly: still need Tradovate API keys)
+- What step we are on in the activation sequence (Section 6)
 
-- **paramiko SSH key**: the deploy key is Ed25519. Use `paramiko.Ed25519Key.from_private_key_file(...)`, not `RSAKey` — RSAKey throws a cryptic `unpack requires a buffer of 4 bytes`.
-- **Never write `.env` (or anything with `$` in it) via an SSH heredoc** (`ssh.exec_command('cat > file << EOF ...')`). Python string escaping + bash heredoc quoting compounds and corrupts special characters like `$`. Always write config files via **SFTP** (`sftp.open(path, 'w').write(content)`) — no shell involved, no double-escaping risk.
-- **systemd `EnvironmentFile=` does NOT expand `$`** — that was a red herring; the real corruption source was the heredoc issue above.
-- **Tradovate rate limit is 5 requests/hour per account** — never let a service crash-loop against the auth endpoint; always use a long backoff (600s+) and make follower-only failures non-fatal.
-- **Tradovate REST API requires a real `cid`/`sec` per account**, generated via Settings → API Access on the web platform — `cid=0`/`sec=""` placeholders will fail with the same generic "incorrect username or password" error as a real credential mistake, even though browser login works fine. Don't mistake this for a lockout (see critical issue above) — confirmed root cause 2026-06-16 after ruling out IP-block/CAPTCHA-lock theories.
-- **Windows console + arrows**: printing `→` or similar unicode via plain `print()` in PowerShell/cmd raises `UnicodeEncodeError` on cp1252. Cosmetic only — encode with `errors='replace'` or avoid the character in diagnostic scripts.
+**Do NOT start `fortress-tradovate` or `fortress-copier` or run any Tradovate auth test until cid/sec are confirmed set in `.env` (TV_CID != 0 and TV_SECRET != empty).**
 
-## Pending / Next Steps
+---
 
-1. **Get real Tradovate API keys** (all 4 accounts) — user needs to generate `cid`/`sec` per account via Settings → API Access on the Tradovate web platform (see critical issue above) and hand them over to replace the `cid=0`/`sec=""` placeholders in `.env`. This blocks both the real-time L2 feed and the trade copier. Start with TakeProfit (leader) since the copier needs that one first.
-2. **TakeProfit Trader** auth failure is almost certainly the same cid/sec root cause, not a separate issue — re-test once it has a real API key.
-3. Once leader auth is restored: start `fortress-copier` in dry-run, verify via logs/Telegram that it correctly mirrors fills, before ever setting `COPIER_DRY_RUN=false` (requires explicit user go-ahead — no real copying yet).
-4. L2 strategies (IDs 40-44) remain blocked on no DOM/L2 data until `fortress-tradovate` is back.
+## 17. QUICK DIAGNOSTICS
 
-## Current Status (as of 2026-06-16)
+```bash
+# All services running?
+systemctl is-active fortress-yfinance fortress-executor fortress-barreader fortress-dashboard fortress-terminal fortress-monitor
 
-- 6 of 8 services ACTIVE: yfinance, executor, barreader, dashboard, terminal, monitor
-- `fortress-tradovate` and `fortress-copier` STOPPED + DISABLED — waiting on real Tradovate API keys (cid/sec), see critical issue above. Root cause confirmed today: not a lockout, the API was simply never provisioned for any of the 4 accounts.
-- Executor in --mock mode (no real orders) — by explicit user instruction, do not change without fresh approval
-- All 43 strategies monitoring, 0 halted, 0 disabled
-- Dashboard signal/P&L visibility bug fixed and verified live (see Dashboard section)
-- Today's mock P&L: -$475.07 (79% of daily limit), 7-day: -$618.40
-- Data: yfinance OHLCV updating every ~5 min, fresh as of last check; no L2/DOM data (blocked on Tradovate)
-- ANTHROPIC_API_KEY not yet set in .env (AI health summaries use plain text fallback)
+# Live signal stream
+journalctl -u fortress-executor -f
+
+# Data freshness (should be updated every few minutes)
+ls -la /opt/fortress/01_data/tick_bars/*.parquet | tail -5
+
+# Is real-time data flowing? (empty = Tradovate feed not running yet)
+ls -la /opt/fortress/01_data/tick_bars/live/
+
+# Full dashboard snapshot
+curl -s http://localhost:5050/api/snapshot | python3 -m json.tool | head -80
+
+# Kill switch status
+curl -s http://localhost:5050/api/kill-switch
+
+# Check if API keys are still placeholders
+python3 -c "
+import os; from dotenv import load_dotenv
+load_dotenv('/opt/fortress/.env')
+cid = os.environ.get('TRADOVATE_CID','0')
+sec = os.environ.get('TRADOVATE_SECRET','')
+print('CID set:', cid != '0', '| SEC set:', len(sec) > 0)
+"
+```
+
+---
+
+## 18. FOOTGUNS (lessons learned — read before touching server config)
+
+- **Paramiko key type:** The deploy key is Ed25519. Use `paramiko.Ed25519Key.from_private_key_file()`, never `RSAKey` — RSAKey throws `unpack requires a buffer of 4 bytes`.
+- **Never write .env via SSH heredoc:** Python string escaping + bash heredoc corrupts `$` characters. Always use SFTP direct write: `sftp.open(path, 'w').write(content)`.
+- **Tradovate rate limit is 5 auth requests/hour per account.** Never let a service crash-loop against `/auth/accesstokenrequest`. The copier uses 600s backoff between retries. Never retry cid=0/sec="" — it just wastes the quota.
+- **Tradovate cid=0/sec="" gives same error as wrong password.** The error `Incorrect username or password` from the Tradovate API means the `cid`/`sec` are wrong, not necessarily the username/password. Don't change the usernames or passwords when you see this error — get the API keys instead.
+- **KILL_SWITCH.txt:** Content must be exactly `STOP` (nothing else). `ARMED` does NOT trigger a halt. Dashboard writes `RUN` or `STOP`. If the file contains something else (e.g. from a previous manual edit), the executor treats it as `RUN`.
+- **OSO bracket orders:** `_OSO_EXCHANGE_VERIFIED = True` is set in `tick_tradovate_client.py` (commit `ab576a3`). Do not change it back to False.
+- **systemd EnvironmentFile does NOT expand `$`** in variable values — this was confirmed to not be an issue; the actual corruption risk is only via SSH heredoc (see above).
+- **Windows Unicode:** Printing `→` or `⚠` via `print()` in PowerShell raises `UnicodeEncodeError` on cp1252. Use `errors='replace'` encoding or avoid the characters. Affects diagnostic scripts only, not server services.
+
+---
+
+## 19. CURRENT STATUS (as of 2026-06-18, 04:15 UTC)
+
+| Item | Status |
+|---|---|
+| Services running | 6 of 8 (yfinance, executor, barreader, dashboard, terminal, monitor) |
+| fortress-tradovate | STOPPED — waiting on cid/sec API keys |
+| fortress-copier | STOPPED — same blocker |
+| Executor mode | DRY_RUN (`--poll 60`, no broker) |
+| Live trading authorized | YES — `FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND` in .env |
+| Real copying authorized | NO — `COPIER_DRY_RUN=true`, needs explicit per-session approval |
+| Data quality | 15-min delayed (yfinance). Real-time: zero — live/ dir empty |
+| API keys | `TV_CID=0`, `TV_SECRET=` empty — BOTH NEED REAL VALUES |
+| Kill switch | RUN (clear) |
+| Strategies | 43 active, 0 halted, 0 disabled |
+| Paper P&L today | -$19.43 (3% of daily limit) |
+| Paper P&L 7-day | -$1,442.38 (on delayed data — not reliable signal) |
+| GitHub | All code pushed to main, working tree clean |
+| ANTHROPIC_API_KEY | Not set — AI health summaries use plain text fallback |
+
+---
+
+## 20. ORDERED NEXT STEPS
+
+**Step 1 (CONOR — requires browser action):** Generate Tradovate API keys for all 4 accounts. See Section 5 for exact steps. Start with TakeProfit. Send cid + sec values to Claude.
+
+**Step 2 (Claude):** Receive cid/sec values → SFTP write to `.env` → test auth for leader account.
+
+**Step 3 (Claude):** Start `fortress-tradovate` → verify real-time bars flowing into `live/` dir.
+
+**Step 4 (Claude):** Edit executor service to `--live-auto-trade` → reload + restart.
+
+**Step 5 (Claude):** Enable `fortress-copier` in dry-run → verify via logs + Telegram.
+
+**Step 6 (Conor approves):** Set `COPIER_DRY_RUN=false` → all 4 accounts trading live.
+
+**Step 7 (optional):** Add `ANTHROPIC_API_KEY` to `.env` for AI health summaries.
+
+**Step 8 (after ~1 week on real-time data):** Review per-strategy performance on real data and disable underperformers.
