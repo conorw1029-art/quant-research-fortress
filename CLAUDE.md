@@ -25,7 +25,7 @@
 
 Fortress is a server-side automated trading system. 43 strategies monitor GC (Gold), SI (Silver), ES (S&P 500), and NQ (Nasdaq) futures. When a strategy fires a signal, the executor places a bracket order on the leader Tradovate account, and the trade copier mirrors that fill to all 3 follower accounts. A web dashboard shows live P&L. Everything runs as systemd services on a Hetzner VPS — it runs 24/7 even when Conor's PC is off.
 
-**Current state as of 2026-06-18:** The system is running in DRY_RUN mode (signals + Telegram only, no real orders placed). The single blocker to going fully live is that the Tradovate API keys (cid + sec) have never been generated. See Section 5 for the exact steps.
+**Current state as of 2026-06-20:** The system is running in DRY_RUN mode (signals + Telegram only, no real orders placed). The single blocker to going fully live is Tradovate API keys (cid + sec). API Access could not be found on the Tradovate platform — it is likely disabled by the prop firms. Emails requesting API access have been sent to all 4 prop firms (TakeProfit, Lucid, Tradeify, Apex). See Section 5 for full context and the email template used.
 
 ---
 
@@ -79,37 +79,48 @@ curl -s http://localhost:5050/api/snapshot | python3 -m json.tool | head -60
 
 ---
 
-## 5. THE ONE BLOCKER: TRADOVATE API KEYS (USER ACTION REQUIRED)
+## 5. THE ONE BLOCKER: TRADOVATE API KEYS
 
-**Root cause confirmed 2026-06-16.** The Tradovate REST API (`POST /auth/accesstokenrequest`) requires a `cid` (Client ID, a number) and `sec` (Secret, a string) that must be generated per-account on the Tradovate web platform. These are separate from the login username/password. `/opt/fortress/.env` currently has `TV_CID=0` and `TV_SECRET=` (empty) — placeholders that were never replaced. This is why all API auth attempts fail even though browser login works perfectly.
+**Root cause confirmed 2026-06-16.** The Tradovate REST API (`POST /auth/accesstokenrequest`) requires a `cid` (Client ID, a number) and `sec` (Secret, a string) generated per-account on the Tradovate web platform. `/opt/fortress/.env` currently has `TV_CID=0` and `TV_SECRET=` (empty) — placeholders never replaced. This is why all API auth fails even though browser login works.
 
 **This is not a lockout. It is not a credential typo. The API was simply never provisioned.**
 
-### Step-by-step: How to generate Tradovate API keys
+### Current status of this blocker (updated 2026-06-20)
 
-Do this once per account (takes ~3 minutes each). Start with **TakeProfit** (the leader).
+Conor tried to find API Access on the Tradovate platform and could not locate it. This is almost certainly because the **prop firms (TakeProfit, Lucid, Tradeify, Apex) have disabled API access** on their funded accounts — this is common practice to prevent certain automated strategies.
 
-1. Open a browser → go to **trader.tradovate.com**
-2. Log in with the account's username and password
-3. Click the **gear icon (⚙)** in the top-right → **Settings**
-4. In the left sidebar, look for **"API Access"** (sometimes listed under Account or Developer)
-5. Click **"Generate API Key"** or **"Create Application"**
-6. You will receive:
-   - **CID** — a number (e.g. `1234`)
-   - **SEC** — a long alphanumeric string
-7. **IMPORTANT:** Check if the page also asks you to set a separate **"API Password"** — this is DIFFERENT from your regular login password. If it does, create one and write it down. Not all accounts require this but some do.
-8. Copy/note: the CID, the SEC, and the API password (if applicable)
-9. Repeat for: Lucid, Tradeify, Apex
+**Emails have been sent to all 4 prop firms requesting API access.** We are waiting for replies.
 
-**Once you have the keys, send them to Claude and say "update the env file" — Claude will SFTP them into `/opt/fortress/.env` immediately.**
+### Email template that was sent (for reference):
 
-### What to send Claude (format):
+> **Subject:** API Access Request — Funded Account [USERNAME]
+>
+> Hi,
+>
+> I'm a funded account holder with [Firm Name] and I'd like to enable API access on my Tradovate account. I'm running a personal automated trading system and need the Tradovate API credentials (Client ID and Secret) to connect it to my account. I understand this is accessed via Settings → API Access on the Tradovate platform, but I'm unable to locate this option — I believe it may need to be enabled on your end.
+>
+> Could you please either enable API access on my account so I can generate my own CID and Secret, or let me know the process for obtaining API credentials for funded accounts.
+>
+> My account details: Username [USERNAME], Account type: Funded.
+>
+> Thanks, Conor
+
+**Sent to:**
+- TakeProfit Trader — support@takeprofittrader.com — username `ConorWalsh1`
+- Lucid — their support/Discord — username `LTT024LOBH5`
+- Tradeify — support@tradeify.co — username `TDFYU439260492`
+- Apex — support@apextraderfunding.com — username `APEX_496623`
+
+### When a prop firm replies
+
+If they provide a CID + SEC: send values to Claude with "update the env file" and Claude will SFTP them in immediately, then proceed with the activation sequence in Section 6.
+
+Format to send Claude:
 ```
-TakeProfit: cid=XXXX sec=XXXXXXXXXX [api_password=XXXXXXXX if applicable]
-Lucid:      cid=XXXX sec=XXXXXXXXXX
-Tradeify:   cid=XXXX sec=XXXXXXXXXX
-Apex:       cid=XXXX sec=XXXXXXXXXX
+TakeProfit: cid=XXXX sec=XXXXXXXXXX [api_password=XXXXXXXX if they require a separate API password]
 ```
+
+If they say API access is not available: we switch to Polygon.io for real-time data (free sign-up, Claude handles the integration) and investigate alternatives for order execution.
 
 ---
 
@@ -515,7 +526,7 @@ print('CID set:', cid != '0', '| SEC set:', len(sec) > 0)
 
 ---
 
-## 19. CURRENT STATUS (as of 2026-06-18, 04:15 UTC)
+## 19. CURRENT STATUS (as of 2026-06-20)
 
 | Item | Status |
 |---|---|
@@ -526,7 +537,7 @@ print('CID set:', cid != '0', '| SEC set:', len(sec) > 0)
 | Live trading authorized | YES — `FORTRESS_LIVE_ENABLE=YES_I_UNDERSTAND` in .env |
 | Real copying authorized | NO — `COPIER_DRY_RUN=true`, needs explicit per-session approval |
 | Data quality | 15-min delayed (yfinance). Real-time: zero — live/ dir empty |
-| API keys | `TV_CID=0`, `TV_SECRET=` empty — BOTH NEED REAL VALUES |
+| API keys | `TV_CID=0`, `TV_SECRET=` empty — emails sent to all 4 prop firms 2026-06-20, awaiting reply |
 | Kill switch | RUN (clear) |
 | Strategies | 43 active, 0 halted, 0 disabled |
 | Paper P&L today | -$19.43 (3% of daily limit) |
@@ -538,18 +549,20 @@ print('CID set:', cid != '0', '| SEC set:', len(sec) > 0)
 
 ## 20. ORDERED NEXT STEPS
 
-**Step 1 (CONOR — requires browser action):** Generate Tradovate API keys for all 4 accounts. See Section 5 for exact steps. Start with TakeProfit. Send cid + sec values to Claude.
+**Step 1 — WAITING (Conor):** Awaiting replies from all 4 prop firms (TakeProfit, Lucid, Tradeify, Apex) to the API access request emails sent 2026-06-20. Check email/Discord for replies. When a firm replies with CID + SEC, bring those values to Claude.
 
-**Step 2 (Claude):** Receive cid/sec values → SFTP write to `.env` → test auth for leader account.
+**Step 2 (Claude):** Receive cid/sec from prop firm reply → SFTP write to `.env` → run one-shot auth test to confirm it works.
 
-**Step 3 (Claude):** Start `fortress-tradovate` → verify real-time bars flowing into `live/` dir.
+**Step 3 (Claude):** Start `fortress-tradovate` → verify real-time bars flowing into `live/` dir → strategies immediately start running on real-time data.
 
-**Step 4 (Claude):** Edit executor service to `--live-auto-trade` → reload + restart.
+**Step 4 (Claude):** Edit executor service file to `--live-auto-trade` → `systemctl daemon-reload && systemctl restart fortress-executor` → confirm live mode in logs.
 
-**Step 5 (Claude):** Enable `fortress-copier` in dry-run → verify via logs + Telegram.
+**Step 5 (Claude):** Enable `fortress-copier` in dry-run → watch logs + Telegram to confirm fills would be mirrored correctly.
 
-**Step 6 (Conor approves):** Set `COPIER_DRY_RUN=false` → all 4 accounts trading live.
+**Step 6 (Conor explicitly approves):** Say "enable real copying" → Claude sets `COPIER_DRY_RUN=false` → all 4 accounts trade live automatically.
 
-**Step 7 (optional):** Add `ANTHROPIC_API_KEY` to `.env` for AI health summaries.
+**Step 7 (optional):** Add `ANTHROPIC_API_KEY` to `.env` for AI health summaries in hourly monitor.
 
-**Step 8 (after ~1 week on real-time data):** Review per-strategy performance on real data and disable underperformers.
+**Step 8 (after ~1 week on real-time data):** Review per-strategy P&L on live data. Disable strategies with negative expectancy. Current paper performance (-$1,450 over 10 days) is unreliable — it was all on 15-min delayed yfinance data.
+
+**If prop firms block API access entirely:** Claude integrates Polygon.io (free real-time data) as the data feed alternative. Order execution via Tradovate API would need a different solution (e.g. trading via NinjaTrader/Rithmic instead).
