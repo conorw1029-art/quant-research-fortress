@@ -877,12 +877,27 @@ def _contract_rollover_warning() -> list[str]:
 
 # ── Stale data detection ──────────────────────────────────────────────────────
 
+# Per-timeframe stale thresholds (minutes). A bar older than this is stale.
+_STALE_THRESHOLDS: dict[int, int] = {
+    1:  3,
+    3:  6,
+    5:  10,
+    15: 25,
+    30: 45,
+}
+_STALE_DEFAULT_MIN = 20
+
+
 def _check_stale(df: pd.DataFrame, symbol: str, bar_min: int,
-                 max_stale_min: int = 20) -> str | None:
+                 max_stale_min: int | None = None) -> str | None:
     """
-    Return a warning string if the newest bar is more than max_stale_min old.
+    Return a warning/block string if the newest bar is older than the
+    per-timeframe threshold. Returns None if data is fresh or market is closed.
+
     Suppressed on weekends (Saturday UTC 00:00 – Monday UTC 00:00) since
     CME futures are closed and no new bars are expected.
+    Also suppressed outside approximate CME trading hours (17:00–16:00 CT)
+    to avoid false positives during maintenance windows.
     """
     if df is None or df.empty:
         return None
@@ -890,12 +905,17 @@ def _check_stale(df: pd.DataFrame, symbol: str, bar_min: int,
     # Saturday=5, Sunday=6
     if now.weekday() in (5, 6):
         return None
+    # CME approximate maintenance window: 16:00–17:00 CT = 21:00–22:00 UTC
+    if now.hour == 21:
+        return None
     last = df.index[-1]
     if last.tzinfo is None:
         last = last.tz_localize("UTC")
     age = (now - last).total_seconds() / 60
-    if age > max_stale_min:
-        return f"STALE: {symbol}/{bar_min}m last bar {age:.0f}min ago (>{max_stale_min}min)"
+    threshold = max_stale_min if max_stale_min is not None else _STALE_THRESHOLDS.get(bar_min, _STALE_DEFAULT_MIN)
+    if age > threshold:
+        return (f"STALE_DATA: {symbol}/{bar_min}m last bar {age:.0f}min ago "
+                f"(threshold={threshold}min)")
     return None
 
 
@@ -1163,10 +1183,24 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 print(f"  [{strat_id}] {symbol}/{strat_name}/{bar_min}m — no data")
             continue
 
-        # Stale data warning — does not block execution
+        # Stale data check — blocks new entries when data is too old during market hours
         stale = _check_stale(df, symbol, bar_min)
-        if stale and verbose:
-            print(f"  [{strat_id}] ⚠ {stale}")
+        if stale:
+            if verbose:
+                print(f"  [{strat_id}] ⚠ {stale} — NEW ENTRIES BLOCKED")
+            _log_signal({
+                "event_type":   "stale_data_block",
+                "timestamp":    datetime.now(timezone.utc).isoformat(),
+                "mode":         mode,
+                "strategy_id":  strat_id,
+                "strategy":     strat_name,
+                "symbol":       traded_sym,
+                "bar_minutes":  bar_min,
+                "version":      version,
+                "accepted":     False,
+                "rejection_reason": stale,
+            })
+            continue
 
         last_bar_ts = df.index[-1]
         if sm:
@@ -1232,7 +1266,7 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                     pnl = ex.get("total_trade_pnl", ex.get("pnl", 0.0))
                     sm.record_trade_pnl(str(strat_id), pnl)
                     sm.remove_bracket(str(strat_id))
-                    current_positions = sm.load_positions()
+                    current_positions = sm.load_positions().get("positions", {})
                     current_positions.pop(traded_sym, None)
                     sm.save_positions(current_positions)
 
@@ -1366,7 +1400,7 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
             if sm:
                 sig_key = f"{strat_id}:{last_bar_ts.isoformat()}"
                 sm.mark_signal_processed(sig_key)
-                current_positions = sm.load_positions()
+                current_positions = sm.load_positions().get("positions", {})
                 current_positions[traded_sym] = {
                     "net_pos": direction,
                     "entry_px": entry_p,
@@ -1851,13 +1885,35 @@ Examples:
     # ── State persistence layer ───────────────────────────────────────────────
     sm = StateManager() if _STATE_MANAGER_AVAILABLE else None
     if sm:
+        # Restore strategy halts
         halts = sm.load_strategy_halts()
-        restored = [sid for sid, h in halts.items()
-                    if isinstance(h, dict) and h.get("active")]
-        if restored:
-            print(f"  [StateManager] Restoring {len(restored)} strategy halt(s) from prior session: {restored}")
+        restored_halts = [sid for sid, h in halts.items()
+                          if isinstance(h, dict) and h.get("active")]
+        if restored_halts:
+            print(f"  [StateManager] Restoring {len(restored_halts)} strategy halt(s) from prior session: {restored_halts}")
         else:
             print(f"  [StateManager] No persistent strategy halts to restore.")
+
+        # Restore open positions into tracker (Gate 5 — crash-recovery)
+        saved_pos_state = sm.load_positions()
+        saved_positions = saved_pos_state.get("positions", {})
+        restored_positions = 0
+        for sym, pos_data in saved_positions.items():
+            if not isinstance(pos_data, dict):
+                continue
+            net_pos = int(pos_data.get("net_pos", 0))
+            sid     = pos_data.get("strategy_id")
+            if net_pos != 0 and sid is not None:
+                try:
+                    tracker.update(int(sid), net_pos)
+                    restored_positions += 1
+                    dir_str = "LONG" if net_pos == 1 else "SHORT"
+                    print(f"  [StateManager] Restored position: strategy {sid} {dir_str} {sym} "
+                          f"@ {pos_data.get('entry_px', '?')}")
+                except Exception:
+                    pass
+        if restored_positions == 0:
+            print(f"  [StateManager] No open positions to restore.")
     else:
         print(f"  [StateManager] Not available — state will not be persisted this session.")
 
@@ -1961,21 +2017,28 @@ Examples:
         current_bias = None
         if news_monitor:
             try:
-                news_monitor.refresh()
-                print(f"  News: {news_monitor.get_status_line()}")
-                in_window, evt = news_monitor.in_news_window()
-                if in_window:
-                    print(f"\n  *** NEWS WINDOW — NEW ENTRIES BLOCKED: {evt} ***")
+                ok = news_monitor.refresh()
+                if not ok:
+                    # Feed unavailable — conservative fallback: block all new entries
+                    print("  *** NEWS FEED UNAVAILABLE — NEW ENTRIES BLOCKED (conservative fallback) ***")
                     news_blocked = True
-                bias = news_monitor.get_daily_bias()
-                if bias.get("score", 0) != 0:
-                    current_bias = bias
-                if bias["es_nq_bias"] != 0:
-                    d  = "BULL" if bias["es_nq_bias"] > 0 else "BEAR"
-                    gc = "BULL" if bias["gc_bias"] > 0 else "BEAR" if bias["gc_bias"] < 0 else "NEUTRAL"
-                    print(f"  Bias: ES/NQ {d} | GC {gc} | {bias['reason']}")
-            except Exception:
-                pass
+                else:
+                    print(f"  News: {news_monitor.get_status_line()}")
+                    in_window, evt = news_monitor.in_news_window()
+                    if in_window:
+                        print(f"\n  *** NEWS WINDOW — NEW ENTRIES BLOCKED: {evt} ***")
+                        news_blocked = True
+                    bias = news_monitor.get_daily_bias()
+                    if bias.get("score", 0) != 0:
+                        current_bias = bias
+                    if bias["es_nq_bias"] != 0:
+                        d  = "BULL" if bias["es_nq_bias"] > 0 else "BEAR"
+                        gc = "BULL" if bias["gc_bias"] > 0 else "BEAR" if bias["gc_bias"] < 0 else "NEUTRAL"
+                        print(f"  Bias: ES/NQ {d} | GC {gc} | {bias['reason']}")
+            except Exception as e:
+                # Any unexpected failure → conservative: block new entries this cycle
+                print(f"  *** NEWS MONITOR ERROR ({e}) — NEW ENTRIES BLOCKED (conservative fallback) ***")
+                news_blocked = True
 
         # Build real broker positions for coordinator (DEMO/LIVE only)
         _broker_net_pos = []
