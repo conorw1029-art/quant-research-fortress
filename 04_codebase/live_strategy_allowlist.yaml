@@ -685,3 +685,43 @@ strategies:
     topstep_compliant: null
     added_date: "2026-06-03"
     note: "High priority GC candidate. Elevate to ENABLED_DRY_RUN after L2 bars confirmed + 2 dry-run sessions."
+
+  # ── V6/V7/V8 NEW — 30m survivors from 2026-06-24 WFO run (2.5yr data) ────────
+  # Bootstrap data Jan 2024-Jun 2026 (~14,800 bars at 30m) enables proper WFO.
+  # Pure OHLCV — no CVD or L2 data required.
+  # Data quality note: 30m has 2.5 years (robust); 1m/3m/5m/15m has <70 days (noise).
+  # Only 30m strategies added here — shorter timeframes need Tradovate history.
+
+  45:
+    key: "NQ/donchian_breakout/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V7 strategy. New WFO survivor 2026-06-24: DSR=1.85, n=208 OOS trades.
+      30m data Jan 2024-Jun 2026 (2.5 years, robust). Pure OHLCV.
+      Worst-day full contract $-9,649, worst_micro $-965 (below $1k limit).
+      Mirrors NQ donchian at longer timeframe. Elevation after 2+ live sessions.
+    worst_day_usd: -9649
+    worst_micro: -965
+    trade_count: 208
+    dsr: 1.85
+    sharpe_1t: null
+    topstep_compliant: null
+    added_date: "2026-06-24"
+    note: "Elevate to ENABLED_DRY_RUN after 2+ live dry-run sessions. worst_micro $965 is just under $1k limit."
+
+  46:
+    key: "NQ/overnight_gap_fill/30m"
+    status: REVIEW_REQUIRED
+    reason: >
+      V6 strategy. New WFO survivor 2026-06-24: DSR=1.71, n=84 OOS trades.
+      30m data Jan 2024-Jun 2026 (2.5 years, robust). Pure OHLCV.
+      Worst-day full contract $-5,521, worst_micro $-552. Mirrors ES strategy (ID 33, DSR=3.37).
+      Low worst_micro and confirmed-edge class of strategy. Elevation after 2+ live sessions.
+    worst_day_usd: -5521
+    worst_micro: -552
+    trade_count: 84
+    dsr: 1.71
+    sharpe_1t: null
+    topstep_compliant: null
+    added_date: "2026-06-24"
+    note: "NQ companion to ID 33 (ES/overnight_gap_fill/30m). Both in same strategy class with confirmed edge."
