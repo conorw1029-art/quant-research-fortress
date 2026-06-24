@@ -725,3 +725,95 @@ strategies:
     topstep_compliant: null
     added_date: "2026-06-24"
     note: "NQ companion to ID 33 (ES/overnight_gap_fill/30m). Both in same strategy class with confirmed edge."
+
+  # ── V6/V7/V8 NEW — 15m survivors from 2026-06-24 promotion run ───────────────
+  # Session-hour filtered. 70-day data (marginal) — re-validate after NT8 import.
+  # All: worst_micro < $500, Topstep 100%, REVIEW_REQUIRED (dry-run eligible).
+
+  47:
+    key: "SI/rolling_return_zscore/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -3720
+    worst_micro: -372
+    trade_count: 70
+    dsr: 2.75
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Re-validate after NT8 15m import. 100% Topstep compliance. filt_Sharpe=7.85."
+
+  48:
+    key: "SI/ma_slope_regime/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -3870
+    worst_micro: -387
+    trade_count: 42
+    dsr: 2.67
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Re-validate after NT8 15m import. 100% Topstep compliance. filt_Sharpe=9.60."
+
+  49:
+    key: "ES/bollinger_rsi_reversal/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -1350
+    worst_micro: -135
+    trade_count: 53
+    dsr: 2.57
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Lowest worst_micro of 15m batch. Re-validate after NT8 15m import. filt_Sharpe=9.43."
+
+  50:
+    key: "NQ/keltner_breakout/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -2910
+    worst_micro: -291
+    trade_count: 40
+    dsr: 2.06
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Re-validate after NT8 15m import. 100% Topstep compliance. filt_Sharpe=8.34."
+
+  51:
+    key: "SI/keltner_breakout/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -3420
+    worst_micro: -342
+    trade_count: 40
+    dsr: 1.91
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Highest filt_Sharpe in 15m batch (12.49). Re-validate after NT8 15m import."
+
+  52:
+    key: "NQ/consecutive_close_momentum/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -4280
+    worst_micro: -428
+    trade_count: 66
+    dsr: 1.82
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Highest trade count in 15m batch (66). Re-validate after NT8 15m import. filt_Sharpe=5.89."
+
+  53:
+    key: "ES/wick_reversal/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -1140
+    worst_micro: -114
+    trade_count: 41
+    dsr: 1.78
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "Very low worst_micro $114. Re-validate after NT8 15m import. filt_Sharpe=7.14."
+
+  54:
+    key: "GC/opening_range_breakout/15m"
+    status: REVIEW_REQUIRED
+    worst_day_usd: -4860
+    worst_micro: -486
+    trade_count: 93
+    dsr: 1.75
+    topstep_compliant: true
+    added_date: "2026-06-24"
+    note: "GC instrument diversification. 93 trades (strong count). filt_Sharpe=7.32. Re-validate after NT8."

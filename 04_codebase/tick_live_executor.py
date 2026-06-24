@@ -588,6 +588,40 @@ PORTFOLIO = [
     (46, "NQ", 30, "overnight_gap_fill",
      {"gap_atr_mult": 0.3, "atr_window": 14},
      {0,4,23}, None, "v6"),   # DSR=1.71, filtered Sharpe=2.055 (+137.8%)
+
+    # ── V6/V7/V8 NEW — 15m survivors added 2026-06-24 (~70 days data, REVIEW_REQUIRED) ──
+    # Re-validate after NT8 import provides multi-year 15m history.
+    (47, "SI", 15, "rolling_return_zscore",
+     {"ret_bars": 3, "zscore_win": 50, "z_thresh": 1.8},
+     {0,1,2,3,5,8,11,12,14,15,16,17,22}, None, "v8"),  # DSR=2.75 filt_Sharpe=7.85
+
+    (48, "SI", 15, "ma_slope_regime",
+     {"ma_win": 20, "slope_bars": 3, "entry_rsi_win": 14, "rsi_ob": 60, "rsi_os": 40},
+     {0,1,2,3,4,6,7,9,13,15,17,22,23}, None, "v8"),  # DSR=2.67 filt_Sharpe=9.60
+
+    (49, "ES", 15, "bollinger_rsi_reversal",
+     {"window": 15, "std_mult": 1.8, "rsi_win": 14, "rsi_ob": 70, "rsi_os": 30},
+     {1,2,4,5,6,8,9,12,13,14,15,16,17,18,19}, None, "v7"),  # DSR=2.57 filt_Sharpe=9.43
+
+    (50, "NQ", 15, "keltner_breakout",
+     {"ema_span": 20, "atr_win": 14, "mult": 2.5},
+     {0,1,3,7,8,9,12,13,16,20,22}, None, "v7"),  # DSR=2.06 filt_Sharpe=8.34
+
+    (51, "SI", 15, "keltner_breakout",
+     {"ema_span": 15, "atr_win": 10, "mult": 2.0},
+     {0,3,4,5,6,11,12,13,15,16,17,18,19,22}, None, "v7"),  # DSR=1.91 filt_Sharpe=12.49
+
+    (52, "NQ", 15, "consecutive_close_momentum",
+     {"n": 4},
+     {0,2,5,6,8,9,10,11,12,13,16,17,19,22,23}, None, "v6"),  # DSR=1.82 filt_Sharpe=5.89
+
+    (53, "ES", 15, "wick_reversal",
+     {"wick_ratio": 0.6, "lookback": 20, "atr_window": 14},
+     {0,1,6,7,10,12,13,14,15,16,17,19,23}, None, "v7"),  # DSR=1.78 filt_Sharpe=7.14
+
+    (54, "GC", 15, "opening_range_breakout",
+     {"orb_bars": 3, "buffer_atr_pct": 0.0, "atr_window": 14},
+     {1,4,5,6,7,9,10,12,13,15,17,18,19,20,23}, None, "v7"),  # DSR=1.75 filt_Sharpe=7.32
 ]
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
