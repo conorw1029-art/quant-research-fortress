@@ -624,6 +624,20 @@ PORTFOLIO = [
      {1,4,5,6,7,9,10,12,13,15,17,18,19,20,23}, None, "v7"),  # DSR=1.75 filt_Sharpe=7.32
 ]
 
+# ── Strategies suspended until real CVD/L2 data is available ─────────────────
+# V1-V5 (IDs 1-15): use buy_vol/sell_vol/cvd_delta/obi_5 — all zeros from yfinance
+# V10  (IDs 40-44): require L2 parquets that don't exist until NT8 bridge or TV webhook
+#                   populates them with real DOM data
+# Once TradingView webhook has been running for ≥30 bars the synthetic CVD is
+# trustworthy enough to re-enable V1-V5. Remove IDs from this set then.
+SUSPENDED_IDS: frozenset = frozenset({
+    1, 2, 3, 4, 5, 6, 7,   # V1: obi_threshold, cvd_divergence, tape_absorption, etc.
+    8, 9,                   # V3: uses cvd_z parameter
+    10, 11, 12,             # V4: trade_absorption uses ntrades_z + cvd_z
+    13, 14, 15,             # V5: key_level_cvd_rejection
+    40, 41, 42, 43, 44,    # V10: L2 strategies, no real L2 parquets yet
+})
+
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
 # On micros with 1 contract: MES ~$45, MNQ ~$120, MGC ~$15 per trade.
 # All safely under $200. Use 1 contract until account recovers to $5k+.
@@ -1876,6 +1890,9 @@ Examples:
         filtered = []
         for entry in PORTFOLIO:
             sid      = entry[0]
+            if sid in SUSPENDED_IDS:
+                print(f"  [suspended] Strategy {sid} — CVD/L2 data unavailable, skipped")
+                continue
             al_entry = allowlist.get(sid)
             if al_entry is None:
                 # Not in allowlist — allow in dry-run with warning, block in demo/live
@@ -1924,6 +1941,14 @@ Examples:
             sys.exit(1)
     else:
         print(f"  [allowlist] {ALLOWLIST_PATH.name} not found — running all strategies (no allowlist control)")
+
+    # ── Apply SUSPENDED_IDS (always enforced, regardless of allowlist) ────────
+    before = len(PORTFOLIO)
+    PORTFOLIO = [e for e in PORTFOLIO if e[0] not in SUSPENDED_IDS]
+    suspended_count = before - len(PORTFOLIO)
+    if suspended_count:
+        print(f"  [suspended] {suspended_count} strategies suspended (CVD/L2 data unavailable): "
+              f"IDs {sorted(SUSPENDED_IDS)}")
 
     # ── Print mode banner ─────────────────────────────────────────────────────
     print("\n" + _mode_banner(mode, tv_client, PORTFOLIO, RISK_CFG,
