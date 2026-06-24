@@ -88,13 +88,13 @@ BAR_DIR.mkdir(parents=True, exist_ok=True)
 DATABENTO_DATASET = "GLBX.MDP3"   # CME Globex MDP3
 
 # Strategy base symbol → Databento raw symbol (current front month)
-# UPDATE EACH QUARTERLY ROLLOVER (M5=Jun → U5=Sep → Z5=Dec → H6=Mar)
+# UPDATE EACH QUARTERLY ROLLOVER: U6=Sep 2026 (expires ~Sep 19) → Z6=Dec → H7=Mar
 SYMBOL_MAP: dict[str, str] = {
-    "GC": "MGCM5",   # micro gold  — June 2026
-    "ES": "MESM5",   # micro S&P   — June 2026
-    "NQ": "MNQM5",   # micro NQ    — June 2026
-    "SI": "SILM5",   # micro silver — June 2026
-    "CL": "MCLM5",   # micro crude oil — June 2026
+    "GC": "MGCU6",   # micro gold  — Sep 2026
+    "ES": "MESU6",   # micro S&P   — Sep 2026
+    "NQ": "MNQU6",   # micro NQ    — Sep 2026
+    "SI": "SILU6",   # micro silver — Sep 2026
+    "CL": "MCLU6",   # micro crude oil — Sep 2026
 }
 
 # Symbols that use mbp-10 (need DOM). Others get trades schema.

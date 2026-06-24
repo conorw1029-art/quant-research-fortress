@@ -1,0 +1,21 @@
+[Unit]
+Description=Fortress Databento Live Bar Builder (real-time CME futures — GC/ES/NQ/SI)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fortress/04_codebase
+EnvironmentFile=/opt/fortress/.env
+ExecStart=/opt/fortress/venv/bin/python3 tick_bar_builder_databento.py --symbol GC ES NQ SI --bar-sizes 1 3 5 15 30
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+# Do NOT start until DATABENTO_API_KEY is set in .env
+# Enable with: systemctl enable --now fortress-databento
+# Once running, disable yfinance: systemctl disable --now fortress-yfinance
+
+[Install]
+WantedBy=multi-user.target
