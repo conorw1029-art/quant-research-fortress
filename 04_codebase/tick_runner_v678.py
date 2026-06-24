@@ -18,7 +18,10 @@ from tick_strategies_v7 import STRATEGIES_V7
 from tick_strategies_v8 import STRATEGIES_V8
 
 ROOT    = Path(__file__).parent.parent
-BAR_DIR = ROOT / "01_data" / "tick_bars"
+# Support running from git clone (no data) by falling back to /opt/fortress data dir
+_LOCAL_BAR_DIR = ROOT / "01_data" / "tick_bars"
+_VPS_BAR_DIR   = Path("/opt/fortress/01_data/tick_bars")
+BAR_DIR = _LOCAL_BAR_DIR if _LOCAL_BAR_DIR.exists() and any(_LOCAL_BAR_DIR.glob("*.parquet")) else _VPS_BAR_DIR
 OUT_DIR = ROOT / "05_backtests"; OUT_DIR.mkdir(exist_ok=True)
 
 SYMBOLS   = ["GC", "SI", "ES", "NQ"]

@@ -675,6 +675,12 @@ def get_spec(base_symbol: str) -> dict:
 
 # ── Bar loading ───────────────────────────────────────────────────────────────
 
+_L2_STUB_COLS = (
+    "obi_5", "large_buys", "large_sells", "book_pressure",
+    "spread_mean", "bid_sz_mean", "ask_sz_mean", "trade_rate",
+)
+
+
 def load_bars(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame | None:
     path = BAR_DIR / f"{symbol}_bars_{bar_min}m.parquet"
     if not path.exists():
@@ -682,7 +688,14 @@ def load_bars(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame | 
     df = pd.read_parquet(path)
     df.index = pd.to_datetime(df.index, utc=True)
     df.sort_index(inplace=True)
-    return df.iloc[-lookback:] if len(df) > lookback else df
+    df = df.iloc[-lookback:] if len(df) > lookback else df
+    # Stub missing L2 columns with zeros so strategies don't crash on yfinance data.
+    # Strategies that depend on these will produce flat (0) signals, which is correct
+    # when real L2/tick data is unavailable.
+    for col in _L2_STUB_COLS:
+        if col not in df.columns:
+            df[col] = 0.0
+    return df
 
 
 def load_bars_l2(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame | None:
@@ -1194,7 +1207,7 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 "mode":         mode,
                 "strategy_id":  strat_id,
                 "strategy":     strat_name,
-                "symbol":       traded_sym,
+                "symbol":       symbol,
                 "bar_minutes":  bar_min,
                 "version":      version,
                 "accepted":     False,
