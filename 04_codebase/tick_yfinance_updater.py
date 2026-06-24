@@ -40,7 +40,8 @@ SYMBOLS = {
 }
 
 # Timeframes to generate from 1-min base data
-TIMEFRAMES = [1, 3, 5, 15, 30]
+# 60m included so bootstrap parquets stay fresh (60m used by V9 runner + future strategies)
+TIMEFRAMES = [1, 3, 5, 15, 30, 60]
 
 
 def download_1m(yf_symbol: str) -> pd.DataFrame | None:

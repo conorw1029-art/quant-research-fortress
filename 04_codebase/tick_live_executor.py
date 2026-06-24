@@ -578,6 +578,16 @@ PORTFOLIO = [
     (44, "GC", 1, "Repeated_Replenishment",
      {"imbal_thr": 0.4, "persist_bars": 5, "cvd_negative": True, "rr_ratio": 2.0, "hold_bars": 8},
      None, None, "v10"),   # WF Sharpe=4.102, DSR=1.000, 3-tick Sharpe=0.899
+
+    # ── V6/V7 NEW — 30m survivors added 2026-06-24 (2.5yr data, WFO DSR>=1.5) ──
+    # Session-hour optimization pending — using None (all hours) until run.
+    (45, "NQ", 30, "donchian_breakout",
+     {"n": 40, "confirm": 2},
+     {0,1,2,3,4,5,6,7,8,9,10,13,15,16,18,20}, None, "v7"),   # DSR=1.85, filtered Sharpe=6.763 (+292.8%)
+
+    (46, "NQ", 30, "overnight_gap_fill",
+     {"gap_atr_mult": 0.3, "atr_window": 14},
+     {0,4,23}, None, "v6"),   # DSR=1.71, filtered Sharpe=2.055 (+137.8%)
 ]
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
