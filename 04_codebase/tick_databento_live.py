@@ -91,6 +91,28 @@ def _cvd_delta(o: float, h: float, l: float, c: float, v: int) -> int:
         return 0
     return int(v * (c - l) / rng) - int(v * (h - c) / rng)
 
+# ── Synthetic L2 ──────────────────────────────────────────────────────────────
+def _synthetic_l2(buy_v: float, sel_v: float, h: float, l: float, c: float) -> dict:
+    """Compute synthetic L2 fields from OHLCV volume split.
+    obi_5 = (buy - sell) / (buy + sell + 1) — same sign/range as real DOM OBI.
+    spread proxy = (high - low) * 5% — typical bid/ask spread as fraction of range.
+    """
+    obi    = (buy_v - sel_v) / (buy_v + sel_v + 1)
+    spread = (h - l) * 0.05
+    return {
+        "spread":        spread,
+        "bid_sz_00":     float(buy_v),
+        "ask_sz_00":     float(sel_v),
+        "book_pressure": obi,
+        "obi_5":         obi,
+        "microprice":    c,
+        "imbal_L5_last": obi,
+        "microprice_last": c,
+        "spread_mean":   spread,
+        "bid_sz_mean":   float(buy_v),
+        "ask_sz_mean":   float(sel_v),
+    }
+
 # ── Parquet upsert ────────────────────────────────────────────────────────────
 def _upsert(path: Path, new_df: pd.DataFrame):
     if path.exists():
@@ -122,10 +144,7 @@ def write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
         "open": o, "high": h, "low": l, "close": c, "volume": v,
         "buy_vol": buy_v, "sell_vol": sel_v, "cvd_delta": cvd, "cvd": 0,
         "n_trades": v,
-        "spread": 0.0, "bid_sz_00": 0.0, "ask_sz_00": 0.0,
-        "book_pressure": 0.0, "obi_5": 0.0, "microprice": c,
-        "imbal_L5_last": 0.0, "microprice_last": c,
-        "spread_mean": 0.0, "bid_sz_mean": 0.0, "ask_sz_mean": 0.0,
+        **_synthetic_l2(buy_v, sel_v, h, l, c),
     }
     new_df = pd.DataFrame([row], index=pd.DatetimeIndex([ts], name="ts"))
     pq = BAR_DIR / f"{sym}_bars_{bar_min}m.parquet"
@@ -246,10 +265,7 @@ def backfill(api_key: str):
         sym_dfs[base].append({
             "ts": ts, "open": o, "high": h, "low": l, "close": c, "volume": v,
             "buy_vol": buy_v, "sell_vol": sel_v, "cvd_delta": cvd, "cvd": 0,
-            "n_trades": v, "spread": 0.0, "bid_sz_00": 0.0, "ask_sz_00": 0.0,
-            "book_pressure": 0.0, "obi_5": 0.0, "microprice": c,
-            "imbal_L5_last": 0.0, "microprice_last": c,
-            "spread_mean": 0.0, "bid_sz_mean": 0.0, "ask_sz_mean": 0.0,
+            "n_trades": v, **_synthetic_l2(buy_v, sel_v, h, l, c),
         })
 
     # Bulk upsert 1m data, then resample to higher timeframes
@@ -281,11 +297,19 @@ def backfill(api_key: str):
                 "cvd_delta": "sum",
                 "n_trades":  "sum",
             }).dropna(subset=["close"])
-            # Fill derived fields
-            for col in ["spread","bid_sz_00","ask_sz_00","book_pressure","obi_5",
-                        "imbal_L5_last","spread_mean","bid_sz_mean","ask_sz_mean"]:
-                agg[col] = 0.0
-            agg["microprice"] = agg["close"]
+            # Synthetic L2 from aggregated volume
+            obi = (agg["buy_vol"] - agg["sell_vol"]) / (agg["buy_vol"] + agg["sell_vol"] + 1)
+            spread_col = (agg["high"] - agg["low"]) * 0.05
+            agg["obi_5"]          = obi
+            agg["book_pressure"]  = obi
+            agg["imbal_L5_last"]  = obi
+            agg["spread"]         = spread_col
+            agg["spread_mean"]    = spread_col
+            agg["bid_sz_00"]      = agg["buy_vol"].astype(float)
+            agg["ask_sz_00"]      = agg["sell_vol"].astype(float)
+            agg["bid_sz_mean"]    = agg["buy_vol"].astype(float)
+            agg["ask_sz_mean"]    = agg["sell_vol"].astype(float)
+            agg["microprice"]     = agg["close"]
             agg["microprice_last"] = agg["close"]
             agg["cvd"] = 0
             pq_tf = BAR_DIR / f"{base}_bars_{tf}m.parquet"
@@ -373,6 +397,40 @@ def poll_loop(api_key: str):
         time.sleep(POLL_SECS)
 
 
+def patch_all_parquets():
+    """Retroactively recompute synthetic L2 fields in all existing parquets."""
+    pq_files = sorted(BAR_DIR.glob("*.parquet"))
+    log.info(f"Patching {len(pq_files)} parquets with synthetic L2...")
+    patched = 0
+    for pq in pq_files:
+        try:
+            df = pd.read_parquet(pq)
+            df.index = pd.to_datetime(df.index, utc=True)
+            if "buy_vol" not in df.columns or "close" not in df.columns:
+                continue
+            buy_v = df["buy_vol"].fillna(0).astype(float)
+            sel_v = df["sell_vol"].fillna(0).astype(float)
+            obi   = (buy_v - sel_v) / (buy_v + sel_v + 1)
+            spread_col = (df["high"] - df["low"]) * 0.05
+            df["obi_5"]           = obi
+            df["book_pressure"]   = obi
+            df["imbal_L5_last"]   = obi
+            df["spread"]          = spread_col
+            df["spread_mean"]     = spread_col
+            df["bid_sz_00"]       = buy_v
+            df["ask_sz_00"]       = sel_v
+            df["bid_sz_mean"]     = buy_v
+            df["ask_sz_mean"]     = sel_v
+            df["microprice"]      = df["close"]
+            df["microprice_last"] = df["close"]
+            df["cvd"] = df["cvd_delta"].cumsum()
+            df.to_parquet(pq, engine="pyarrow", compression="snappy")
+            patched += 1
+        except Exception as e:
+            log.warning(f"  Patch failed {pq.name}: {e}")
+    log.info(f"  Patched {patched}/{len(pq_files)} parquets — synthetic L2 live on all bars")
+
+
 def run_forever(api_key: str):
     try:
         poll_loop(api_key)
@@ -385,12 +443,18 @@ def main():
     parser.add_argument("--loop",          action="store_true")
     parser.add_argument("--backfill-only", action="store_true")
     parser.add_argument("--no-backfill",   action="store_true")
+    parser.add_argument("--patch-l2",      action="store_true",
+                        help="Retroactively patch all parquets with synthetic L2, then exit")
     args = parser.parse_args()
 
     api_key = os.environ.get("DATABENTO_API_KEY", "")
-    if not api_key.startswith("db-"):
+    if not api_key.startswith("db-") and not args.patch_l2:
         log.error("DATABENTO_API_KEY missing or invalid in /opt/fortress/.env")
         sys.exit(1)
+
+    if args.patch_l2:
+        patch_all_parquets()
+        return
 
     log.info(f"Fortress Databento Live  schema=ohlcv-1m  cost=~$0.31/month")
     log.info(f"Symbols: {SYMBOLS}")

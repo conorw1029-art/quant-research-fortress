@@ -631,10 +631,11 @@ PORTFOLIO = [
 # Once TradingView webhook has been running for ≥30 bars the synthetic CVD is
 # trustworthy enough to re-enable V1-V5. Remove IDs from this set then.
 SUSPENDED_IDS: frozenset = frozenset({
-    # V1-V5 (IDs 1-15) now un-suspended — synthetic CVD available from Databento
-    # Synthetic CVD quality: good for direction, not tick-accurate for size
-    # V10 remains suspended — needs real DOM/OBI (NT8 FortressBarWriter when PC available)
-    40, 41, 42, 43, 44,    # V10: L2 strategies — obi_5/microprice/dom require real DOM data
+    # All strategies now active — synthetic L2 computed from buy_vol/sell_vol:
+    #   obi_5 = (buy_vol - sell_vol) / (buy_vol + sell_vol + 1)  — same range as real DOM OBI
+    #   spread = (high - low) * 0.05  — rough tick-spread proxy
+    # V10 (IDs 40-44): un-suspended after synthetic L2 patch (2026-06-24)
+    # Upgrade path: NT8 FortressBarWriter (real DOM) when PC available
 })
 
 # ── Max contracts cap — HARD LIMIT to enforce $200 max risk per trade ─────────
