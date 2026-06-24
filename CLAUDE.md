@@ -429,19 +429,36 @@ All code changes as of 2026-06-18 are committed and pushed to `main`. Recent com
 
 ## 15. HOW TO CONTINUE FROM ANY DEVICE
 
-### From iPad (no SSH app needed):
+### BEST: Reconnect after WiFi drop (tmux — zero context loss)
+Claude Code runs inside a persistent **tmux** session on the server. WiFi drops don't kill it.
+
 1. Open browser → `http://46.225.110.190:3000`
 2. Login: `root` / `Fortress2026!`
-3. Type: `cd /opt/fortress && claude`
-4. Claude Code starts. This CLAUDE.md loads automatically. Pick up from Section 16.
+3. Type: **`fortress`**  ← this reattaches to the running Claude Code session
+
+That's it. Everything is exactly where you left off — same context, same conversation.
+
+To detach without killing: press `Ctrl+B` then `D` inside tmux.
+To check if a session is running: `tmux ls`
+
+### Starting a fresh session (first time, or after server reboot):
+1. Open browser → `http://46.225.110.190:3000`
+2. Login: `root` / `Fortress2026!`
+3. Type: `fortress` — it creates a new tmux session and starts Claude Code automatically
 
 ### From Termius (SSH app):
 - Host: `46.225.110.190`, user: `root`, password: `Fortress2026!`
-- Then `cd /opt/fortress && claude`
+- Then type `fortress`
 
 ### From Windows PC:
 - Open Claude Code in `C:\Users\conor\Desktop\quant-research`
 - This CLAUDE.md loads automatically
+
+### Reconnect prompt (if a truly new session starts):
+Paste this verbatim:
+```
+I'm Conor Walsh — resuming the Quant Research Fortress project. Load all memory from /root/.claude/projects/-root/memory/ and give me a quick status check: services running? Any API replies from TakeProfit or Tradeify? (Lucid confirmed NO — skip them.) Current state and next step?
+```
 
 ---
 
