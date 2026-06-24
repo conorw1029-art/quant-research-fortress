@@ -526,7 +526,7 @@ print('CID set:', cid != '0', '| SEC set:', len(sec) > 0)
 
 ---
 
-## 19. CURRENT STATUS (as of 2026-06-20)
+## 19. CURRENT STATUS (as of 2026-06-24)
 
 | Item | Status |
 |---|---|
@@ -539,30 +539,50 @@ print('CID set:', cid != '0', '| SEC set:', len(sec) > 0)
 | Data quality | 15-min delayed (yfinance). Real-time: zero — live/ dir empty |
 | API keys | `TV_CID=0`, `TV_SECRET=` empty — emails sent to all 4 prop firms 2026-06-20, awaiting reply |
 | Kill switch | RUN (clear) |
-| Strategies | 43 active, 0 halted, 0 disabled |
-| Paper P&L today | -$19.43 (3% of daily limit) |
-| Paper P&L 7-day | -$1,442.38 (on delayed data — not reliable signal) |
-| GitHub | All code pushed to main, working tree clean |
+| Strategies | 46 in allowlist (IDs 45-46 added 2026-06-24) |
+| Paper P&L (2026-06-24) | +$368 net (strategies 19, 21, 31 profitable; 23 and 35 on circuit breaker) |
+| GitHub | commit 39c7ce9 — V678 results + 2 new allowlist IDs. Push blocked (no PAT on VPS) |
 | ANTHROPIC_API_KEY | Not set — AI health summaries use plain text fallback |
+
+**2026-06-24 session fixes:**
+- Bug fix: `KeyError: 'obi_5'` / `KeyError: 'large_buys'` — L2 columns now stubbed with 0.0
+- Bug fix: `_check_stale` flat 20min → per-timeframe thresholds {1:3, 3:6, 5:10, 15:25, 30:45}
+- Bug fix: `UnboundLocalError: 'traded_sym'` in stale block log handler
+- New: `tick_history_bootstrap.py` — 60d@5m + 730d@1h downloaded for all 4 symbols
+- New: `tick_runner_v9.py` — FOMC drift backtest (4 survivors at 30m/60m)
+- New: `tick_runner_v678.py` — WFO on new bootstrap data (53 survivors, 30m trusted)
+- New: `tick_worst_day_v678.py` — worst-day analysis for top 29 new candidates
+- Allowlist: IDs 45 (NQ/donchian_breakout/30m, DSR=1.85) and 46 (NQ/overnight_gap_fill/30m, DSR=1.71)
 
 ---
 
 ## 20. ORDERED NEXT STEPS
 
-**Step 1 — WAITING (Conor):** Awaiting replies from all 4 prop firms (TakeProfit, Lucid, Tradeify, Apex) to the API access request emails sent 2026-06-20. Check email/Discord for replies. When a firm replies with CID + SEC, bring those values to Claude.
+**Step 1 — WAITING (Conor):** Awaiting replies from all 4 prop firms (TakeProfit, Lucid, Tradeify, Apex) to API access request emails sent 2026-06-20. When a firm replies with CID + SEC, bring those values to Claude immediately.
 
-**Step 2 (Claude):** Receive cid/sec from prop firm reply → SFTP write to `.env` → run one-shot auth test to confirm it works.
+**Step 2 — Push to GitHub (Conor):** Commit 39c7ce9 exists locally on VPS but push is blocked (no GitHub PAT on VPS). To fix:
+```bash
+# Option A: from Windows PC
+cd C:\Users\conor\Desktop\quant-research
+git pull origin main  # pull VPS commits down first (they're only local)
+# ... actually the VPS commits aren't on GitHub yet, need to push FROM VPS
+# Set PAT on VPS:
+git remote set-url origin https://YOUR_PAT@github.com/conorw1029-art/quant-research-fortress
+git push origin main
+```
 
-**Step 3 (Claude):** Start `fortress-tradovate` → verify real-time bars flowing into `live/` dir → strategies immediately start running on real-time data.
+**Step 3 (Claude):** Receive cid/sec → SFTP write to `.env` → run one-shot auth test.
 
-**Step 4 (Claude):** Edit executor service file to `--live-auto-trade` → `systemctl daemon-reload && systemctl restart fortress-executor` → confirm live mode in logs.
+**Step 4 (Claude):** Start `fortress-tradovate` → verify real-time bars → strategies run on live data.
 
-**Step 5 (Claude):** Enable `fortress-copier` in dry-run → watch logs + Telegram to confirm fills would be mirrored correctly.
+**Step 5 (Claude):** Edit executor service to `--live-auto-trade` → restart.
 
-**Step 6 (Conor explicitly approves):** Say "enable real copying" → Claude sets `COPIER_DRY_RUN=false` → all 4 accounts trade live automatically.
+**Step 6 (Claude):** Enable `fortress-copier` in dry-run → verify fills for 1 session.
 
-**Step 7 (optional):** Add `ANTHROPIC_API_KEY` to `.env` for AI health summaries in hourly monitor.
+**Step 7 (Conor explicitly approves):** "Enable real copying" → Claude sets `COPIER_DRY_RUN=false`.
 
-**Step 8 (after ~1 week on real-time data):** Review per-strategy P&L on live data. Disable strategies with negative expectancy. Current paper performance (-$1,450 over 10 days) is unreliable — it was all on 15-min delayed yfinance data.
+**Step 8 (when live):** Run Phase 2 stress test (tick_worst_day_v678.py style analysis) on 1m/3m/5m/15m strategies using real Tradovate historical data. The V678 WFO run on bootstrap data found many high-DSR 1m/15m strategies but they only have 10-70 days of data — meaningless. With Tradovate real history, these can be properly validated.
 
-**If prop firms block API access entirely:** Claude integrates Polygon.io (free real-time data) as the data feed alternative. Order execution via Tradovate API would need a different solution (e.g. trading via NinjaTrader/Rithmic instead).
+**If prop firms block API entirely:** Integrate Polygon.io real-time data feed instead. Order execution via NinjaTrader/Rithmic alternative.
+
+**V678 data note:** The bootstrap WFO run produced 53 survivors, but ONLY 30m results are trusted (2.5yr data). Do NOT add any 1m/3m/5m/15m strategies to the allowlist until running on real Tradovate multi-year historical data.
