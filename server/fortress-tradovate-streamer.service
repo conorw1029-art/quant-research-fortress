@@ -1,0 +1,19 @@
+[Unit]
+Description=Fortress Tradovate Real-Time Bar Streamer
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fortress
+ExecStart=/opt/fortress/venv/bin/python3 /opt/fortress/04_codebase/tick_tradovate_streamer.py --loop
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+# Do NOT start automatically — requires TV_CID and TV_SECRET in .env first
+# Enable with: systemctl enable --now fortress-tradovate-streamer
+
+[Install]
+WantedBy=multi-user.target
