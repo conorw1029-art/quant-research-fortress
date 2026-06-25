@@ -6,60 +6,86 @@ Receives bar-close webhooks from TradingView and writes them into the
 fortress parquet files, replacing the 15-20 minute delayed yfinance data.
 
 TradingView sends a POST request with JSON body on every bar close.
-We receive it, parse the OHLCV, compute synthetic CVD, and update the
-parquets that tick_live_executor.py reads.
+We receive it, parse the OHLCV, compute synthetic CVD/L2, and update
+the parquets that tick_live_executor.py reads.
 
-This gives the executor real-time data (2-5 second delay from bar close)
+Gives the executor real-time data (2-5 second delay from bar close)
 without needing NinjaTrader, a Windows PC, or any other local software.
 
-Listen: 0.0.0.0:8765  (open this port in your VPS firewall)
+Listen: 0.0.0.0:8765  (firewall: ufw allow 8765/tcp)
 
-TRADINGVIEW ALERT SETUP (do this from your iPad):
-  For each symbol × timeframe combination, create a TradingView alert:
+DATA QUALITY MONITOR:
+  http://46.225.110.190:8765/data-quality   ← live feed status
+  http://46.225.110.190:8765/status         ← bar counts
+  http://46.225.110.190:8765/test           ← connectivity check
 
-  Condition: <any indicator> → Bar closes  (or use a simple "close > 0" condition)
-  Alert name: GC_1m  (or ES_30m etc)
-  Webhook URL: http://46.225.110.190:8765/bar
-  Message (copy exactly):
-  {
-    "sym": "{{ticker}}",
-    "tf": "{{interval}}",
-    "ts": "{{time}}",
-    "o": {{open}},
-    "h": {{high}},
-    "l": {{low}},
-    "c": {{close}},
-    "v": {{volume}}
-  }
+TRADINGVIEW ALERT SETUP (do this once from iPad or browser):
+─────────────────────────────────────────────────────────────
+  TradingView plan required: Plus ($14.95/mo) or higher for webhooks.
 
-SYMBOLS TO SET UP (one alert per row):
-  Ticker           Timeframes     → base symbol
-  COMEX:GC1!       1,3,5,15,30   → GC
-  COMEX:SI1!       1,3,5,15,30   → SI
-  CME_MINI:ES1!    1,3,5,15,30   → ES
-  CME_MINI:NQ1!    1,3,5,15,30   → NQ
+  Step 1 — Open TradingView chart for the symbol/timeframe.
+  Step 2 — Click the alert (clock) icon → Create Alert.
+  Step 3 — Set:
+      Condition:   Any indicator → On Bar Close
+      Webhook URL: http://46.225.110.190:8765/bar
+      Message:     paste the JSON below (copy exactly — no line breaks):
 
-  Total: 20 alerts  (TradingView Plus plan = 100 alert limit)
+  {"sym":"{{ticker}}","tf":"{{interval}}","ts":"{{time}}","o":{{open}},"h":{{high}},"l":{{low}},"c":{{close}},"v":{{volume}}}
 
-TRADINGVIEW PLAN NEEDED: Plus ($30/month) for webhooks + 100 alerts.
-Free and Essential plans do NOT support webhooks.
+  Step 4 — Set alert to "Open-ended" (no expiry).
+  Step 5 — Click Create.
+  Step 6 — Repeat for each symbol × timeframe below.
+
+ALERTS TO CREATE (20 total — 4 symbols × 5 timeframes):
+─────────────────────────────────────────────────────────────
+  Symbol in TradingView    Timeframe    Alert name
+  COMEX:GC1!               1            GC_1m
+  COMEX:GC1!               3            GC_3m
+  COMEX:GC1!               5            GC_5m
+  COMEX:GC1!               15           GC_15m
+  COMEX:GC1!               30           GC_30m
+  COMEX:SI1!               1            SI_1m
+  COMEX:SI1!               3            SI_3m
+  COMEX:SI1!               5            SI_5m
+  COMEX:SI1!               15           SI_15m
+  COMEX:SI1!               30           SI_30m
+  CME_MINI:ES1!            1            ES_1m
+  CME_MINI:ES1!            3            ES_3m
+  CME_MINI:ES1!            5            ES_5m
+  CME_MINI:ES1!            15           ES_15m
+  CME_MINI:ES1!            30           ES_30m
+  CME_MINI:NQ1!            1            NQ_1m
+  CME_MINI:NQ1!            3            NQ_3m
+  CME_MINI:NQ1!            5            NQ_5m
+  CME_MINI:NQ1!            15           NQ_15m
+  CME_MINI:NQ1!            30           NQ_30m
+
+OPTIONAL AUTH (add TV_WEBHOOK_TOKEN to .env to require ?token=XXX on requests):
+  TV_WEBHOOK_TOKEN=your_secret_here
+  Then use webhook URL: http://46.225.110.190:8765/bar?token=your_secret_here
+
+TELEGRAM NOTIFICATIONS:
+  Set TELEGRAM_TOKEN and TELEGRAM_CHAT_ID in /opt/fortress/.env.
+  First bar received per symbol triggers a Telegram alert.
 """
 from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import requests as http_requests
 from flask import Flask, request, jsonify
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-BAR_DIR = Path("/opt/fortress/01_data/tick_bars")
+BAR_DIR  = Path("/opt/fortress/01_data/tick_bars")
 BAR_DIR.mkdir(parents=True, exist_ok=True)
-
+ENV_FILE = Path("/opt/fortress/.env")
 LOG_FILE = BAR_DIR.parent / "logs" / "tv_webhook.log"
 LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
@@ -74,20 +100,35 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
+# ── Load .env ──────────────────────────────────────────────────────────────────
+def _load_env():
+    if ENV_FILE.exists():
+        for line in ENV_FILE.read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, _, v = line.partition("=")
+                os.environ.setdefault(k.strip(), v.strip())
+
+_load_env()
+
+# ── Config from env ────────────────────────────────────────────────────────────
+TV_TOKEN        = os.environ.get("TV_WEBHOOK_TOKEN", "")       # optional auth
+TELEGRAM_TOKEN  = os.environ.get("TELEGRAM_TOKEN", "")
+TELEGRAM_CHAT   = os.environ.get("TELEGRAM_CHAT_ID", "")
+
 # ── TradingView ticker → fortress base symbol ──────────────────────────────────
 TV_SYM_MAP = {
     "GC1!": "GC",  "COMEX:GC1!": "GC",  "GC": "GC",
     "SI1!": "SI",  "COMEX:SI1!": "SI",  "SI": "SI",
     "ES1!": "ES",  "CME_MINI:ES1!": "ES", "CME:ES1!": "ES", "ES": "ES",
     "NQ1!": "NQ",  "CME_MINI:NQ1!": "NQ", "CME:NQ1!": "NQ", "NQ": "NQ",
-    # Micro symbols also accepted (same price as full-size)
+    # Micro symbols also accepted
     "MGC1!": "GC", "COMEX:MGC1!": "GC",
     "MES1!": "ES", "CME_MINI:MES1!": "ES",
     "MNQ1!": "NQ", "CME_MINI:MNQ1!": "NQ",
     "SIL1!": "SI", "COMEX:SIL1!": "SI",
 }
 
-# TradingView interval string → minutes
 TV_TF_MAP = {
     "1": 1, "3": 3, "5": 5, "10": 10, "15": 15,
     "30": 30, "45": 45, "60": 60, "1H": 60,
@@ -98,38 +139,50 @@ TV_TF_MAP = {
 _locks: dict[str, threading.Lock] = {}
 _locks_mu = threading.Lock()
 
-
 def _lock(key: str) -> threading.Lock:
     with _locks_mu:
         if key not in _locks:
             _locks[key] = threading.Lock()
         return _locks[key]
 
+# ── Stats + data quality tracking ─────────────────────────────────────────────
+_received:          dict[str, int]              = {}   # key → bar count
+_last_bar_time:     dict[str, pd.Timestamp]     = {}   # key → last bar ts
+_first_notified:    set[str]                    = set() # symbols already notified
+_errors:            int = 0
 
-# ── Stats ─────────────────────────────────────────────────────────────────────
-_received: dict[str, int] = {}
-_errors:   int = 0
-
+# ── Telegram ──────────────────────────────────────────────────────────────────
+def _telegram(msg: str):
+    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT:
+        return
+    try:
+        http_requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+            json={"chat_id": TELEGRAM_CHAT, "text": msg, "parse_mode": ""},
+            timeout=5,
+        )
+    except Exception:
+        pass
 
 # ── Synthetic CVD from OHLCV ──────────────────────────────────────────────────
 def _synthetic_cvd_delta(o: float, h: float, l: float, c: float, v: float) -> int:
-    """
-    Estimate CVD delta from OHLCV using the Williams Accumulation/Distribution proxy.
-    buy_vol_proxy  = v × (close - low) / (high - low)
-    sell_vol_proxy = v × (high - close) / (high - low)
-    cvd_delta      = buy_vol - sell_vol
-
-    Returns 0 if high == low (doji bar — indeterminate direction).
-    """
     rng = h - l
     if rng < 1e-9:
         return 0
     buy_frac  = (c - l) / rng
     sell_frac = (h - c) / rng
-    buy_vol   = int(v * buy_frac)
-    sell_vol  = int(v * sell_frac)
-    return buy_vol - sell_vol
+    return int(v * buy_frac) - int(v * sell_frac)
 
+# ── Synthetic L2 fields ────────────────────────────────────────────────────────
+def _synthetic_l2(buy_v: float, sel_v: float, h: float, l: float, c: float) -> dict:
+    obi    = (buy_v - sel_v) / (buy_v + sel_v + 1)
+    spread = (h - l) * 0.05
+    return {
+        "spread": spread, "bid_sz_00": float(buy_v), "ask_sz_00": float(sel_v),
+        "book_pressure": obi, "obi_5": obi, "microprice": c,
+        "imbal_L5_last": obi, "microprice_last": c,
+        "spread_mean": spread, "bid_sz_mean": float(buy_v), "ask_sz_mean": float(sel_v),
+    }
 
 # ── Core: write one bar to parquet ────────────────────────────────────────────
 def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
@@ -139,21 +192,10 @@ def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
     sell_vol  = max(0, int(v) - buy_vol)
 
     row = {
-        "open":      o,
-        "high":      h,
-        "low":       l,
-        "close":     c,
-        "volume":    int(v),
-        "buy_vol":   buy_vol,
-        "sell_vol":  sell_vol,
-        "cvd_delta": cvd_delta,
-        "cvd":       0,       # running cumsum updated below
-        "n_trades":  int(v),
-        # L2 fields — not available from TradingView, left as 0
-        "spread": 0, "bid_sz_00": 0, "ask_sz_00": 0,
-        "book_pressure": 0, "obi_5": 0, "microprice": c,
-        "imbal_L5_last": 0, "microprice_last": c,
-        "spread_mean": 0, "bid_sz_mean": 0, "ask_sz_mean": 0,
+        "open": o, "high": h, "low": l, "close": c, "volume": int(v),
+        "buy_vol": buy_vol, "sell_vol": sell_vol,
+        "cvd_delta": cvd_delta, "cvd": 0, "n_trades": int(v),
+        **_synthetic_l2(buy_vol, sell_vol, h, l, c),
     }
     new_df = pd.DataFrame([row], index=pd.DatetimeIndex([ts], name="ts"))
 
@@ -165,7 +207,18 @@ def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
             _upsert(path, new_df)
 
     key = f"{sym}/{bar_min}m"
-    _received[key] = _received.get(key, 0) + 1
+    _received[key]      = _received.get(key, 0) + 1
+    _last_bar_time[key] = ts
+
+    # Telegram once per symbol (not per tf — too noisy)
+    if sym not in _first_notified:
+        _first_notified.add(sym)
+        _telegram(
+            f"FORTRESS TV LIVE\n"
+            f"{sym} {bar_min}m  C={c:.2f}  V={int(v)}\n"
+            f"Real-time data is flowing! 20 alerts = no more delay."
+        )
+        log.info(f"FIRST BAR for {sym} — Telegram notified")
 
 
 def _upsert(path: Path, new_df: pd.DataFrame):
@@ -181,14 +234,12 @@ def _upsert(path: Path, new_df: pd.DataFrame):
                     new_df[col] = np.nan
             combined = pd.concat([existing, new_df]).sort_index()
             combined = combined[~combined.index.duplicated(keep="last")]
-            # Update running CVD
             combined["cvd"] = combined["cvd_delta"].cumsum()
         except Exception:
             combined = new_df
     else:
         combined = new_df
         combined["cvd"] = combined["cvd_delta"].cumsum()
-
     combined.to_parquet(path, engine="pyarrow", compression="snappy")
 
 
@@ -196,13 +247,24 @@ def _upsert(path: Path, new_df: pd.DataFrame):
 app = Flask(__name__)
 
 
+def _check_token() -> bool:
+    """Return True if auth passes (or auth is disabled)."""
+    if not TV_TOKEN:
+        return True
+    q_token  = request.args.get("token", "")
+    auth_hdr = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
+    return q_token == TV_TOKEN or auth_hdr == TV_TOKEN
+
+
 @app.route("/bar", methods=["POST"])
 def receive_bar():
     global _errors
+    if not _check_token():
+        return jsonify({"error": "unauthorized"}), 401
+
     try:
         data = request.get_json(force=True, silent=True)
         if data is None:
-            # TradingView sometimes sends as text/plain — parse manually
             try:
                 data = json.loads(request.data)
             except Exception:
@@ -211,16 +273,14 @@ def receive_bar():
 
         # ── Parse symbol ──────────────────────────────────────────────────────
         raw_sym = str(data.get("sym", "")).strip().upper()
-        # Remove exchange prefix if present (e.g., "COMEX:GC1!" → "GC1!")
         if ":" in raw_sym:
             raw_sym = raw_sym.split(":")[-1]
         sym = TV_SYM_MAP.get(raw_sym) or TV_SYM_MAP.get(raw_sym.split(":")[0])
         if sym is None:
-            # Try stripping numbers from end: "GC1!" → "GC"
             stripped = raw_sym.rstrip("!1234567890")
             sym = TV_SYM_MAP.get(stripped)
         if sym is None:
-            log.warning(f"Unknown symbol: {data.get('sym')!r} — ignoring")
+            log.warning(f"Unknown symbol: {data.get('sym')!r}")
             return jsonify({"error": f"unknown symbol {data.get('sym')}"}), 400
 
         # ── Parse timeframe ───────────────────────────────────────────────────
@@ -236,7 +296,6 @@ def receive_bar():
         # ── Parse timestamp ───────────────────────────────────────────────────
         raw_ts = data.get("ts")
         try:
-            # TradingView sends {{time}} as Unix seconds (int)
             ts = pd.Timestamp(int(raw_ts), unit="s", tz="UTC")
         except Exception:
             try:
@@ -260,8 +319,7 @@ def receive_bar():
         log.info(f"Bar: {sym} {bar_min}m  {ts.strftime('%H:%M')}  "
                  f"C={c:.2f}  V={int(v)}  lag={lag:.0f}s")
 
-        return jsonify({"ok": True, "sym": sym, "bar_min": bar_min,
-                        "ts": str(ts)}), 200
+        return jsonify({"ok": True, "sym": sym, "bar_min": bar_min, "ts": str(ts)}), 200
 
     except Exception as e:
         _errors += 1
@@ -269,29 +327,82 @@ def receive_bar():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/data-quality", methods=["GET"])
+def data_quality():
+    """Per-symbol/tf feed health — shows last bar time and staleness."""
+    now     = pd.Timestamp.now(tz="UTC")
+    quality = {}
+    for key, ts in sorted(_last_bar_time.items()):
+        age_s   = (now - ts).total_seconds()
+        bar_min = int(key.split("/")[1].replace("m", ""))
+        # stale = older than bar_period + 2-min grace
+        threshold_s = bar_min * 60 + 120
+        quality[key] = {
+            "last_bar":   ts.strftime("%Y-%m-%d %H:%M:%S UTC"),
+            "age_sec":    round(age_s),
+            "is_live":    age_s < threshold_s,
+            "bars_recv":  _received.get(key, 0),
+        }
+
+    live_count = sum(1 for v in quality.values() if v["is_live"])
+    total      = len(quality)
+    if total == 0:
+        overall = "no_data"
+    elif live_count >= 16:
+        overall = "live"     # all 20 alerts flowing
+    elif live_count >= 4:
+        overall = "partial"  # some symbols flowing
+    else:
+        overall = "degraded"
+
+    return jsonify({
+        "overall":     overall,
+        "live_feeds":  f"{live_count}/{total}",
+        "quality":     quality,
+        "errors":      _errors,
+        "time_utc":    now.isoformat(),
+        "setup_url":   "See tick_tv_webhook.py docstring for alert setup",
+    })
+
+
 @app.route("/status", methods=["GET"])
 def status():
     return jsonify({
-        "status": "running",
+        "status":        "running",
         "bars_received": _received,
-        "errors": _errors,
-        "bar_dir": str(BAR_DIR),
-        "time_utc": datetime.now(timezone.utc).isoformat(),
+        "errors":        _errors,
+        "bar_dir":       str(BAR_DIR),
+        "auth_enabled":  bool(TV_TOKEN),
+        "time_utc":      datetime.now(timezone.utc).isoformat(),
     })
 
 
 @app.route("/test", methods=["GET", "POST"])
 def test():
-    """Quick connectivity test — visit http://VPS_IP:8765/test in browser."""
+    """Quick connectivity test — visit http://46.225.110.190:8765/test in browser."""
     return "Fortress TV Webhook OK — server is reachable.", 200
+
+
+@app.route("/ping", methods=["GET", "POST"])
+def ping():
+    return jsonify({"pong": True, "time_utc": datetime.now(timezone.utc).isoformat()})
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    log.info("Fortress TradingView Webhook Server")
+    log.info("Fortress TradingView Webhook Server v2")
     log.info(f"Listening on 0.0.0.0:8765")
     log.info(f"Parquets: {BAR_DIR}")
-    log.info("Test URL: http://46.225.110.190:8765/test")
-    log.info("Bar URL:  http://46.225.110.190:8765/bar  (POST)")
-    log.info("Status:   http://46.225.110.190:8765/status")
+    log.info(f"Auth token: {'enabled' if TV_TOKEN else 'disabled (open)'}")
+    log.info(f"Telegram: {'enabled' if TELEGRAM_TOKEN else 'disabled'}")
+    log.info("")
+    log.info("Endpoints:")
+    log.info("  POST /bar           — receive bar from TradingView")
+    log.info("  GET  /data-quality  — live feed health per symbol/tf")
+    log.info("  GET  /status        — bar counts")
+    log.info("  GET  /test          — connectivity check")
+    log.info("")
+    log.info("SETUP: Create 20 TradingView alerts (one per symbol × timeframe)")
+    log.info('  Webhook URL: http://46.225.110.190:8765/bar')
+    log.info('  Message:     {"sym":"{{ticker}}","tf":"{{interval}}","ts":"{{time}}","o":{{open}},"h":{{high}},"l":{{low}},"c":{{close}},"v":{{volume}}}')
     app.run(host="0.0.0.0", port=8765, threaded=True)

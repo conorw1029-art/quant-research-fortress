@@ -31,9 +31,16 @@ from src.strategies.l2_cvd_strategies import CVDMicropriceStrategy, CVDAccelerat
 from src.strategies.l2_absorption_strategies import RepeatedReplenishmentStrategy
 
 
+L2_REQUIRED_COLUMNS = {"cvd_delta", "imbal_L5_last", "microprice_last", "buy_vol"}
+
 def _make_entry(cls):
-    """Wrap an L2 strategy class into the executor's dispatch dict format."""
-    def compute(df, **params):
+    """Wrap an L2 strategy class into the executor's dispatch dict format.
+    Guards against yfinance bars that lack L2 columns — returns flat (all 0)
+    when none of the required L2 columns are present."""    def compute(df, **params):
+        import pandas as pd
+        has_l2 = any(c in df.columns for c in L2_REQUIRED_COLUMNS)
+        if not has_l2:
+            return pd.Series(0, index=df.index, dtype=int)
         return cls(params).generate_signals(df)
     return {"compute": compute, "class": cls}
 

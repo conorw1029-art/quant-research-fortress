@@ -320,14 +320,14 @@ def backfill(api_key: str):
         log.info(f"  {base} resampled to {RESAMPLE_TFS}m")
 
 # ── Historical-API poller (replaces Live stream — no live license needed) ──────
-POLL_SECS    = 60    # fetch last 5 bars every 60s — ~60s latency, ~$0.50/month
-POLL_LOOKBACK = 5    # minutes of recent bars to fetch each poll
+POLL_SECS    = 60    # fetch last 15 bars every 60s — ~60s latency, ~$0.50/month
+POLL_LOOKBACK = 15   # minutes — covers ~7min Databento publication lag
 
 
 def _fetch_recent(client: db.Historical, lookback_min: int = POLL_LOOKBACK) -> pd.DataFrame | None:
     """Fetch the last lookback_min 1m bars for all symbols via Historical API."""
-    end   = datetime.now(timezone.utc)
-    start = end - timedelta(minutes=lookback_min + 2)   # small buffer
+    end   = datetime.now(timezone.utc) - timedelta(minutes=10)   # cap: Databento lags ~4-7min
+    start = end - timedelta(minutes=lookback_min)
     try:
         data = client.timeseries.get_range(
             dataset=DATASET, schema=SCHEMA,
@@ -337,7 +337,7 @@ def _fetch_recent(client: db.Historical, lookback_min: int = POLL_LOOKBACK) -> p
         df = data.to_df()
         return df if df is not None and len(df) > 0 else None
     except Exception as e:
-        log.debug(f"Poll error: {e}")
+        log.warning(f"Poll error: {e}")
         return None
 
 

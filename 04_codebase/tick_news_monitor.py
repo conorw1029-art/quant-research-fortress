@@ -249,8 +249,7 @@ class NewsMonitor:
 
     # ── Refresh ───────────────────────────────────────────────────────────────
 
-    def refresh(self, force: bool = False) -> bool:
-        """Refresh calendar and headlines. Returns True if calendar is healthy."""
+    def refresh(self, force: bool = False) -> None:
         now = datetime.now(timezone.utc)
         if (force or self.last_calendar is None or
                 (now - self.last_calendar).seconds > self.cache_minutes * 60):
@@ -259,15 +258,6 @@ class NewsMonitor:
         if (force or self.last_rss is None or
                 (now - self.last_rss).seconds > 15 * 60):  # headlines every 15 min
             self.fetch_headlines()
-
-        return self.is_feed_healthy()
-
-    def is_feed_healthy(self) -> bool:
-        """True if calendar was successfully loaded within 2× cache_minutes."""
-        if self.last_calendar is None:
-            return False
-        age_min = (datetime.now(timezone.utc) - self.last_calendar).total_seconds() / 60
-        return age_min <= self.cache_minutes * 2
 
     # ── Analysis Methods ─────────────────────────────────────────────────────
 
