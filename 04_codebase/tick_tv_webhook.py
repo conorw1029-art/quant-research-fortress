@@ -147,7 +147,8 @@ def _lock(key: str) -> threading.Lock:
 
 # ── Stats + data quality tracking ─────────────────────────────────────────────
 _received:          dict[str, int]              = {}   # key → bar count
-_last_bar_time:     dict[str, pd.Timestamp]     = {}   # key → last bar ts
+_last_bar_time:     dict[str, pd.Timestamp]     = {}   # key → last bar ts (bar's own timestamp)
+_last_arrival:      dict[str, datetime]         = {}   # key → wall-clock time bar arrived
 _first_notified:    set[str]                    = set() # symbols already notified
 _errors:            int = 0
 
@@ -207,8 +208,9 @@ def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
             _upsert(path, new_df)
 
     key = f"{sym}/{bar_min}m"
-    _received[key]      = _received.get(key, 0) + 1
-    _last_bar_time[key] = ts
+    _received[key]       = _received.get(key, 0) + 1
+    _last_bar_time[key]  = ts
+    _last_arrival[key]   = datetime.now(timezone.utc)
 
     # Telegram once per symbol (not per tf — too noisy)
     if sym not in _first_notified:
@@ -263,12 +265,22 @@ def receive_bar():
         return jsonify({"error": "unauthorized"}), 401
 
     try:
+        raw_body = request.data
         data = request.get_json(force=True, silent=True)
         if data is None:
             try:
-                data = json.loads(request.data)
+                # TradingView can embed newlines in JSON keys when alert message
+                # is copy-pasted with line breaks. Strip whitespace from keys.
+                import re as _re
+                cleaned = _re.sub(
+                    rb'"([^"]{0,40})"',
+                    lambda m: b'"' + m.group(1).replace(b'\n', b'').replace(b'\r', b'').strip() + b'"',
+                    raw_body,
+                )
+                data = json.loads(cleaned)
             except Exception:
                 _errors += 1
+                log.error(f"PARSE_FAIL body={raw_body[:300]!r}")
                 return jsonify({"error": "invalid JSON"}), 400
 
         # ── Parse symbol ──────────────────────────────────────────────────────
@@ -294,12 +306,18 @@ def receive_bar():
                 return jsonify({"error": f"unknown tf {raw_tf}"}), 400
 
         # ── Parse timestamp ───────────────────────────────────────────────────
+        # TradingView sends {{time}} as ISO-8601 string ("2026-06-25T17:52:00Z")
+        # or as Unix seconds (integer). Handle both.
         raw_ts = data.get("ts")
-        try:
-            ts = pd.Timestamp(int(raw_ts), unit="s", tz="UTC")
-        except Exception:
+        ts = None
+        if raw_ts is not None:
             try:
                 ts = pd.to_datetime(str(raw_ts), utc=True)
+            except Exception:
+                pass
+        if ts is None:
+            try:
+                ts = pd.Timestamp(int(raw_ts), unit="s", tz="UTC")
             except Exception:
                 ts = pd.Timestamp.now(tz="UTC").floor(f"{bar_min}min")
 
@@ -329,18 +347,27 @@ def receive_bar():
 
 @app.route("/data-quality", methods=["GET"])
 def data_quality():
-    """Per-symbol/tf feed health — shows last bar time and staleness."""
-    now     = pd.Timestamp.now(tz="UTC")
+    """Per-symbol/tf feed health — shows last bar time and whether alerts are arriving."""
+    now_dt  = datetime.now(timezone.utc)
+    now_ts  = pd.Timestamp.now(tz="UTC")
     quality = {}
-    for key, ts in sorted(_last_bar_time.items()):
-        age_s   = (now - ts).total_seconds()
-        bar_min = int(key.split("/")[1].replace("m", ""))
-        # stale = older than bar_period + 2-min grace
-        threshold_s = bar_min * 60 + 120
+    for key in sorted(set(_last_bar_time) | set(_last_arrival)):
+        ts       = _last_bar_time.get(key)
+        arrived  = _last_arrival.get(key)
+        bar_min  = int(key.split("/")[1].replace("m", ""))
+        # is_live = alert arrived recently (2× bar period + 2min grace)
+        # Use arrival time so 10-min delayed data still shows as "live"
+        if arrived is not None:
+            since_arrival = (now_dt - arrived).total_seconds()
+            is_live = since_arrival < (bar_min * 60 * 2 + 120)
+        else:
+            is_live = False
+        data_lag = round((now_ts - ts).total_seconds()) if ts else None
         quality[key] = {
-            "last_bar":   ts.strftime("%Y-%m-%d %H:%M:%S UTC"),
-            "age_sec":    round(age_s),
-            "is_live":    age_s < threshold_s,
+            "last_bar":   ts.strftime("%Y-%m-%d %H:%M:%S UTC") if ts else "never",
+            "data_lag_s": data_lag,
+            "since_recv": round((now_dt - arrived).total_seconds()) if arrived else None,
+            "is_live":    is_live,
             "bars_recv":  _received.get(key, 0),
         }
 
@@ -360,7 +387,7 @@ def data_quality():
         "live_feeds":  f"{live_count}/{total}",
         "quality":     quality,
         "errors":      _errors,
-        "time_utc":    now.isoformat(),
+        "time_utc":    now_dt.isoformat(),
         "setup_url":   "See tick_tv_webhook.py docstring for alert setup",
     })
 
