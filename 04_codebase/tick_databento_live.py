@@ -326,7 +326,7 @@ POLL_LOOKBACK = 15   # minutes — covers ~7min Databento publication lag
 
 def _fetch_recent(client: db.Historical, lookback_min: int = POLL_LOOKBACK) -> pd.DataFrame | None:
     """Fetch the last lookback_min 1m bars for all symbols via Historical API."""
-    end   = datetime.now(timezone.utc) - timedelta(minutes=10)   # cap: Databento lags ~4-7min
+    end   = datetime.now(timezone.utc) - timedelta(minutes=15)   # cap: Databento lags ~4-7min
     start = end - timedelta(minutes=lookback_min)
     try:
         data = client.timeseries.get_range(
@@ -337,7 +337,13 @@ def _fetch_recent(client: db.Historical, lookback_min: int = POLL_LOOKBACK) -> p
         df = data.to_df()
         return df if df is not None and len(df) > 0 else None
     except Exception as e:
-        log.warning(f"Poll error: {e}")
+        err = str(e)
+        if "data_end_after_available_end" in err:
+            log.debug("Poll: data not yet published, will retry")
+        elif "dataset_unavailable_range" in err or "subscription" in err or "license" in err:
+            log.debug("Poll: subscription gap, backing off 5min")
+        else:
+            log.warning(f"Poll error: {e}")
         return None
 
 
