@@ -1266,18 +1266,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
         if stale:
             if verbose:
                 print(f"  [{strat_id}] ⚠ {stale} — NEW ENTRIES BLOCKED")
-            _log_signal({
-                "event_type":   "stale_data_block",
-                "timestamp":    datetime.now(timezone.utc).isoformat(),
-                "mode":         mode,
-                "strategy_id":  strat_id,
-                "strategy":     strat_name,
-                "symbol":       symbol,
-                "bar_minutes":  bar_min,
-                "version":      version,
-                "accepted":     False,
-                "rejection_reason": stale,
-            })
+            # Stale-data blocks are routine operational events — log to stdout only,
+            # not to the signal log (would bloat it with thousands of entries/day).
             continue
 
         last_bar_ts = df.index[-1]
@@ -1415,7 +1405,7 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 strategy_id=strat_id,
                 strategy_key=f"{symbol}/{strat_name}/{bar_min}m",
                 symbol=traded_sym,
-                contract=TV_CONTRACT_MAP.get(traded_sym, f"{traded_sym}U5"),
+                contract=TV_CONTRACT_MAP.get(traded_sym, f"{traded_sym}U6"),
                 side=Side.LONG if last_sig == 1 else Side.SHORT,
                 desired_qty=1,
                 entry_price=entry_p,
@@ -2146,19 +2136,19 @@ Examples:
             except Exception:
                 _broker_net_pos = []
 
-        # ── IBKR gate — hold signals until real-time data is ready ──────────
+        # ── IBKR gate — hold NEW entries until real-time data is ready ─────
+        # Exits for open positions still run so existing DRY_RUN positions can close.
         _ibkr_ready_path = Path("/opt/fortress/IBKR_READY")
-        if not _ibkr_ready_path.exists():
-            print(f"\n  *** WAITING FOR IBKR — signal generation suspended ***")
-            print(f"  Touch {_ibkr_ready_path} to enable signals once IBKR data is flowing.")
-            print(f"\n  Positions: {tracker.to_dict()}")
-            print(f"  Signal log: {_signal_log_path()}")
-            return []
+        _ibkr_waiting = not _ibkr_ready_path.exists()
+        if _ibkr_waiting:
+            print(f"\n  *** WAITING FOR IBKR — new entries suspended ***")
+            print(f"  Touch {_ibkr_ready_path} to enable entries once IBKR data is flowing.")
+            print(f"  (Existing positions will still be managed / can still exit.)")
 
         alerts = check_all_strategies(tracker, rm, args.disable_v2,
                                       verbose=verbose, tv_client=tv_client,
                                       mode=mode,
-                                      block_new_entries=news_blocked,
+                                      block_new_entries=news_blocked or _ibkr_waiting,
                                       news_bias=current_bias,
                                       sm=sm,
                                       coordinator=coordinator,

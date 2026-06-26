@@ -111,8 +111,8 @@ def _build_plain_report(services: dict, freshness: dict,
         lines.append(f"  {sym}: {age}")
 
     equity = acct.get("equity", 49000)
-    dd     = acct.get("trailing_dd", 0)
-    pnl    = acct.get("pnl_today", 0)
+    dd     = acct.get("trailing_drawdown_remaining", acct.get("trailing_dd", 0))
+    pnl    = acct.get("realized_pnl", acct.get("pnl_today", 0))
     lines += [
         "",
         f"Account: ${equity:,.0f} equity | DD: ${dd:,.0f} | P&L today: ${pnl:+,.2f}",

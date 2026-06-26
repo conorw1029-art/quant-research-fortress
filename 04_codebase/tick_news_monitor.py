@@ -125,8 +125,17 @@ class NewsEvent:
         if not self.has_result or self.forecast is None:
             return None
         try:
-            a = float(str(self.actual).replace("%", "").replace("K", "000").replace("M", "000000"))
-            f = float(str(self.forecast).replace("%", "").replace("K", "000").replace("M", "000000"))
+            def _parse(v: str) -> float:
+                v = v.replace("%", "").strip()
+                if v.upper().endswith("K"):
+                    return float(v[:-1]) * 1_000
+                if v.upper().endswith("M"):
+                    return float(v[:-1]) * 1_000_000
+                if v.upper().endswith("B"):
+                    return float(v[:-1]) * 1_000_000_000
+                return float(v)
+            a = _parse(str(self.actual))
+            f = _parse(str(self.forecast))
             return a > f
         except (ValueError, AttributeError):
             return None
@@ -252,11 +261,11 @@ class NewsMonitor:
     def refresh(self, force: bool = False) -> bool:
         now = datetime.now(timezone.utc)
         if (force or self.last_calendar is None or
-                (now - self.last_calendar).seconds > self.cache_minutes * 60):
+                (now - self.last_calendar).total_seconds() > self.cache_minutes * 60):
             self.fetch_calendar()
 
         if (force or self.last_rss is None or
-                (now - self.last_rss).seconds > 15 * 60):  # headlines every 15 min
+                (now - self.last_rss).total_seconds() > 15 * 60):  # headlines every 15 min
             self.fetch_headlines()
 
         return self.last_calendar is not None

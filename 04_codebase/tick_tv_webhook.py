@@ -113,7 +113,7 @@ _load_env()
 
 # ── Config from env ────────────────────────────────────────────────────────────
 TV_TOKEN        = os.environ.get("TV_WEBHOOK_TOKEN", "")       # optional auth
-TELEGRAM_TOKEN  = os.environ.get("TELEGRAM_TOKEN", "")
+TELEGRAM_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", os.environ.get("TELEGRAM_TOKEN", ""))
 TELEGRAM_CHAT   = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # ── TradingView ticker → fortress base symbol ──────────────────────────────────

@@ -246,6 +246,28 @@ def main():
             if not active:
                 print(f"  ⚠️  {svc} inactive (optional — not restarting)")
 
+        # ── Executor heartbeat liveness check ───────────────────────────
+        # Checks that the executor's heartbeat.json was updated recently.
+        # A hung-but-active executor (e.g. blocked on IBKR gate, OOM, etc.)
+        # will not update its heartbeat and should alert after 5 min silence.
+        hb_path = STATE_DIR / "heartbeat.json"
+        try:
+            hb_data = json.loads(hb_path.read_text())
+            hb_ts_str = hb_data.get("timestamp", "")
+            if hb_ts_str:
+                from datetime import datetime as _dt
+                hb_ts = _dt.fromisoformat(hb_ts_str.replace("Z", "+00:00"))
+                hb_age = (now - hb_ts).total_seconds()
+                if hb_age > POLL_INTERVAL * 2:  # stale if older than 2 poll cycles
+                    alerts.append(f"⚠️ Executor heartbeat stale: last seen {int(hb_age/60)}m ago")
+                    print(f"  ⚠️  Executor heartbeat stale ({int(hb_age/60)}m ago)")
+                else:
+                    print(f"  ✅ Executor heartbeat {int(hb_age)}s ago")
+            else:
+                print(f"  ⚠️  Executor heartbeat timestamp missing")
+        except Exception as hb_err:
+            print(f"  ⚠️  Cannot read heartbeat: {hb_err}")
+
         # ── Data freshness ──────────────────────────────────────────────
         data_issues = check_data_freshness()
         for issue in data_issues:
