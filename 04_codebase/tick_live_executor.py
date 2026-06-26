@@ -617,11 +617,11 @@ PORTFOLIO = [
 
     (53, "ES", 15, "wick_reversal",
      {"wick_ratio": 0.6, "lookback": 20, "atr_window": 14},
-     {0,1,6,7,10,12,13,14,15,16,17,19,23}, None, "v7"),  # DSR=1.78 filt_Sharpe=7.14
+     {0,1,6,7,10,12,13,14,15,16,17,19,23}, None, "v6"),  # DSR=1.78 filt_Sharpe=7.14
 
     (54, "GC", 15, "opening_range_breakout",
      {"orb_bars": 3, "buffer_atr_pct": 0.0, "atr_window": 14},
-     {1,4,5,6,7,9,10,12,13,15,17,18,19,20,23}, None, "v7"),  # DSR=1.75 filt_Sharpe=7.32
+     {1,4,5,6,7,9,10,12,13,15,17,18,19,20,23}, None, "v6"),  # DSR=1.75 filt_Sharpe=7.32
 ]
 
 # ── Strategies suspended until real CVD/L2 data is available ─────────────────
