@@ -743,7 +743,11 @@ def load_bars(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame | 
     path = BAR_DIR / f"{symbol}_bars_{bar_min}m.parquet"
     if not path.exists():
         return None
-    df = pd.read_parquet(path)
+    try:
+        df = pd.read_parquet(path)
+    except Exception:
+        # File may be 0 bytes mid-write (tv-webhook race). Treat as missing.
+        return None
     df.index = pd.to_datetime(df.index, utc=True)
     df.sort_index(inplace=True)
     df = df.iloc[-lookback:] if len(df) > lookback else df
@@ -761,7 +765,10 @@ def load_bars_l2(symbol: str, bar_min: int, lookback: int = 500) -> pd.DataFrame
     path = BAR_DIR / f"{symbol}_bars_l2_{bar_min}m.parquet"
     if not path.exists():
         return None
-    df = pd.read_parquet(path)
+    try:
+        df = pd.read_parquet(path)
+    except Exception:
+        return None
     df.index = pd.to_datetime(df.index, utc=True)
     df.sort_index(inplace=True)
     return df.iloc[-lookback:] if len(df) > lookback else df
@@ -2138,6 +2145,15 @@ Examples:
                 )
             except Exception:
                 _broker_net_pos = []
+
+        # ── IBKR gate — hold signals until real-time data is ready ──────────
+        _ibkr_ready_path = Path("/opt/fortress/IBKR_READY")
+        if not _ibkr_ready_path.exists():
+            print(f"\n  *** WAITING FOR IBKR — signal generation suspended ***")
+            print(f"  Touch {_ibkr_ready_path} to enable signals once IBKR data is flowing.")
+            print(f"\n  Positions: {tracker.to_dict()}")
+            print(f"  Signal log: {_signal_log_path()}")
+            return []
 
         alerts = check_all_strategies(tracker, rm, args.disable_v2,
                                       verbose=verbose, tv_client=tv_client,

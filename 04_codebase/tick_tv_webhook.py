@@ -223,6 +223,8 @@ def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
         log.info(f"FIRST BAR for {sym} — Telegram notified")
 
 
+_UPSERT_MAX_ROWS = 1000  # ~14 days at 1m, ~500 days at 30m — covers 500-bar lookback
+
 def _upsert(path: Path, new_df: pd.DataFrame):
     if path.exists():
         try:
@@ -236,6 +238,7 @@ def _upsert(path: Path, new_df: pd.DataFrame):
                     new_df[col] = np.nan
             combined = pd.concat([existing, new_df]).sort_index()
             combined = combined[~combined.index.duplicated(keep="last")]
+            combined = combined.iloc[-_UPSERT_MAX_ROWS:]  # trim to keep memory bounded
             combined["cvd"] = combined["cvd_delta"].cumsum()
         except Exception:
             combined = new_df
