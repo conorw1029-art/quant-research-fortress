@@ -266,11 +266,26 @@ def receive_bar():
 
     try:
         raw_body = request.data
-        data = request.get_json(force=True, silent=True)
+        # Normalize Unicode smart/curly quotes → ASCII straight quotes.
+        # TradingView's alert message editor autocorrects "..." → "..." so
+        # the closing quote of values becomes U+201D (\xe2\x80\x9d) instead of
+        # the ASCII " (0x22), producing invalid JSON.
+        raw_body = (raw_body
+            .replace(b'\xe2\x80\x9c', b'"')   # " LEFT DOUBLE QUOTATION MARK
+            .replace(b'\xe2\x80\x9d', b'"')   # " RIGHT DOUBLE QUOTATION MARK
+            .replace(b'\xe2\x80\x98', b"'")   # ' LEFT SINGLE QUOTATION MARK
+            .replace(b'\xe2\x80\x99', b"'"))  # ' RIGHT SINGLE QUOTATION MARK
+
+        data = None
+        try:
+            data = json.loads(raw_body)
+        except Exception:
+            pass
+
         if data is None:
             try:
-                # TradingView can embed newlines in JSON keys when alert message
-                # is copy-pasted with line breaks. Strip whitespace from keys.
+                # Also strip newlines/spaces embedded in JSON key names
+                # (copy-paste from some editors wraps key text with line breaks).
                 import re as _re
                 cleaned = _re.sub(
                     rb'"([^"]{0,40})"',
