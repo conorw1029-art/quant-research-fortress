@@ -1001,27 +1001,38 @@ def _check_stale(df: pd.DataFrame, symbol: str, bar_min: int,
 # ES and NQ are ~90% correlated. Holding both long (or both short) at once
 # effectively doubles the position size. Log a warning when this occurs.
 
-_CORR_ES = frozenset({2, 3, 4, 7, 11, 13})    # ES-based strategy IDs
-_CORR_NQ = frozenset({5, 6, 8, 12, 14})     # NQ-based strategy IDs
-_CORR_GC = frozenset({1, 9, 10, 15})        # GC-based strategy IDs
+# Full strategy-ID membership by underlying symbol (V1-V10, all 54 strategies).
+# Derived from the authoritative PORTFOLIO id->symbol map.
+_CORR_ES = frozenset({2, 3, 4, 7, 11, 13, 33, 34, 38, 39, 49, 53})
+_CORR_NQ = frozenset({5, 6, 8, 12, 14, 35, 36, 37, 45, 46, 50, 52})
+_CORR_GC = frozenset({1, 9, 10, 15, 16, 17, 20, 24, 27, 32, 40, 43, 44, 54})
+_CORR_SI = frozenset({18, 19, 21, 22, 23, 25, 26, 28, 29, 30, 31, 41, 42, 47, 48, 51})
+
+
+def _net_dir(tracker: PositionTracker, ids) -> int:
+    """Net directional bias across a cluster: +1 if net long, -1 if net short, 0 flat."""
+    net = sum(tracker.current(s) for s in ids)
+    return 1 if net > 0 else (-1 if net < 0 else 0)
 
 
 def _correlation_warning(tracker: PositionTracker) -> str | None:
     """
-    Return a warning if ES and NQ strategies are simultaneously in the same
-    direction. GC is uncorrelated — not checked here.
+    Flag correlated-cluster exposure: the index complex (ES≈NQ) and the metals
+    complex (GC≈SI) each move together, so same-direction positions across a
+    cluster stack risk. Covers all V1-V10 strategy IDs, not just the legacy set.
+    Display/log only — does not block entries (the PortfolioCoordinator enforces
+    the hard net-position caps).
     """
-    es_dirs = [tracker.current(s) for s in _CORR_ES if tracker.current(s) != 0]
-    nq_dirs = [tracker.current(s) for s in _CORR_NQ if tracker.current(s) != 0]
-    if not es_dirs or not nq_dirs:
-        return None
-    es_dir = es_dirs[0]
-    nq_dir = nq_dirs[0]
-    if es_dir == nq_dir:
+    msgs = []
+    es_dir, nq_dir = _net_dir(tracker, _CORR_ES), _net_dir(tracker, _CORR_NQ)
+    if es_dir != 0 and es_dir == nq_dir:
         d = "LONG" if es_dir == 1 else "SHORT"
-        return (f"CORRELATION: ES strategies {d} + NQ strategies {d} "
-                f"— correlated exposure doubled, risk is 2× a single position")
-    return None
+        msgs.append(f"INDEX CORRELATION: ES {d} + NQ {d} — exposure ~2× a single index position")
+    gc_dir, si_dir = _net_dir(tracker, _CORR_GC), _net_dir(tracker, _CORR_SI)
+    if gc_dir != 0 and gc_dir == si_dir:
+        d = "LONG" if gc_dir == 1 else "SHORT"
+        msgs.append(f"METALS CORRELATION: GC {d} + SI {d} — exposure ~2× a single metals position")
+    return "  ".join(msgs) if msgs else None
 
 
 # ── Gate 7: Startup reconciliation + periodic broker sync ────────────────────
@@ -2043,6 +2054,29 @@ Examples:
         # ── Heartbeat ─────────────────────────────────────────────────────
         if sm:
             sm.update_heartbeat(mode=mode, bar_loop_count=pass_num)
+
+        # ── Persist live account state ────────────────────────────────────
+        # Keeps account_state.json fresh so the dashboard + AI monitor report
+        # real equity / drawdown / realized P&L instead of stale startup values.
+        # Merge-safe: preserves keys the executor doesn't own (account_id, etc).
+        if sm and rm is not None:
+            try:
+                acct = rm.account
+                dd_limit = getattr(acct.cfg, "max_account_trailing_dd_usd", 800.0)
+                st = sm.load_account_state()
+                st.update({
+                    "last_updated":                datetime.now(timezone.utc).isoformat(),
+                    "equity":                      round(acct.equity, 2),
+                    "equity_peak":                 round(acct.peak_equity, 2),
+                    "trailing_drawdown_remaining": round(dd_limit - acct.trailing_dd, 2),
+                    "max_drawdown_limit":          round(dd_limit, 2),
+                    "account_halt":                bool(acct.is_halted),
+                    "account_halt_reason":         (acct._halt_reason or None),
+                    "realized_pnl":                round(rm.ledger.portfolio_today(), 2),
+                })
+                sm.save_account_state(st)
+            except Exception as _acct_err:
+                print(f"  [acct-state] persist skipped: {_acct_err}")
 
         # ── Kill switch check ─────────────────────────────────────────────
         if _check_kill_switch():

@@ -452,6 +452,23 @@ def _ks_status() -> str:
     return "RUN"
 
 
+# ── Optional auth for mutating / costly endpoints ──────────────────────────────
+# Defaults to OPEN (preserves existing browser access). Set DASHBOARD_TOKEN in
+# /opt/fortress/.env to require ?token=XXX or  X-Dash-Token: XXX  on
+# /api/halt, /api/resume and /api/chat (halt/resume = control, chat = $ API spend).
+DASHBOARD_TOKEN = os.environ.get("DASHBOARD_TOKEN", "")
+
+
+def _dash_auth() -> bool:
+    """True if the request is authorised (or auth is disabled)."""
+    if not DASHBOARD_TOKEN:
+        return True
+    tok = (request.args.get("token", "")
+           or request.headers.get("X-Dash-Token", "")
+           or request.headers.get("Authorization", "").replace("Bearer ", "").strip())
+    return tok == DASHBOARD_TOKEN
+
+
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.route("/")
@@ -484,6 +501,8 @@ def api_kill_switch_status():
 
 @app.route("/api/halt", methods=["POST"])
 def api_halt():
+    if not _dash_auth():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
     try:
         KILL_SWITCH_PATH.write_text("STOP\n", encoding="utf-8")
         return jsonify({"ok": True, "status": "STOP"})
@@ -493,6 +512,8 @@ def api_halt():
 
 @app.route("/api/resume", methods=["POST"])
 def api_resume():
+    if not _dash_auth():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
     try:
         KILL_SWITCH_PATH.write_text("RUN\n", encoding="utf-8")
         return jsonify({"ok": True, "status": "RUN"})
@@ -502,6 +523,8 @@ def api_resume():
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
+    if not _dash_auth():
+        return jsonify({"error": "unauthorized"}), 401
     body    = request.json or {}
     user_msg = body.get("message", "").strip()
     if not user_msg:

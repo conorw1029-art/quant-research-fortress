@@ -109,7 +109,14 @@ class StateManager:
                          bar_loop_count: int = 0,
                          last_signal_time: str = None) -> None:
         existing = load_json(self._p("heartbeat.json"), {})
-        start_ts = existing.get("_start_timestamp", time.time())
+        # uptime_seconds must reflect THIS process, not the first-ever launch.
+        # Reset the start timestamp whenever the PID changes (i.e. a restart),
+        # otherwise uptime grows unbounded across service restarts.
+        cur_pid = os.getpid()
+        if existing.get("pid") == cur_pid and existing.get("_start_timestamp"):
+            start_ts = existing["_start_timestamp"]
+        else:
+            start_ts = time.time()
         data = {
             "_start_timestamp":  start_ts,
             "timestamp":         datetime.now(timezone.utc).isoformat(),

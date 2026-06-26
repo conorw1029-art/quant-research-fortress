@@ -381,4 +381,65 @@ GIT_SSH_COMMAND="ssh -i ~/.ssh/github_fortress -o StrictHostKeyChecking=no" git 
 
 ---
 
-*Generated: 2026-06-26 | Commit: pending | Next review: when IBKR account confirmed*
+## SESSION ADDENDUM — Verification Pass + Hardening (2026-06-26, Opus 4.8)
+
+### Independent re-verification of prior work (all PASS)
+- All 14 earlier bug fixes confirmed present in **both** the live deployment
+  (`/opt/fortress/04_codebase`) and the git repo (`/root/quant-research-fortress`),
+  byte-for-byte identical (`diff` clean on all 6 changed files).
+- All **91** `tick_*.py` modules compile cleanly in the venv.
+- V10 L2 strategies import correctly (`Depth_Imbalance_Momentum`, `CVD_Microprice`,
+  `CVD_Acceleration`, `Repeated_Replenishment`) — the SyntaxError fix holds.
+- All 7 services active; executor **0 restarts**, heartbeat fresh, IBKR gate working
+  (new entries suspended, exits allowed), stale-data block correctly firing on 1m/3m.
+- Git clean and pushed; remote `origin/main` == local at the prior commit.
+
+### Corrections to earlier notes
+- **60m parquet files are NOT orphaned** — they are consumed by `tick_runner_v9.py`
+  and kept fresh by the yfinance updater for V9 / future strategies. **Do not delete.**
+- **`daily_pnl.json` persistence works** (writes realized P&L + per-strategy stats);
+  earlier "save_daily_pnl never called" was a false positive (written via another path).
+
+### New fixes applied this pass (live + git, tested)
+1. **Heartbeat uptime bug** (`tick_state_manager.py`): `uptime_seconds` was counting
+   from the first-ever launch (~39 days) because `_start_timestamp` was read back from
+   the old file on every restart. Now resets when the PID changes → reflects the
+   current process. Verified: post-restart `uptime_seconds` = 0.
+2. **account_state.json now persisted every loop** (`tick_live_executor.py`):
+   `save_account_state()` was defined but never wired. Now writes live equity, peak,
+   `trailing_drawdown_remaining` (= limit − used DD), `max_drawdown_limit`,
+   `account_halt`, and `realized_pnl` each pass — **merge-safe** (preserves
+   `account_id`/`session_open`). Fixes the AI monitor + dashboard showing stale $0 DD.
+   Verified against a real RiskManager with a simulated −$250 loss.
+3. **Correlation guard widened to all 54 IDs** (`tick_live_executor.py`): previously
+   only covered legacy V1-V5 IDs (2-15). Now covers full ES/NQ/GC/SI membership and
+   adds a **metals (GC+SI) correlation** warning alongside the index (ES+NQ) one.
+   Display/log only — does not block (PortfolioCoordinator owns hard caps).
+4. **Opt-in dashboard auth** (`tick_dashboard_server.py`): `/api/halt`, `/api/resume`,
+   `/api/chat` now honour an optional `DASHBOARD_TOKEN`. **Defaults to open** (no
+   lockout risk); set the env var to require `?token=` / `X-Dash-Token` header.
+
+### Operator actions to harden security (optional, coordinated)
+These mechanisms now exist in code but are **disabled by default** so nothing breaks.
+To enable, add to `/opt/fortress/.env` and restart the relevant service:
+
+```
+# Dashboard control/chat auth — then append ?token=... when hitting halt/resume/chat
+DASHBOARD_TOKEN=5984eb9ca4dbde95c5f2898665bf3997   # (example — regenerate your own)
+
+# TradingView webhook auth — REQUIRES updating all 20 TV alert URLs at the same time,
+# otherwise the data feed will start returning 401. Only enable when ready to edit alerts:
+TV_WEBHOOK_TOKEN=0aba883a9581589d315996af429fb5a0   # then URL: .../bar?token=...
+```
+
+### Still open (IBKR-gated or needs review — unchanged risk, documented)
+- Daily-loss halt enforcement across executor restart (two trackers — needs session-date
+  reconciliation; low urgency while IBKR gate blocks entries).
+- `ACCOUNT_EQUITY = 49000` hardcoded — sync to real broker equity once a broker connects.
+- Re-suspend V10 L2 until real IBKR L2 data flows (currently redundant — IBKR gate blocks
+  ALL entries anyway).
+- HMM regime / COT / GEX / fractional-Kelly — strategic roadmap, build behind the gate.
+
+---
+
+*Generated: 2026-06-26 | Verified + hardened by Opus 4.8 | Next review: when IBKR account confirmed*
