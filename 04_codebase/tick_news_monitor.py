@@ -249,7 +249,7 @@ class NewsMonitor:
 
     # ── Refresh ───────────────────────────────────────────────────────────────
 
-    def refresh(self, force: bool = False) -> None:
+    def refresh(self, force: bool = False) -> bool:
         now = datetime.now(timezone.utc)
         if (force or self.last_calendar is None or
                 (now - self.last_calendar).seconds > self.cache_minutes * 60):
@@ -258,6 +258,8 @@ class NewsMonitor:
         if (force or self.last_rss is None or
                 (now - self.last_rss).seconds > 15 * 60):  # headlines every 15 min
             self.fetch_headlines()
+
+        return self.last_calendar is not None
 
     # ── Analysis Methods ─────────────────────────────────────────────────────
 

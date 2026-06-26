@@ -613,7 +613,7 @@ PORTFOLIO = [
 
     (52, "NQ", 15, "consecutive_close_momentum",
      {"n": 4},
-     {0,2,5,6,8,9,10,11,12,13,16,17,19,22,23}, None, "v6"),  # DSR=1.82 filt_Sharpe=5.89
+     {0,2,5,6,8,9,10,11,12,13,16,17,19,22,23}, None, "v8"),  # DSR=1.82 filt_Sharpe=5.89
 
     (53, "ES", 15, "wick_reversal",
      {"wick_ratio": 0.6, "lookback": 20, "atr_window": 14},
