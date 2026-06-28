@@ -996,6 +996,16 @@ const API_KILL_STATUS = '/api/kill-switch';
 const API_HALT        = '/api/halt';
 const API_RESUME      = '/api/resume';
 
+// Dashboard auth: if DASHBOARD_TOKEN is set server-side, control endpoints
+// (halt/resume/chat) require it. Read it from the URL (?token=XXX) so a
+// bookmarked URL keeps full control while drive-by visitors get 401.
+const DASH_TOKEN = new URLSearchParams(location.search).get('token') || '';
+function dashHeaders(extra) {
+  const h = Object.assign({}, extra || {});
+  if (DASH_TOKEN) h['X-Dash-Token'] = DASH_TOKEN;
+  return h;
+}
+
 let _data       = null;
 let _sse        = null;
 let _connected  = false;
@@ -1902,7 +1912,7 @@ async function sendChat() {
 
     const resp = await fetch(API_CHAT, {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: dashHeaders({'Content-Type':'application/json'}),
       body: JSON.stringify({ message: q, context })
     });
 
@@ -2018,7 +2028,7 @@ async function toggleKillSwitch() {
   const label = _ksActive ? 'resume' : 'STOP ALL TRADING';
   if (!_ksActive && !confirm('EMERGENCY STOP — halt all new trades immediately?')) return;
   try {
-    const r = await fetch(url, { method: 'POST' });
+    const r = await fetch(url, { method: 'POST', headers: dashHeaders() });
     const d = await r.json();
     if (d.ok) await syncKillSwitchStatus();
     else alert('Kill switch error: ' + (d.error || 'unknown'));
