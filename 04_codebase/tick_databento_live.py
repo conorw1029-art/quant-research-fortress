@@ -47,9 +47,12 @@ log = logging.getLogger(__name__)
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DATASET       = "GLBX.MDP3"
-SCHEMA        = "ohlcv-1m"
+SCHEMA        = "ohlcv-1m"          # override with DATABENTO_SCHEMA env: ohlcv-1m | trades | mbp-10
 STYPE         = "continuous"
 BACKFILL_DAYS = 60
+COST_CAP_USD  = 2.00               # hard safety cap on any single fetch; override with DATABENTO_COST_CAP env
+# Measured 2026-06-28 (4 syms, 1mo): ohlcv-1m=$0.31  trades=$43.68  mbp-10=$180.96
+# 'trades' gives REAL footprint (buy/sell vol, CVD) via process_trades(); depth stays synthetic.
 
 # Continuous contract symbols (no rollover needed — always front month)
 SYMBOLS = {
@@ -209,8 +212,39 @@ def _bulk_upsert(path: Path, new_df: pd.DataFrame):
     return len(combined)
 
 
+def _trades_to_sym_rows(df) -> dict:
+    """Convert a raw Databento 'trades' DataFrame into per-symbol lists of 1m bar
+    dicts with REAL footprint (buy_vol/sell_vol/cvd derived from the aggressor side),
+    reusing the validated process_trades() feature builder. Depth columns remain
+    synthetic (real order-book depth requires the mbp-10 schema)."""
+    from tick_databento_to_features import process_trades
+    out: dict[str, list] = {sym: [] for sym in SYMBOLS}
+    sym_col = df["symbol"].astype(str).str.strip()
+    for raw_sym, g in df.groupby(sym_col):
+        base = SYM_REVERSE.get(raw_sym)
+        if base is None:
+            continue
+        bars = process_trades(g.copy(), "1min")        # real OHLCV + buy/sell/cvd
+        for ts, r in bars.iterrows():
+            ts = pd.Timestamp(ts)
+            ts = ts.tz_convert("UTC") if ts.tzinfo else ts.tz_localize("UTC")
+            o, h, l, c = float(r["open"]), float(r["high"]), float(r["low"]), float(r["close"])
+            if c <= 0:
+                continue
+            v  = int(r.get("volume", 0) or 0)
+            bv = float(r.get("buy_vol", 0) or 0)
+            sv = float(r.get("sell_vol", 0) or 0)
+            out[base].append({
+                "ts": ts, "open": o, "high": h, "low": l, "close": c, "volume": v,
+                "buy_vol": bv, "sell_vol": sv, "cvd_delta": bv - sv, "cvd": 0,
+                "n_trades": int(r.get("n_trades", v) or v),
+                **_synthetic_l2(bv, sv, h, l, c),
+            })
+    return out
+
+
 def backfill(api_key: str):
-    log.info(f"Backfill: last {BACKFILL_DAYS} days of ohlcv-1m...")
+    log.info(f"Backfill: last {BACKFILL_DAYS} days of {SCHEMA}...")
     end   = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
     start = end - timedelta(days=BACKFILL_DAYS)
     client = db.Historical(key=api_key)
@@ -222,9 +256,10 @@ def backfill(api_key: str):
             start=start.strftime("%Y-%m-%d"),
             end=end.strftime("%Y-%m-%d"),
         )
-        log.info(f"  Cost: ${cost:.4f}")
-        if cost > 2.00:
-            log.warning(f"  ${cost:.4f} exceeds $2 safety cap — skipping backfill")
+        log.info(f"  Cost: ${cost:.4f}  (schema={SCHEMA}, cap=${COST_CAP_USD:.2f})")
+        if cost > COST_CAP_USD:
+            log.warning(f"  ${cost:.4f} exceeds ${COST_CAP_USD:.2f} safety cap — skipping. "
+                        f"For 'trades' use a short window, e.g. --backfill-days 1 (~$1.50).")
             return
     except Exception as e:
         log.warning(f"  Cost check error: {e} — skipping")
@@ -248,25 +283,30 @@ def backfill(api_key: str):
 
     # Build per-symbol 1m DataFrames in memory, then bulk-upsert once per symbol
     sym_dfs: dict[str, list] = {sym: [] for sym in SYMBOLS}
-    for ts, row in df.iterrows():
-        raw_sym = str(row.get("symbol", "")).strip()
-        base    = SYM_REVERSE.get(raw_sym)
-        if base is None:
-            continue
-        ts = pd.Timestamp(ts).tz_convert("UTC") if getattr(ts, "tzinfo", None) else pd.Timestamp(ts, tz="UTC")
-        o = float(row["open"]); h = float(row["high"])
-        l = float(row["low"]);  c = float(row["close"])
-        v = int(row.get("volume", 0))
-        if c <= 0:
-            continue
-        cvd   = _cvd_delta(o, h, l, c, v)
-        buy_v = max(0, int(v * (c - l) / (h - l + 1e-9)))
-        sel_v = max(0, v - buy_v)
-        sym_dfs[base].append({
-            "ts": ts, "open": o, "high": h, "low": l, "close": c, "volume": v,
-            "buy_vol": buy_v, "sell_vol": sel_v, "cvd_delta": cvd, "cvd": 0,
-            "n_trades": v, **_synthetic_l2(buy_v, sel_v, h, l, c),
-        })
+    if SCHEMA == "trades":
+        # REAL footprint path: derive buy/sell vol + CVD from the aggressor side.
+        sym_dfs = _trades_to_sym_rows(df)
+    else:
+        # ohlcv path: buy/sell vol estimated from bar shape (synthetic footprint).
+        for ts, row in df.iterrows():
+            raw_sym = str(row.get("symbol", "")).strip()
+            base    = SYM_REVERSE.get(raw_sym)
+            if base is None:
+                continue
+            ts = pd.Timestamp(ts).tz_convert("UTC") if getattr(ts, "tzinfo", None) else pd.Timestamp(ts, tz="UTC")
+            o = float(row["open"]); h = float(row["high"])
+            l = float(row["low"]);  c = float(row["close"])
+            v = int(row.get("volume", 0))
+            if c <= 0:
+                continue
+            cvd   = _cvd_delta(o, h, l, c, v)
+            buy_v = max(0, int(v * (c - l) / (h - l + 1e-9)))
+            sel_v = max(0, v - buy_v)
+            sym_dfs[base].append({
+                "ts": ts, "open": o, "high": h, "low": l, "close": c, "volume": v,
+                "buy_vol": buy_v, "sell_vol": sel_v, "cvd_delta": cvd, "cvd": 0,
+                "n_trades": v, **_synthetic_l2(buy_v, sel_v, h, l, c),
+            })
 
     # Bulk upsert 1m data, then resample to higher timeframes
     for base, rows in sym_dfs.items():
@@ -444,14 +484,42 @@ def run_forever(api_key: str):
         log.info("Stopped.")
 
 
+def probe_cost(api_key: str):
+    """Zero-data-cost: print the real monthly cost of each schema for the
+    configured symbols, so you can decide a tier before paying a cent."""
+    client = db.Historical(key=api_key)
+    end   = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    start = end - timedelta(days=30)
+    log.info(f"Cost probe — {start:%Y-%m-%d}..{end:%Y-%m-%d}, symbols={list(SYMBOLS)}")
+    for sch in ("ohlcv-1m", "trades", "mbp-10"):
+        try:
+            cost = client.metadata.get_cost(
+                dataset=DATASET, schema=sch, symbols=list(SYMBOLS.values()),
+                stype_in=STYPE, start=start.strftime("%Y-%m-%d"), end=end.strftime("%Y-%m-%d"))
+            log.info(f"  {sch:10s}  ~${cost:.2f}/month")
+        except Exception as e:
+            log.info(f"  {sch:10s}  probe error: {repr(e)[:120]}")
+
+
 def main():
+    global SCHEMA, BACKFILL_DAYS, COST_CAP_USD
     parser = argparse.ArgumentParser()
     parser.add_argument("--loop",          action="store_true")
     parser.add_argument("--backfill-only", action="store_true")
     parser.add_argument("--no-backfill",   action="store_true")
+    parser.add_argument("--backfill-days", type=int, default=None,
+                        help="Override backfill window (use 1 for a cheap 'trades' test)")
+    parser.add_argument("--probe-cost",    action="store_true",
+                        help="Print real monthly cost of every schema, then exit (no data fetched)")
     parser.add_argument("--patch-l2",      action="store_true",
                         help="Retroactively patch all parquets with synthetic L2, then exit")
     args = parser.parse_args()
+
+    # Schema / cost-cap / window come from env + flags (.env already loaded at import)
+    SCHEMA       = os.environ.get("DATABENTO_SCHEMA", SCHEMA)
+    COST_CAP_USD = float(os.environ.get("DATABENTO_COST_CAP", COST_CAP_USD))
+    if args.backfill_days is not None:
+        BACKFILL_DAYS = args.backfill_days
 
     api_key = os.environ.get("DATABENTO_API_KEY", "")
     if not api_key.startswith("db-") and not args.patch_l2:
@@ -462,7 +530,12 @@ def main():
         patch_all_parquets()
         return
 
-    log.info(f"Fortress Databento Live  schema=ohlcv-1m  cost=~$0.31/month")
+    if args.probe_cost:
+        probe_cost(api_key)
+        return
+
+    _cost_hint = {"ohlcv-1m": "~$0.31/mo", "trades": "~$44/mo", "mbp-10": "~$181/mo"}.get(SCHEMA, "?")
+    log.info(f"Fortress Databento Live  schema={SCHEMA}  cost={_cost_hint}  cap=${COST_CAP_USD:.2f}")
     log.info(f"Symbols: {SYMBOLS}")
     log.info(f"Parquets: {BAR_DIR}")
 
@@ -470,6 +543,14 @@ def main():
         backfill(api_key)
 
     if args.backfill_only:
+        return
+
+    # Live poll loop currently handles row-per-bar schemas (ohlcv). The 'trades'
+    # poller needs overlap-minimal windowing (else it multiplies the bill) and must
+    # be validated against real trade records — wire it after a --backfill-only test.
+    if SCHEMA == "trades":
+        log.warning("Live poll for 'trades' not yet enabled. Validate first: "
+                    "DATABENTO_SCHEMA=trades python tick_databento_live.py --backfill-only --backfill-days 1")
         return
 
     # Always use poll mode — Live API requires separate license ($50+/month)
