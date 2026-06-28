@@ -321,6 +321,7 @@ def _build_snapshot() -> dict:
     dpnl     = _read_json(STATE_DIR / "daily_pnl.json")
     acct     = _read_json(STATE_DIR / "account_state.json")
     halts    = _read_json(STATE_DIR / "strategy_halts.json", {})
+    testing  = _read_json(STATE_DIR / "testing_pnl.json", {})
 
     allowlist = _load_allowlist()
     portfolio = _load_portfolio()
@@ -419,6 +420,16 @@ def _build_snapshot() -> dict:
                                       and not s["halted"]),
             "strategies_halted":  sum(1 for s in strategies if s["halted"]),
             "strategies_disabled": sum(1 for s in strategies if s["status"] in ("DISABLED_FOR_LIVE","RESEARCH_ONLY")),
+        },
+        "testing": {
+            "net_pnl":  round(float(testing.get("cumulative_realized_pnl", 0.0)), 2),
+            "trades":   testing.get("trades", 0),
+            "wins":     testing.get("wins", 0),
+            "losses":   testing.get("losses", 0),
+            "win_rate": (round(100.0 * testing.get("wins", 0) / testing.get("trades", 1), 1)
+                         if testing.get("trades", 0) else 0.0),
+            "since":    testing.get("testing_start"),
+            "per_strategy": testing.get("per_strategy", {}),
         },
     }
 

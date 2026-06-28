@@ -718,6 +718,10 @@ td{padding:5px 8px;vertical-align:middle}
 
   <div class="header-metrics">
     <div class="hm-item">
+      <div class="hm-label">Net P&amp;L (Testing)</div>
+      <div class="hm-val hm-val-lg val-neutral" id="hm-pnl-testing" title="Cumulative simulated strategy P&amp;L since testing reset — prop-firm equity decoupled">—</div>
+    </div>
+    <div class="hm-item">
       <div class="hm-label">Today P&amp;L</div>
       <div class="hm-val hm-val-lg val-neutral" id="hm-pnl-today">—</div>
     </div>
@@ -1190,6 +1194,13 @@ function renderHeader(d) {
   haltBadge.style.display = (p.halt_triggered || p.account_halt) ? 'inline' : 'none';
 
   // Metrics — with flash on change
+  const t = d.testing || {};
+  const tEl = document.getElementById('hm-pnl-testing');
+  if (tEl) {
+    tEl.textContent = fmtPnl(t.net_pnl).text;
+    tEl.className = 'hm-val hm-val-lg ' + fmtPnl(t.net_pnl).cls;
+    tEl.title = `Cumulative simulated strategy P&L since testing reset — ${t.trades||0} trades, ${t.win_rate||0}% win rate. Prop-firm equity decoupled.`;
+  }
   setValFlash('hm-pnl-today', p.pnl_today, fmtPnl(p.pnl_today));
   setValFlash('hm-pnl-7d',   p.pnl_7d,    fmtPnl(p.pnl_7d));
   setValFlash('hm-positions', p.open_positions, { text: String(p.open_positions ?? 0), cls: '' });

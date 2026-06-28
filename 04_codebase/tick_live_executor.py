@@ -197,10 +197,43 @@ except Exception:
     _L2_AVAILABLE = False
     STRAT_MAP_L2 = {}
 
-ROOT    = Path(__file__).parent.parent
-BAR_DIR = ROOT / "01_data" / "tick_bars"
-LOG_DIR = ROOT / "06_live_trading" / "logs"
+ROOT      = Path(__file__).parent.parent
+BAR_DIR   = ROOT / "01_data" / "tick_bars"
+LOG_DIR   = ROOT / "06_live_trading" / "logs"
+STATE_DIR = ROOT / "06_live_trading" / "state"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
+TESTING_PNL_PATH = STATE_DIR / "testing_pnl.json"
+
+
+def _update_testing_pnl(ex: dict) -> None:
+    """Accumulate realized P&L across the whole testing period (survives daily
+    resets), independent of the prop-firm equity. Updated on every full close."""
+    try:
+        import json as _json
+        if TESTING_PNL_PATH.exists():
+            d = _json.loads(TESTING_PNL_PATH.read_text())
+        else:
+            d = {"testing_start": datetime.now(timezone.utc).isoformat(),
+                 "cumulative_realized_pnl": 0.0, "trades": 0, "wins": 0,
+                 "losses": 0, "per_strategy": {}}
+        pnl = float(ex.get("pnl", 0.0) or 0.0)
+        d["cumulative_realized_pnl"] = round(d.get("cumulative_realized_pnl", 0.0) + pnl, 2)
+        d["trades"] = d.get("trades", 0) + 1
+        d["wins"]   = d.get("wins", 0) + (1 if pnl > 0 else 0)
+        d["losses"] = d.get("losses", 0) + (1 if pnl < 0 else 0)
+        sid = str(ex.get("strat_id", "?"))
+        ps  = d.setdefault("per_strategy", {}).setdefault(
+            sid, {"pnl": 0.0, "trades": 0, "wins": 0, "losses": 0})
+        ps["pnl"]    = round(ps["pnl"] + pnl, 2)
+        ps["trades"] += 1
+        ps["wins"]   += 1 if pnl > 0 else 0
+        ps["losses"] += 1 if pnl < 0 else 0
+        d["last_updated"] = datetime.now(timezone.utc).isoformat()
+        tmp = TESTING_PNL_PATH.with_suffix(".tmp")
+        tmp.write_text(_json.dumps(d, indent=2))
+        tmp.replace(TESTING_PNL_PATH)
+    except Exception as _e:
+        print(f"  [testing_pnl] update skipped: {_e}")
 
 # ── Safety constants ──────────────────────────────────────────────────────────
 KILL_SWITCH_PATH = ROOT / "KILL_SWITCH.txt"
@@ -1295,6 +1328,8 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
         bar_exits = rm.update_bar(strat_id, bar_high, bar_low, entry_p)
         for ex in bar_exits:
             reason = ex["reason"]
+            if reason in ("stop", "target", "timeout", "signal", "forced"):
+                _update_testing_pnl(ex)
             if verbose:
                 pnl = ex.get("pnl", 0.0)
                 if reason == "ratchet_1":
@@ -2170,13 +2205,16 @@ Examples:
             except Exception:
                 _broker_net_pos = []
 
-        # ── IBKR gate — hold NEW entries until real-time data is ready ─────
-        # Exits for open positions still run so existing DRY_RUN positions can close.
-        _ibkr_ready_path = Path("/opt/fortress/IBKR_READY")
-        _ibkr_waiting = not _ibkr_ready_path.exists()
+        # ── DATA gate — hold NEW entries until real-time data is flowing ──
+        # Decoupled from IBKR: any real-time feed (Databento footprint, etc.) qualifies.
+        # Touch /opt/fortress/DATA_READY once live data is confirmed. IBKR_READY still
+        # honored for backwards-compat. Exits for open positions always run.
+        _data_ready = (Path("/opt/fortress/DATA_READY").exists()
+                       or Path("/opt/fortress/IBKR_READY").exists())
+        _ibkr_waiting = not _data_ready
         if _ibkr_waiting:
-            print(f"\n  *** WAITING FOR IBKR — new entries suspended ***")
-            print(f"  Touch {_ibkr_ready_path} to enable entries once IBKR data is flowing.")
+            print(f"\n  *** WAITING FOR LIVE DATA — new entries suspended ***")
+            print(f"  Touch /opt/fortress/DATA_READY once real-time (Databento) data is flowing.")
             print(f"  (Existing positions will still be managed / can still exit.)")
 
         alerts = check_all_strategies(tracker, rm, args.disable_v2,

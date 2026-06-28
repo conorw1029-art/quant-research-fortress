@@ -47,6 +47,16 @@ from typing import Optional
 import math
 
 
+# ── Tick sizes (for slippage realism) ─────────────────────────────────────────
+_TICK_SIZE = {
+    "GC": 0.10, "MGC": 0.10, "ES": 0.25, "MES": 0.25,
+    "NQ": 0.25, "MNQ": 0.25, "SI": 0.005, "SIL": 0.005,
+}
+
+def _tick_for(symbol: str) -> float:
+    return _TICK_SIZE.get(str(symbol).upper(), 0.0)
+
+
 # ── Risk configuration ────────────────────────────────────────────────────────
 
 @dataclass
@@ -54,6 +64,10 @@ class RiskConfig:
     # ── Per-trade ──────────────────────────────────────────────────────────
     max_trade_risk_usd: float = 500.0
     max_hold_bars: int = 50
+    # Slippage realism: ticks of adverse slippage per market fill. Entry is always
+    # a market fill; stop/timeout/forced/signal exits are market too; a limit target
+    # fills clean. Set 0.0 to disable.
+    slippage_ticks: float = 1.0
 
     # ── Exit structure ─────────────────────────────────────────────────────
     # use_ratchet=True: trailing stop ratchet — works with ANY quantity ≥ 1
@@ -70,6 +84,10 @@ class RiskConfig:
 
     # Full TP R-multiple (ratchet and partial-exit mode).
     full_tp_r: float = 3.0
+
+    # Breakeven: move stop to entry once price reaches +breakeven_r R (0 = disabled).
+    # Fires before the ratchet; protects winners earlier than the +1.5R ratchet.
+    breakeven_r: float = 0.0
 
     # ── Legacy: partial exit (only valid with 2+ contracts) ────────────────
     partial_exit_r: float = 1.5
@@ -110,6 +128,7 @@ class TradeRecord:
     # Ratchet state
     ratchet_1_done:   bool  = False
     ratchet_2_done:   bool  = False
+    breakeven_done:   bool  = False
     # Legacy partial exit state (for 2+ contract mode)
     partial_done:     bool  = False
     closed:           bool  = False
@@ -358,6 +377,24 @@ class RiskManager:
             exits.append(self._do_close(trade, trade.stop_px, 1.0, "stop"))
             return exits
 
+        # ── 1b. Breakeven move (optional, before ratchet) ─────────────────
+        if self.cfg.breakeven_r > 0 and not trade.breakeven_done:
+            be_trigger = trade.entry_px + trade.direction * self.cfg.breakeven_r * trade.stop_dist
+            be_hit = ((trade.direction == 1  and bar_high >= be_trigger) or
+                      (trade.direction == -1 and bar_low  <= be_trigger))
+            if be_hit:
+                if trade.direction == 1:
+                    trade.stop_px = max(trade.stop_px, trade.entry_px)
+                else:
+                    trade.stop_px = min(trade.stop_px, trade.entry_px)
+                trade.breakeven_done = True
+                exits.append({
+                    "strat_id": strat_id, "symbol": trade.symbol,
+                    "reason": "breakeven", "fraction": 0.0,
+                    "exit_px": be_trigger, "pnl": 0.0,
+                    "new_stop": round(trade.stop_px, 4), "account_halt": None,
+                })
+
         # ── 2a. Ratchet trailing stop (single-contract mode) ──────────────
         if self.cfg.use_ratchet:
             rp = trade.ratchet_prices(self.cfg)
@@ -476,6 +513,13 @@ class RiskManager:
                   fraction: float, reason: str) -> dict:
         remaining = 0.5 if trade.partial_done else 1.0
         pnl = trade.pnl_at_price(exit_px, remaining)
+        # Slippage realism: entry is always a market fill (1 tick adverse); a market
+        # exit (stop/timeout/forced/signal) slips another tick; a limit target fills clean.
+        _tick = _tick_for(trade.symbol)
+        _slip = getattr(self.cfg, "slippage_ticks", 0.0)
+        if _tick > 0 and _slip > 0:
+            _sides = 1.0 + (1.0 if reason in ("stop", "timeout", "forced", "signal") else 0.0)
+            pnl -= _sides * _slip * _tick * trade.point_value * trade.contracts * remaining
         trade.realised_pnl += pnl
         trade.closed = True
         del self._open[trade.strat_id]
