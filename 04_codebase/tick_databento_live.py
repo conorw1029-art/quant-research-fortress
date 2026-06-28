@@ -308,21 +308,29 @@ def backfill(api_key: str):
                 "n_trades": v, **_synthetic_l2(buy_v, sel_v, h, l, c),
             })
 
-    # Bulk upsert 1m data, then resample to higher timeframes
+    _write_sym_rows(sym_dfs)
+
+
+def _write_sym_rows(sym_dfs: dict, quiet: bool = False) -> int:
+    """Bulk-upsert per-symbol 1m bar rows + resample to higher timeframes.
+    Shared by backfill() and the trades poller. Returns total bars written."""
+    written = 0
     for base, rows in sym_dfs.items():
         if not rows:
-            log.warning(f"  No data for {base}")
+            if not quiet:
+                log.warning(f"  No data for {base}")
             continue
         new_1m = pd.DataFrame(rows).set_index("ts")
         new_1m.index = pd.to_datetime(new_1m.index, utc=True)
         new_1m = new_1m.sort_index()
+        written += len(rows)
 
         pq = BAR_DIR / f"{base}_bars_1m.parquet"
         l2 = BAR_DIR / f"{base}_bars_l2_1m.parquet"
         with _lock(f"{base}_1"):
             n = _bulk_upsert(pq, new_1m)
             _bulk_upsert(l2, new_1m)
-        log.info(f"  {base} 1m: {len(rows)} new bars → {n} total")
+        (log.debug if quiet else log.info)(f"  {base} 1m: {len(rows)} new bars → {n} total")
 
         # Resample to higher timeframes
         for tf in RESAMPLE_TFS:
@@ -357,11 +365,76 @@ def backfill(api_key: str):
             with _lock(f"{base}_{tf}"):
                 _bulk_upsert(pq_tf, agg)
                 _bulk_upsert(l2_tf, agg)
-        log.info(f"  {base} resampled to {RESAMPLE_TFS}m")
+        (log.debug if quiet else log.info)(f"  {base} resampled to {RESAMPLE_TFS}m")
+    return written
 
 # ── Historical-API poller (replaces Live stream — no live license needed) ──────
 POLL_SECS    = 60    # fetch last 15 bars every 60s — ~60s latency, ~$0.50/month
 POLL_LOOKBACK = 15   # minutes — covers ~7min Databento publication lag
+
+# ── Overlap-safe 'trades' poller config ───────────────────────────────────────
+# Polls ONLY new data (advances a watermark) so fetch windows never overlap —
+# overlap would multiply the trades bill. Per-fetch window is hard-bounded and
+# cost-checked for safety.
+SAFETY_LAG_MIN      = 15   # Databento historical publication lag (~4-7min + margin)
+MAX_POLL_WINDOW_MIN = 30   # hard cap on a single fetch window (bounds per-poll cost)
+COST_CHECK_MIN      = 5    # only cost-check windows larger than this (catch-up case)
+
+
+def poll_loop_trades(api_key: str):
+    """Overlap-minimal Historical-API poller for the 'trades' schema → REAL footprint.
+    Never re-pulls a window it already fetched (watermark only advances on success),
+    so steady-state cost ≈ the monthly trades price with no overlap multiplier."""
+    client = db.Historical(key=api_key)
+    # Start just inside the safe (published) horizon — backfill() covers older history.
+    watermark = datetime.now(timezone.utc) - timedelta(minutes=SAFETY_LAG_MIN + 2)
+    log.info(f"Trades poll: overlap-safe, every {POLL_SECS}s, lag {SAFETY_LAG_MIN}min, "
+             f"window cap {MAX_POLL_WINDOW_MIN}min, cost cap ${COST_CAP_USD:.2f}")
+    polls = bars_total = 0
+    while True:
+        now = datetime.now(timezone.utc)
+        end = now - timedelta(minutes=SAFETY_LAG_MIN)
+        start = watermark
+        if end <= start + timedelta(seconds=30):
+            time.sleep(POLL_SECS); continue
+        # Bound the window so a backlog (e.g. after downtime) can't trigger a huge fetch.
+        if (end - start) > timedelta(minutes=MAX_POLL_WINDOW_MIN):
+            log.warning(f"  trades poll behind by {end - start}; clamping to "
+                        f"{MAX_POLL_WINDOW_MIN}min (older gap skipped — backfill if needed)")
+            start = end - timedelta(minutes=MAX_POLL_WINDOW_MIN)
+        # Cost guard — only for unusually large (catch-up) windows.
+        if (end - start) > timedelta(minutes=COST_CHECK_MIN):
+            try:
+                cost = client.metadata.get_cost(
+                    dataset=DATASET, schema="trades", symbols=list(SYMBOLS.values()),
+                    stype_in=STYPE, start=start.isoformat(), end=end.isoformat())
+                if cost > COST_CAP_USD:
+                    log.warning(f"  window cost ${cost:.2f} > cap ${COST_CAP_USD:.2f}; "
+                                f"skipping this window")
+                    watermark = end
+                    time.sleep(POLL_SECS); continue
+            except Exception:
+                pass
+        # Fetch ONLY the new [start, end] window.
+        try:
+            data = client.timeseries.get_range(
+                dataset=DATASET, schema="trades", symbols=list(SYMBOLS.values()),
+                stype_in=STYPE, start=start.isoformat(), end=end.isoformat())
+            df = data.to_df()
+        except Exception as e:
+            err = str(e)
+            if "data_end_after_available_end" in err:
+                time.sleep(POLL_SECS); continue          # not published yet — retry, don't advance
+            log.warning(f"  trades poll fetch error: {e}")
+            time.sleep(POLL_SECS); continue
+        n = 0
+        if df is not None and len(df) > 0:
+            n = _write_sym_rows(_trades_to_sym_rows(df), quiet=True)
+        watermark = end                                  # advance ONLY after a successful fetch
+        bars_total += n; polls += 1
+        if n:
+            log.info(f"  trades {start:%H:%M}–{end:%H:%M}  +{n} bars  (total {bars_total})")
+        time.sleep(POLL_SECS)
 
 
 def _fetch_recent(client: db.Historical, lookback_min: int = POLL_LOOKBACK) -> pd.DataFrame | None:
@@ -545,16 +618,16 @@ def main():
     if args.backfill_only:
         return
 
-    # Live poll loop currently handles row-per-bar schemas (ohlcv). The 'trades'
-    # poller needs overlap-minimal windowing (else it multiplies the bill) and must
-    # be validated against real trade records — wire it after a --backfill-only test.
-    if SCHEMA == "trades":
-        log.warning("Live poll for 'trades' not yet enabled. Validate first: "
-                    "DATABENTO_SCHEMA=trades python tick_databento_live.py --backfill-only --backfill-days 1")
-        return
-
-    # Always use poll mode — Live API requires separate license ($50+/month)
-    run_forever(api_key)
+    # Poll mode — Historical API (no live license needed). Route by schema:
+    #   trades   → overlap-safe watermark poller (REAL footprint)
+    #   ohlcv-1m → legacy lookback poller
+    try:
+        if SCHEMA == "trades":
+            poll_loop_trades(api_key)
+        else:
+            poll_loop(api_key)
+    except KeyboardInterrupt:
+        log.info("Stopped.")
 
 
 if __name__ == "__main__":
