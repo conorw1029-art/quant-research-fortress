@@ -192,14 +192,17 @@ def process_trades(df: pd.DataFrame, bar_freq: str) -> pd.DataFrame:
     if df[size_col].dtype == "int64" or df[size_col].dtype == "uint32":
         df[size_col] = df[size_col].astype(float)
 
-    # Determine buy/sell side from 'side' column
-    # Databento convention: side='A' means the resting order was on the Ask (buyer is aggressor)
-    #                       side='B' means the resting order was on the Bid (seller is aggressor)
+    # Determine buy/sell side from 'side' column.
+    # Databento 'trades' convention: 'side' is the AGGRESSOR's side (SDK: "the side of
+    # the aggressor for trades"). side='B' (Bid) = BUY aggressor; side='A' (Ask) = SELL aggressor.
+    # Verified empirically on GLBX.MDP3 MES trades 2026-06-26 (tick rule): side='B' 92.3% upticks,
+    # side='A' 8.9% upticks. This now matches tick_processor.py (the historical research builder).
+    # (Prior code had this inverted, which would have flipped CVD/delta sign on the live feed.)
     if "side" in df.columns:
         # Normalize to uppercase strings
         side = df["side"].astype(str).str.upper()
-        buy_mask = side == "A"   # ask side hit = buy aggressor
-        sell_mask = side == "B"  # bid side hit = sell aggressor
+        buy_mask = side == "B"   # bid-aggressor = buy
+        sell_mask = side == "A"  # ask-aggressor = sell
     elif "action" in df.columns:
         # Some schemas use 'action'; treat all as unknown direction
         buy_mask = pd.Series(False, index=df.index)
