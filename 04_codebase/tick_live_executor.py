@@ -722,9 +722,11 @@ else:
         topstep_daily_limit_usd       = 4000.0,
     )
 
-# Total account equity across all accounts. Adjust to current real value.
-# 10 accounts × ~$4,900 each after $1k DD = ~$49k combined.
-ACCOUNT_EQUITY = 49_000.0
+# Starting account equity. Configurable via FORTRESS_ACCOUNT_EQUITY in .env —
+# the old hardcoded 49k modeled 10 Topstep accounts that no longer exist.
+# On restart, the live value is restored from account_state.json anyway; this
+# is only the fresh-state seed.
+ACCOUNT_EQUITY = float(os.environ.get("FORTRESS_ACCOUNT_EQUITY", "49000"))
 
 # ── Legacy constant ───────────────────────────────────────────────────────────
 MAX_TRADE_RISK_USD = RISK_CFG.max_trade_risk_usd
@@ -2042,6 +2044,48 @@ Examples:
     # ── State persistence layer ───────────────────────────────────────────────
     sm = StateManager() if _STATE_MANAGER_AVAILABLE else None
     if sm:
+        # ── Restore risk state (daily ledger, equity, halts, loss streaks) ──
+        # The RiskManager was rebuilt EMPTY on every restart, which erased the
+        # daily-loss halt and consecutive-loss streaks (a halted day silently
+        # resumed trading after a service restart). Restore from the state
+        # files the executor itself persists each pass / on each close.
+        try:
+            _acct_st = sm.load_account_state()
+            if isinstance(_acct_st.get("equity"), (int, float)):
+                rm.account.equity = float(_acct_st["equity"])
+            if isinstance(_acct_st.get("equity_peak"), (int, float)):
+                rm.account.peak_equity = max(float(_acct_st["equity_peak"]),
+                                             rm.account.equity)
+            if _acct_st.get("account_halt"):
+                rm.account._halted = True
+                rm.account._halt_reason = str(_acct_st.get("account_halt_reason")
+                                              or "restored from account_state.json")
+                print(f"  [StateManager] ⚠ ACCOUNT HALT restored: {rm.account._halt_reason}")
+            _consec = _acct_st.get("consecutive_losses", {})
+            if isinstance(_consec, dict):
+                for _sid, _n in _consec.items():
+                    try:
+                        rm._consecutive_losses[int(_sid)] = int(_n)
+                    except (ValueError, TypeError):
+                        pass
+            _dp = sm.load_daily_pnl()
+            _today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            if _dp.get("date") == _today:
+                for _sid, _s in (_dp.get("per_strategy") or {}).items():
+                    try:
+                        rm.ledger._data[(int(_sid), _today)] = float(_s.get("pnl", 0.0))
+                    except (ValueError, TypeError):
+                        pass
+                _port = rm.ledger.portfolio_today()
+                if _port != 0:
+                    print(f"  [StateManager] Restored today's P&L ledger: ${_port:+,.2f} "
+                          f"({len(_dp.get('per_strategy') or {})} strategies) — "
+                          f"daily-loss limits enforce across restarts")
+            print(f"  [StateManager] Risk state restored: equity=${rm.account.equity:,.2f} "
+                  f"peak=${rm.account.peak_equity:,.2f} trailDD=${rm.account.trailing_dd:,.2f}")
+        except Exception as _rs_err:
+            print(f"  [StateManager] Risk-state restore failed (starting fresh): {_rs_err}")
+
         # Restore strategy halts
         halts = sm.load_strategy_halts()
         restored_halts = [sid for sid, h in halts.items()
@@ -2170,6 +2214,8 @@ Examples:
                     "account_halt":                bool(acct.is_halted),
                     "account_halt_reason":         (acct._halt_reason or None),
                     "realized_pnl":                round(rm.ledger.portfolio_today(), 2),
+                    "consecutive_losses":          {str(k): v for k, v
+                                                    in rm._consecutive_losses.items() if v},
                 })
                 sm.save_account_state(st)
             except Exception as _acct_err:
