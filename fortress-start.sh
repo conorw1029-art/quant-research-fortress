@@ -33,7 +33,12 @@ else
     # Set a useful status bar
     tmux set-option -t "$SESSION" status-right "#[fg=green]Fortress VPS#[default] | %H:%M UTC"
     tmux set-option -t "$SESSION" status-right-length 40
-    # Start Claude Code in the session
-    tmux send-keys -t "$SESSION" "cd /opt/fortress && claude" Enter
+    # Start Claude Code in the session.
+    # --continue resumes the MOST RECENT conversation (same chat, full context)
+    # instead of starting a blank one — so even a VPS reboot doesn't lose the chat.
+    # Falls back to a fresh session only if there is nothing to resume.
+    # cd /root: conversations are stored per-directory; the Fortress chat lives
+    # in the /root project (memory at /root/.claude/projects/-root/).
+    tmux send-keys -t "$SESSION" "cd /root && (claude --continue || claude)" Enter
     tmux attach-session -t "$SESSION"
 fi
