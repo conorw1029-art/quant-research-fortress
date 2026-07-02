@@ -201,11 +201,12 @@ def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
     new_df = pd.DataFrame([row], index=pd.DatetimeIndex([ts], name="ts"))
 
     pq_path = BAR_DIR / f"{sym}_bars_{bar_min}m.parquet"
-    l2_path = BAR_DIR / f"{sym}_bars_l2_{bar_min}m.parquet"
+    # NOTE: this webhook must NEVER write the *_bars_l2_* files. Those are
+    # reserved for REAL footprint/L2 data (Databento / IBKR / NT8). Writing
+    # synthetic L2 there corrupted the real datasets (2026-06-30 incident).
 
     with _lock(f"{sym}_{bar_min}"):
-        for path in (pq_path, l2_path):
-            _upsert(path, new_df)
+        _upsert(pq_path, new_df, bar_min)
 
     key = f"{sym}/{bar_min}m"
     _received[key]       = _received.get(key, 0) + 1
@@ -223,9 +224,14 @@ def _write_bar(sym: str, bar_min: int, ts: pd.Timestamp,
         log.info(f"FIRST BAR for {sym} — Telegram notified")
 
 
-_UPSERT_MAX_ROWS = 1000  # ~14 days at 1m, ~500 days at 30m — covers 500-bar lookback
+# Per-timeframe row caps. The old flat 1000-row cap silently destroyed the
+# 2.5-year 30m bootstrap history (1000 rows of 30m ≈ 3 weeks). Caps below keep
+# memory bounded while never truncating multi-year history on slow timeframes.
+_UPSERT_MAX_ROWS_BY_TF = {1: 30_000, 3: 30_000, 5: 30_000, 15: 60_000, 30: 60_000}
+_UPSERT_MAX_ROWS_DEFAULT = 60_000
 
-def _upsert(path: Path, new_df: pd.DataFrame):
+def _upsert(path: Path, new_df: pd.DataFrame, bar_min: int = 0):
+    max_rows = _UPSERT_MAX_ROWS_BY_TF.get(bar_min, _UPSERT_MAX_ROWS_DEFAULT)
     if path.exists():
         try:
             existing = pd.read_parquet(path)
@@ -238,7 +244,7 @@ def _upsert(path: Path, new_df: pd.DataFrame):
                     new_df[col] = np.nan
             combined = pd.concat([existing, new_df]).sort_index()
             combined = combined[~combined.index.duplicated(keep="last")]
-            combined = combined.iloc[-_UPSERT_MAX_ROWS:]  # trim to keep memory bounded
+            combined = combined.iloc[-max_rows:]  # trim to keep memory bounded
             combined["cvd"] = combined["cvd_delta"].cumsum()
         except Exception:
             combined = new_df
@@ -348,6 +354,17 @@ def receive_bar():
 
         if c <= 0:
             return jsonify({"error": "zero close price"}), 400
+
+        # ── Bar-grid validation ───────────────────────────────────────────────
+        # A real {bar_min}m bar closes on the {bar_min}-minute grid. Misconfigured
+        # TV alerts (e.g. "once per minute" on a 30m chart) send per-minute ticks
+        # labeled as 15m/30m bars, which destroyed the 30m history on 2026-07-01.
+        # Reject anything off-grid instead of writing it.
+        if bar_min > 1 and (ts.minute % bar_min != 0 or ts.second != 0):
+            _errors += 1
+            log.warning(f"OFF_GRID bar rejected: {sym} {bar_min}m ts={ts} "
+                        f"(alert misconfigured — check TV alert condition)")
+            return jsonify({"error": f"timestamp {ts} not aligned to {bar_min}m grid"}), 400
 
         _write_bar(sym, bar_min, ts, o, h, l, c, v)
 

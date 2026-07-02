@@ -375,7 +375,9 @@ def _build_snapshot() -> dict:
         for sym, p in pos_dict.items():
             if isinstance(p, dict) and "net_pos" in p:
                 positions.append({
-                    "sym": sym, "net_pos": p["net_pos"],
+                    # New records are keyed by strategy id and carry the symbol
+                    # in the record; legacy records were keyed by symbol.
+                    "sym": p.get("symbol", sym), "net_pos": p["net_pos"],
                     "entry_px": p.get("entry_px"),
                     "strategy_id": p.get("strategy_id"),
                 })

@@ -85,6 +85,19 @@ def check_service(name: str) -> tuple[bool, str]:
     except Exception as e:
         return False, str(e)
 
+def is_unit_disabled(name: str) -> bool:
+    """True when the unit was deliberately taken out of service (disabled/masked).
+    The watchdog must NOT revive these — a stopped+disabled unit is an operator
+    decision (e.g. tv-webhook disabled 2026-06-30 for corrupting L2 parquets)."""
+    try:
+        r = subprocess.run(
+            ["systemctl", "is-enabled", name],
+            capture_output=True, text=True, timeout=10
+        )
+        return r.stdout.strip() in ("disabled", "masked")
+    except Exception:
+        return False
+
 def restart_service(name: str) -> bool:
     try:
         subprocess.run(["systemctl", "restart", name], timeout=30, check=True)
@@ -229,6 +242,9 @@ def main():
         for svc in CRITICAL_SERVICES:
             active, status = check_service(svc)
             if not active:
+                if is_unit_disabled(svc):
+                    print(f"  ⏸  {svc} inactive but DISABLED (operator decision) — not restarting")
+                    continue
                 count = restart_counts.get(svc, 0) + 1
                 restart_counts[svc] = count
                 print(f"  ❌ {svc} DOWN (attempt #{count}) — restarting...")

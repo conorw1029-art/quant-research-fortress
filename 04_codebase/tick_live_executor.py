@@ -102,7 +102,7 @@ from tick_strategies import STRATEGY_MAP
 from tick_strategies_v2 import STRAT_MAP
 from tick_strategies_v3 import STRAT_MAP_V3
 from tick_strategies_v4 import STRAT_MAP_V4
-from tick_risk_manager import (RiskConfig, RiskManager,
+from tick_risk_manager import (RiskConfig, RiskManager, TradeRecord,
                                 recommended_contracts, format_entry_alert)
 try:
     from tick_news_monitor import NewsMonitor
@@ -1373,15 +1373,30 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 "consecutive_losses": ex.get("consecutive_losses", 0),
                 "account_halt":  ex.get("account_halt"),
             })
-            # Only update signal tracker on actual closes (not ratchet/partial)
-            if reason not in ("ratchet_1", "ratchet_2", "partial_tp"):
+            # Persist ratchet/breakeven stop moves so a restart re-arms the
+            # CURRENT stop, not the entry-time stop.
+            if sm and reason in ("ratchet_1", "ratchet_2", "breakeven") and "new_stop" in ex:
+                current_positions = sm.load_positions().get("positions", {})
+                rec = current_positions.get(str(strat_id))
+                if isinstance(rec, dict):
+                    rec["stop_px"]        = ex["new_stop"]
+                    rec["ratchet_1_done"] = reason in ("ratchet_1", "ratchet_2") or rec.get("ratchet_1_done", False)
+                    rec["ratchet_2_done"] = reason == "ratchet_2" or rec.get("ratchet_2_done", False)
+                    rec["breakeven_done"] = reason == "breakeven" or rec.get("breakeven_done", False)
+                    if strat_id in rm._open:
+                        rec["bar_count"] = rm._open[strat_id].bar_count
+                    sm.save_positions(current_positions)
+
+            # Only update signal tracker on actual closes (not ratchet/breakeven/partial)
+            if reason not in ("ratchet_1", "ratchet_2", "breakeven", "partial_tp"):
                 tracker.update(strat_id, 0)
                 if sm:
                     pnl = ex.get("total_trade_pnl", ex.get("pnl", 0.0))
                     sm.record_trade_pnl(str(strat_id), pnl)
                     sm.remove_bracket(str(strat_id))
                     current_positions = sm.load_positions().get("positions", {})
-                    current_positions.pop(traded_sym, None)
+                    current_positions.pop(str(strat_id), None)
+                    current_positions.pop(traded_sym, None)  # legacy symbol-keyed records
                     sm.save_positions(current_positions)
 
         # ── Hours filter ──────────────────────────────────────────────────
@@ -1515,10 +1530,27 @@ def check_all_strategies(tracker: PositionTracker, rm: RiskManager,
                 sig_key = f"{strat_id}:{last_bar_ts.isoformat()}"
                 sm.mark_signal_processed(sig_key)
                 current_positions = sm.load_positions().get("positions", {})
-                current_positions[traded_sym] = {
-                    "net_pos": direction,
-                    "entry_px": entry_p,
-                    "strategy_id": strat_id,
+                # Keyed by strategy id: two strategies holding the same symbol
+                # must not overwrite each other (the old symbol-keyed format
+                # collided and dropped positions on restore). Full trade state
+                # is persisted so a restart rebuilds the RiskManager record and
+                # keeps enforcing stop/target/ratchet/timeout.
+                current_positions[str(strat_id)] = {
+                    "net_pos":          direction,
+                    "symbol":           traded_sym,
+                    "entry_px":         entry_p,
+                    "strategy_id":      strat_id,
+                    "stop_px":          trade.stop_px,
+                    "initial_stop_px":  trade.initial_stop_px,
+                    "target_px":        trade.target_px,
+                    "point_value":      spec["point_value"],
+                    "commission":       spec.get("commission", 2.0),
+                    "contracts":        trade.contracts,
+                    "bar_count":        trade.bar_count,
+                    "ratchet_1_done":   trade.ratchet_1_done,
+                    "ratchet_2_done":   trade.ratchet_2_done,
+                    "breakeven_done":   trade.breakeven_done,
+                    "opened_at":        datetime.now(timezone.utc).isoformat(),
                 }
                 sm.save_positions(current_positions)
             contracts = min(recommended_contracts(trade.risk_usd, rm.account.equity),
@@ -2023,18 +2055,48 @@ Examples:
         saved_pos_state = sm.load_positions()
         saved_positions = saved_pos_state.get("positions", {})
         restored_positions = 0
-        for sym, pos_data in saved_positions.items():
+        _TR_FIELDS = ("entry_px", "stop_px", "initial_stop_px", "target_px", "point_value")
+        for key, pos_data in saved_positions.items():
             if not isinstance(pos_data, dict):
                 continue
             net_pos = int(pos_data.get("net_pos", 0))
             sid     = pos_data.get("strategy_id")
             if net_pos != 0 and sid is not None:
                 try:
-                    tracker.update(int(sid), net_pos)
+                    sid = int(sid)
+                    tracker.update(sid, net_pos)
                     restored_positions += 1
-                    dir_str = "LONG" if net_pos == 1 else "SHORT"
-                    print(f"  [StateManager] Restored position: strategy {sid} {dir_str} {sym} "
-                          f"@ {pos_data.get('entry_px', '?')}")
+                    sym_disp = pos_data.get("symbol", key)
+                    dir_str  = "LONG" if net_pos == 1 else "SHORT"
+                    # Rebuild the RiskManager TradeRecord so stop/target/ratchet/
+                    # timeout keep being enforced after a restart. Legacy records
+                    # (symbol-keyed, no stop data) cannot be rebuilt — warn loudly:
+                    # that position is tracked but its exits are UNMANAGED.
+                    if all(k in pos_data for k in _TR_FIELDS):
+                        rm._open[sid] = TradeRecord(
+                            strat_id=sid,
+                            symbol=sym_disp,
+                            direction=net_pos,
+                            entry_px=float(pos_data["entry_px"]),
+                            stop_px=float(pos_data["stop_px"]),
+                            initial_stop_px=float(pos_data["initial_stop_px"]),
+                            target_px=float(pos_data["target_px"]),
+                            point_value=float(pos_data["point_value"]),
+                            commission=float(pos_data.get("commission", 2.0)),
+                            contracts=int(pos_data.get("contracts", 1)),
+                            bar_count=int(pos_data.get("bar_count", 0)),
+                            ratchet_1_done=bool(pos_data.get("ratchet_1_done", False)),
+                            ratchet_2_done=bool(pos_data.get("ratchet_2_done", False)),
+                            breakeven_done=bool(pos_data.get("breakeven_done", False)),
+                        )
+                        print(f"  [StateManager] Restored position: strategy {sid} {dir_str} {sym_disp} "
+                              f"@ {pos_data.get('entry_px', '?')} — stop/target RE-ARMED "
+                              f"(stop={pos_data['stop_px']}, target={pos_data['target_px']})")
+                    else:
+                        print(f"  [StateManager] ⚠ Restored position WITHOUT exit management "
+                              f"(legacy record): strategy {sid} {dir_str} {sym_disp} @ "
+                              f"{pos_data.get('entry_px', '?')} — stops NOT re-armed; "
+                              f"review/flatten manually")
                 except Exception:
                     pass
         if restored_positions == 0:
